@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkpowerpages_lab=self.webpackChunkpowerpages_lab||[]).push([[472],{5513:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Welcome to Power Pages Lab","permalink":"/powerpages-lab/blog/welcome","unlisted":false,"date":"2026-04-30T00:00:00.000Z"}]}')}}]);

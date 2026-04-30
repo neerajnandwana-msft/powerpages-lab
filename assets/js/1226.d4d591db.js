@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkpowerpages_lab=self.webpackChunkpowerpages_lab||[]).push([[1226],{1226:(e,a,s)=>{s.d(a,{createInfoServices:()=>p.v});var p=s(3954);s(2519)}}]);

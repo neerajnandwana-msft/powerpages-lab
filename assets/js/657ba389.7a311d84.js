@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkpowerpages_lab=self.webpackChunkpowerpages_lab||[]).push([[778],{7079:e=>{e.exports=JSON.parse('{"tags":[{"label":"welcome","permalink":"/powerpages-lab/blog/tags/welcome","count":1}]}')}}]);

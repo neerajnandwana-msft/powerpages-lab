@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkpowerpages_lab=self.webpackChunkpowerpages_lab||[]).push([[6282],{6282:(e,a,p)=>{p.d(a,{createTreemapServices:()=>s.d});var s=p(6609);p(2519)}}]);
