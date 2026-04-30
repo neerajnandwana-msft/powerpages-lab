@@ -1,11 +1,11 @@
 # Dependencies
-node_modules
+/node_modules
 
-# Production build
-build
+# Production build (Docusaurus output at repo root only)
+/build
 
 # Docusaurus cache and generated files
-.docusaurus
+/.docusaurus
 .cache-loader
 
 # Misc
