@@ -8,7 +8,14 @@
       "Bash(npm run *)",
       "Bash(npm ls *)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(gh api *)",
+      "Bash(gh run *)",
+      "Bash(gh repo *)",
+      "Bash(curl -sI https://neerajnandwana-msft.github.io/powerpages-lab/)",
+      "Bash(git rm *)",
+      "Bash(git push *)",
+      "Bash(git check-ignore *)"
     ]
   }
 }
