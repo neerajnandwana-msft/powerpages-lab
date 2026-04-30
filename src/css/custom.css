@@ -1,22 +1,28 @@
 :root {
-  --ifm-color-primary: #0078d4;
-  --ifm-color-primary-dark: #006bbf;
-  --ifm-color-primary-darker: #0065b5;
-  --ifm-color-primary-darkest: #005496;
-  --ifm-color-primary-light: #1485d9;
-  --ifm-color-primary-lighter: #1f8bdb;
-  --ifm-color-primary-lightest: #3d9ce0;
+  --ifm-color-primary: #742774;
+  --ifm-color-primary-dark: #682368;
+  --ifm-color-primary-darker: #622162;
+  --ifm-color-primary-darkest: #511b51;
+  --ifm-color-primary-light: #802b80;
+  --ifm-color-primary-lighter: #862e86;
+  --ifm-color-primary-lightest: #993699;
+
+  --ifm-font-family-base: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --ifm-heading-font-family: var(--ifm-font-family-base);
+  --ifm-font-family-monospace: "Cascadia Code", "Consolas", "SF Mono", Menlo, Monaco, "Courier New", monospace;
+
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
 [data-theme='dark'] {
-  --ifm-color-primary: #4ca6e8;
-  --ifm-color-primary-dark: #2e96e4;
-  --ifm-color-primary-darker: #1e8fe2;
-  --ifm-color-primary-darkest: #1175c5;
-  --ifm-color-primary-light: #6ab6ec;
-  --ifm-color-primary-lighter: #7abdee;
-  --ifm-color-primary-lightest: #a5d3f4;
+  --ifm-color-primary: #b66cb6;
+  --ifm-color-primary-dark: #a955a9;
+  --ifm-color-primary-darker: #a249a2;
+  --ifm-color-primary-darkest: #863c86;
+  --ifm-color-primary-light: #c283c2;
+  --ifm-color-primary-lighter: #c790c7;
+  --ifm-color-primary-lightest: #d7afd7;
+
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
