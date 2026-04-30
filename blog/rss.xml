@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xsl" href="rss.xsl"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title>Power Pages Lab Blog</title>
+        <link>https://neerajnandwana-msft.github.io/powerpages-lab/blog</link>
+        <description>Power Pages Lab Blog</description>
+        <lastBuildDate>Thu, 30 Apr 2026 00:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>en</language>
+        <item>
+            <title><![CDATA[Welcome to Power Pages Lab]]></title>
+            <link>https://neerajnandwana-msft.github.io/powerpages-lab/blog/welcome</link>
+            <guid>https://neerajnandwana-msft.github.io/powerpages-lab/blog/welcome</guid>
+            <pubDate>Thu, 30 Apr 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Welcome to Power Pages Lab — a place to learn, experiment, and share knowledge about Microsoft Power Pages.]]></description>
+            <content:encoded><![CDATA[<p>Welcome to <strong>Power Pages Lab</strong> — a place to learn, experiment, and share knowledge about Microsoft Power Pages.</p>
+<p>Labs, tips, and code samples will be published here regularly. Use the <strong>Labs</strong> section in the top nav to get started.</p>]]></content:encoded>
+            <category>welcome</category>
+        </item>
+    </channel>
+</rss>
