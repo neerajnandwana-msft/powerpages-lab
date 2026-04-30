@@ -15,7 +15,9 @@
       "Bash(curl -sI https://neerajnandwana-msft.github.io/powerpages-lab/)",
       "Bash(git rm *)",
       "Bash(git push *)",
-      "Bash(git check-ignore *)"
+      "Bash(git check-ignore *)",
+      "Bash(rm -f static/img/power-pages-logo.svg)",
+      "Bash(rmdir static/img)"
     ]
   }
 }

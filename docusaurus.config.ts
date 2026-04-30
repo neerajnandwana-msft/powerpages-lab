@@ -4,9 +4,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 import rehypeExternalLinks from 'rehype-external-links';
 
 const config: Config = {
-  title: 'Agentic Site Authoring',
+  title: 'Power Pages Agentic Site Authoring',
   tagline: 'A self-paced lab track for Power Pages SPA sites',
-  favicon: 'img/power-pages-logo.svg',
 
   url: 'https://neerajnandwana-msft.github.io',
   baseUrl: '/powerpages-lab/',
@@ -58,17 +57,20 @@ const config: Config = {
 
   themeConfig: {
     navbar: {
-      title: 'Agentic Site Authoring',
-      logo: {
-        alt: 'Microsoft Power Pages',
-        src: 'img/power-pages-logo.svg',
-      },
+      title: 'Power Pages Agentic Site Authoring',
       items: [
         {
           type: 'docSidebar',
           sidebarId: 'labSidebar',
           position: 'left',
           label: 'Lab Guide',
+        },
+        {
+          href: 'pathname:///pdf/lab-guide.pdf',
+          label: 'Download PDF',
+          position: 'right',
+          target: '_blank',
+          rel: ['noopener'],
         },
         {
           href: 'https://github.com/neerajnandwana-msft/powerpages-lab',
