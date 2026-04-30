@@ -6,7 +6,7 @@ title: "Lab 03: Connect to Live Data via Web API"
 
 # Lab 03: Connect to Live Data via Web API
 
-## What You Will Build
+## What you will build
 
 A portal that reads and writes real Dataverse data through the Power Pages Web API: a typed service layer, CSRF token handling, working CRUD on the deployed site, and OData queries for filtering, sorting, and pagination.
 
@@ -15,9 +15,9 @@ A portal that reads and writes real Dataverse data through the Power Pages Web A
 - Completed [Lab 02: Set Up Dataverse and Security](./02-dataverse-and-security.md) (Dataverse tables created, sample data inserted, 3-5 invoices re-linked to your Contact, permissions configured, site deployed)
 - Site deployed and accessible at its public URL
 - You have signed in to the deployed site at least once (so your Contact record exists in Dataverse)
-- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions` -- the plugin uses AAD-scoped tokens that don't require one.
+- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions` — the plugin uses AAD-scoped tokens that don't require one.
 
-## Learning Objectives
+## Learning objectives
 
 By the end of this lab you will be able to:
 
@@ -32,9 +32,9 @@ By the end of this lab you will be able to:
 
 ---
 
-## Part 1: Generate Web API Service Layer
+## Part 1: generate web API service layer
 
-### Step 1.1: Run `/integrate-webapi`
+### Step 1.1: run `/integrate-webapi`
 
 In your AI coding CLI session:
 
@@ -49,13 +49,13 @@ Your AI coding CLI will:
 4. Replace mock imports with API calls
 5. Generate or update permission YAML files (if not done in Lab 02)
 
-### Step 1.2: Review the Generated Files
+### Step 1.2: review the generated files
 
 > **Reference only — your output may differ.** The code shown below illustrates what the plugin *typically* generates. The plugin adapts its output to your exact project (variable names, helper placement, imports, comments), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece — do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
 
 Claude Code creates three key files. Let's examine each one.
 
-#### `src/services/webApi.ts` -- The API Client
+#### `src/services/webApi.ts` — the API client
 
 This is the foundation layer that handles all HTTP communication with Dataverse.
 
@@ -82,13 +82,13 @@ headers: {
 ```
 
 **Generic CRUD functions:**
-- `get<T>(entitySet, options?)` -- Fetch multiple records with OData parameters
-- `getById<T>(entitySet, id)` -- Fetch a single record by GUID
-- `create<T>(entitySet, data)` -- Create a new record (requires CSRF token)
-- `update<T>(entitySet, id, data)` -- Update an existing record (requires CSRF token)
-- `remove(entitySet, id)` -- Delete a record (requires CSRF token)
+- `get<T>(entitySet, options?)` — Fetch multiple records with OData parameters
+- `getById<T>(entitySet, id)` — Fetch a single record by GUID
+- `create<T>(entitySet, data)` — Create a new record (requires CSRF token)
+- `update<T>(entitySet, id, data)` — Update an existing record (requires CSRF token)
+- `remove(entitySet, id)` — Delete a record (requires CSRF token)
 
-#### `src/types/entities.ts` -- TypeScript Interfaces
+#### `src/types/entities.ts` — TypeScript interfaces
 
 Defines the shape of data returned by the API:
 
@@ -111,7 +111,7 @@ export interface Invoice {
 > - Lookup columns in responses: `_cr_submittedby_value` (underscore prefix, `_value` suffix)
 > - The `cr_` prefix comes from your environment's publisher
 
-#### `src/services/invoiceService.ts` -- Typed CRUD for Invoices
+#### `src/services/invoiceService.ts` — typed CRUD for invoices
 
 A convenience layer that wraps the generic API client with invoice-specific types:
 
@@ -131,19 +131,19 @@ export async function update(id: string, data: Partial<Invoice>): Promise<void>
 
 The entity set name for OData is `cr_invoices` (plural of the table logical name).
 
-### Progress Checkpoint
+### Progress checkpoint
 
 You should now have three new files in `src/services/` and `src/types/`. The mock data files should still exist at this point (Claude replaces references next).
 
 ---
 
-## Part 2: Review the Mock-to-Live Replacement
+## Part 2: review the Mock-to-Live replacement
 
-### Step 2.1: What Claude Changes
+### Step 2.1: what Claude changes
 
 Claude Code scans every page component and replaces mock data imports with API calls:
 
-**Dashboard.tsx -- Before:**
+**Dashboard.tsx — Before:**
 ```typescript
 import { invoices } from '../data/mockInvoices';
 
@@ -152,7 +152,7 @@ const totalInvoices = invoices.length;
 const pendingCount = invoices.filter(i => i.status === 'Under Review').length;
 ```
 
-**Dashboard.tsx -- After:**
+**Dashboard.tsx — After:**
 ```typescript
 import { getAll } from '../services/invoiceService';
 
@@ -166,7 +166,7 @@ useEffect(() => {
 }, []);
 ```
 
-### Step 2.2: Pages Updated
+### Step 2.2: Pages updated
 
 | Page | What Changes |
 |------|-------------|
@@ -175,7 +175,7 @@ useEffect(() => {
 | **Invoice Detail** | Mock lookup replaced with `getById(id)`. Route param `:id` is used to fetch the specific invoice. |
 | **Submit Invoice** | Form submission calls `create(invoiceData)` with CSRF token. Success redirects to invoice list. |
 
-### Step 2.3: Loading and Error States
+### Step 2.3: loading and error states
 
 Claude adds loading and error handling to each page:
 
@@ -186,15 +186,15 @@ if (error) return <div>Error loading invoices: {error.message}</div>;
 
 This prevents the "Cannot read properties of undefined" error that would occur if the component tried to render before the API call completed.
 
-### Step 2.4: Mock Data Files
+### Step 2.4: mock data files
 
-Claude should delete (or stop importing) the mock data files. Verify that `src/data/mockInvoices.ts` is no longer imported anywhere. The file itself may or may not be deleted -- what matters is that no component references it.
+Claude should delete (or stop importing) the mock data files. Verify that `src/data/mockInvoices.ts` is no longer imported anywhere. The file itself may or may not be deleted — what matters is that no component references it.
 
 ---
 
-## Part 3: Build, Deploy, and End-to-End Test
+## Part 3: build, deploy, and End-to-End test
 
-### Step 3.1: Build and Deploy
+### Step 3.1: build and deploy
 
 ```bash
 npm run build && pac pages upload-code-site --rootPath "."
@@ -206,11 +206,11 @@ Or use Claude Code:
 /deploy-site
 ```
 
-### Step 3.2: Open the Deployed Site
+### Step 3.2: open the deployed site
 
 Open your site's public URL in an **incognito/private browser window** (to avoid cache issues). Sign in with the same Microsoft work account you used at the end of Lab 02 so the Web API calls run under your Contact.
 
-### Step 3.3: Test READ Operations
+### Step 3.3: test READ operations
 
 **Dashboard:**
 - [ ] Page loads without errors
@@ -220,7 +220,7 @@ Open your site's public URL in an **incognito/private browser window** (to avoid
 **Invoice List:**
 - [ ] Only the invoices re-linked to your Contact appear (not all 10). This is Contact scoping working correctly.
 - [ ] Try the status filter and search on the visible records
-- [ ] Click a row to navigate to Invoice Detail
+- [ ] Select a row to navigate to Invoice Detail
 
 > **Why fewer than 10?** Contact-scoped permissions return only the invoices whose `cr_submittedby` points to your Contact. The invoices still linked to Nancy Anderson (sample) are hidden from you, which is the intended security behavior.
 
@@ -229,9 +229,9 @@ Open your site's public URL in an **incognito/private browser window** (to avoid
 - [ ] Details card shows PO#, Amount, Description, Dates, Company
 - [ ] Status timeline shows the correct progression
 
-### Step 3.4: Test CREATE
+### Step 3.4: test CREATE
 
-This is the most exciting test -- you will create a real record in Dataverse from the portal.
+This is the most exciting test — you will create a real record in Dataverse from the portal.
 
 1. Navigate to **Submit Invoice**
 2. Fill in the form:
@@ -239,7 +239,7 @@ This is the most exciting test -- you will create a real record in Dataverse fro
    - Amount: `$22,750.00`
    - Due Date: `2026-04-30`
    - Description: `Q1 consulting services - March 2026`
-3. Click **Submit**
+3. Select **Submit**
 4. Expected: Success toast or message, redirect to invoice list
 
 **Verify in Dataverse:**
@@ -247,9 +247,9 @@ This is the most exciting test -- you will create a real record in Dataverse fro
 2. Go to the cr_invoice table
 3. Refresh the view
 4. A new record should appear with auto-generated Invoice Number (e.g., `INV-100011`)
-5. Open the record -- all fields should be populated, including the Submitted By lookup
+5. Open the record — all fields should be populated, including the Submitted By lookup
 
-### Step 3.5: Test UPDATE (via Dataverse)
+### Step 3.5: test UPDATE (via Dataverse)
 
 Simulate a finance manager approving the invoice:
 
@@ -257,24 +257,24 @@ Simulate a finance manager approving the invoice:
 2. Change the **Status** from "Submitted" to "Approved"
 3. Save the record
 4. Back in the portal, navigate to that invoice's detail page
-5. **Refresh the page** -- the status badge and timeline should now show "Approved"
+5. **Refresh the page** — the status badge and timeline should now show "Approved"
 
-### Step 3.6: Inspect Network Traffic
+### Step 3.6: inspect network traffic
 
 Open browser DevTools (F12) and go to the **Network** tab. Navigate around the portal and observe:
 
 - [ ] `/_api/cr_invoices` GET requests when loading invoice list or dashboard
 - [ ] `/_layout/tokenhtml` request for CSRF token (happens before write operations)
-- [ ] POST request when submitting a new invoice -- check the `__RequestVerificationToken` header
+- [ ] POST request when submitting a new invoice — check the `__RequestVerificationToken` header
 - [ ] Response payloads contain real Dataverse data with `cr_` prefixed field names
 
 ---
 
-## Part 4: OData Query Deep-Dive
+## Part 4: OData query Deep-Dive
 
 The Power Pages Web API supports OData query parameters for filtering, sorting, and selecting data. Here is how they work:
 
-### Key OData Parameters
+### Key OData parameters
 
 | Parameter | Purpose | Example |
 |-----------|---------|---------|
@@ -284,7 +284,7 @@ The Power Pages Web API supports OData query parameters for filtering, sorting, 
 | `$top` | Limit number of results | `$top=5` |
 | `$expand` | Include related records | `$expand=cr_submittedby($select=fullname)` |
 
-### Try It in the Browser Console
+### Try it in the browser console
 
 Open DevTools console on the deployed site and try these queries:
 
@@ -305,7 +305,7 @@ fetch('/_api/cr_invoices?$top=3&$orderby=createdon desc')
   .then(d => console.table(d.value));
 ```
 
-### Status Choice Values
+### Status choice values
 
 The `cr_status` field is a Dataverse Choice column. The API returns and accepts integer values:
 
@@ -322,11 +322,11 @@ The `cr_status` field is a Dataverse Choice column. The API returns and accepts 
 
 ---
 
-## Part 5: Troubleshooting Common Errors
+## Troubleshooting
 
 If you encounter issues during testing, use this reference to diagnose and fix them.
 
-### Error Reference
+### Error reference
 
 | Error | What You See | Cause | Fix |
 |-------|-------------|-------|-----|
@@ -338,24 +338,24 @@ If you encounter issues during testing, use this reference to diagnose and fix t
 | **Empty response `{"value":[]}`** | API returns empty array | Permission scope mismatch or no linked data | Verify the logged-in user's Contact record matches the `cr_submittedby` on invoices. Check scope is Contact (not Self or Global). |
 | **500 Internal Server Error** | Server error on API call | Dataverse issue | Check Power Platform admin center for service health. Try the call again in 30 seconds. |
 
-### Fix Web API Errors with Your AI Agent
+### Fix web API errors with your AI agent
 
 The error-reference table above handles the single-layer cases. In practice many Web API failures are a mix — the site setting is enabled but a field isn't allow-listed, the role exists but the permission has the wrong scope, the permission is correct but the frontend forgot the CSRF token. **Rather than hand-debug these, paste the error into your AI coding CLI and let it check every layer for you.**
 
-This is the same **Error-Paste-and-Fix** pattern you used in [Lab 02, Step 4.4](./02-dataverse-and-security.md#step-44-if-you-see-an-error--use-the-error-paste-and-fix-pattern) and it appears as **Pattern 8** in the [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md#8-error-paste-and-fix). Use it here whenever you hit a Web API error that the reference table alone does not resolve.
+This is the same **Error-Paste-and-Fix** pattern you used in [Lab 02, Step 4.4](./02-dataverse-and-security.md#step-44-if-you-see-an-error-use-the-error-paste-and-fix-pattern) and it appears as **Pattern 8** in the [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md#8-error-paste-and-fix). Use it here whenever you hit a Web API error that the reference table alone does not resolve.
 
-#### Step 1: Gather what the agent needs
+#### Step 1: gather what the agent needs
 
 Open DevTools (**F12**) and collect three things:
 
 1. **Console error** — any red text including the stack trace (or "no console error" if none).
-2. **Failed Network request** — in the Network tab (filter **Fetch/XHR**), click the failing `/_api/*` call, then copy:
+2. **Failed Network request** — in the Network tab (filter **Fetch/XHR**), select the failing `/_api/*` call, then copy:
    - The request URL and HTTP method (from the **Headers** tab)
    - The HTTP status (e.g. `403 Forbidden`, `400 Bad Request`)
    - The full **Response** body — this is where Power Pages puts the actual error reason
 3. **What you were doing** — "loading the Invoice List page", "clicking Submit on the new-invoice form", "signed in as [test user]".
 
-#### Step 2: Paste into your CLI with context
+#### Step 2: paste into your CLI with context
 
 Use a prompt that tells the agent to check all three security layers and the frontend code. Example:
 
@@ -378,7 +378,7 @@ web role, table-permissions YAML) and the frontend fetch code in
 src/services/webApi.ts. Find the root cause and fix it.
 ```
 
-#### Step 3: Let the agent check every layer
+#### Step 3: let the agent check every layer
 
 A Web API failure can live in any of these files. Your agent will read them all in seconds:
 
@@ -389,13 +389,13 @@ A Web API failure can live in any of these files. Your agent will read them all 
 
 Review the proposed fix before you approve. If the agent misidentifies the layer, give it the extra context (e.g., "the site setting already has the field — check the fields allowlist" or "I just signed in as a different user").
 
-#### Step 4: Redeploy and re-test
+#### Step 4: redeploy and re-test
 
 YAML changes only take effect after upload. Run `/deploy-site`, do a hard refresh (**Ctrl+Shift+R**) or switch to an incognito window, and repeat the failing action. If the same error returns, paste the new Network response back to the agent — sometimes the first fix uncovers a second layer.
 
 > **Rule of thumb:** If you're spending more than 2 minutes scanning files by hand, switch to Error-Paste-and-Fix. The agent is faster than you at multi-file diagnosis.
 
-### Common Gotcha: Stale Browser Cache
+### Common gotcha: stale browser cache
 
 If you deploy changes but the site still shows old behavior:
 
@@ -429,19 +429,19 @@ You have completed this lab when:
 If Web API integration fails and you cannot resolve the issues:
 
 1. Claude Code can revert to mock data: "Revert to mock data imports while I fix the API."
-2. Check the git history -- `/create-site` made commits at milestones, so you can revert to a working state.
+2. Check the git history — `/create-site` made commits at milestones, so you can revert to a working state.
 
 ---
 
-## Key Takeaways
+## Key takeaways
 
 - `/integrate-webapi` generates a complete typed service layer: API client, TypeScript interfaces, and table-specific CRUD services
-- CSRF tokens (fetched from `/_layout/tokenhtml`) are required for all write operations (POST, PATCH, DELETE) -- the API client handles this automatically
+- CSRF tokens (fetched from `/_layout/tokenhtml`) are required for all write operations (POST, PATCH, DELETE) — the API client handles this automatically
 - The Web API only works on the deployed site, not localhost
 - OData parameters ($select, $filter, $orderby, $top) give you powerful server-side querying
 - Contact-scoped permissions ensure data isolation: each supplier sees only their own invoices, even through direct API calls
 - When debugging, always check all three security layers and the browser Network tab
 
-## What's Next
+## What's next
 
-→ [Lab 04: Pick the Right Backend Pattern](../integrate/04-pick-backend-pattern.md)
+→ [Lab 04: Plan the Service Layer with /integrate-backend](../integrate/04-pick-backend-pattern.md)

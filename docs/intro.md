@@ -6,11 +6,11 @@ slug: /
 
 # Agentic Site Authoring
 
-A self-paced lab track for building Power Pages SPA sites with Claude Code and GitHub Copilot CLI, then taking them through a real ALM lifecycle: source control, branching, automated CI/CD, and multi-environment promotion via Power Platform Pipelines.
+A self-paced lab track for building Microsoft Power Pages SPA sites with Claude Code and GitHub Copilot CLI, then taking them through a real ALM lifecycle: source control, branching, automated CI/CD, and multi-environment promotion via Microsoft Power Platform Pipelines.
 
 ---
 
-## What You Will Build
+## What you will build
 
 A complete **Supplier Invoice Submission Portal** — a 5-page React SPA connected to Dataverse with authentication, role-based security, and live Web API integration — generated using AI-assisted development tools, then deployed through a real production ALM pipeline.
 
@@ -26,7 +26,7 @@ A complete **Supplier Invoice Submission Portal** — a 5-page React SPA connect
 
 ---
 
-## Lab Track
+## Lab track
 
 13 self-paced labs grouped into three phases. Each lab is self-contained with its own prerequisites, hands-on steps, verification, and pointer to the next lab.
 
@@ -76,11 +76,11 @@ Complete the **[Setup Guide](setup-guide)** to install all required tools and ve
 
 ---
 
-## Where to Go Next (after Lab 13)
+## Where to go next (after Lab 13)
 
 Once you've completed the track, here's how to take what you built into your own org.
 
-### Optional Homework
+### Optional homework
 
 1. **Set up your own service principal and integration env CI** — repeat the Lab 12 setup against a real second environment in your tenant.
 2. **Ask your Power Platform admin to set up Pipelines** — give them the pointer from Lab 13. Once the host env and pipeline definition exist, you can promote managed solutions as shown in the demo.
@@ -88,7 +88,7 @@ Once you've completed the track, here's how to take what you built into your own
 4. **Write up your team's branching convention** — the labs showed trunk-based with `feature/`, `fix/`, `hotfix/`. Adapt it to whatever fits your org and put it in your repo's `CONTRIBUTING.md`.
 5. **Add `.github/CODEOWNERS` to your repo** — pair with branch protection so PRs auto-request the right reviewers. Suggested layout: `/src/solution/ @data-modeling-team`, `/.github/workflows/ @platform-team`, `*.md @docs`.
 
-### Production Hardening Checklist
+### Production hardening checklist
 
 - **Rotate the CI client secret regularly** — typical cadence is every 6 months. Generate a new secret in Microsoft Entra ID, update with `gh secret set CLIENT_SECRET`, retire the old one in Azure.
 - **Scope the service principal down** — Lab 12 used System Administrator on the application user for simplicity. In production, use System Customizer plus the specific Power Pages roles the imports need.
@@ -96,7 +96,7 @@ Once you've completed the track, here's how to take what you built into your own
 - **Idempotency / failed deploy recovery** — solution imports are mostly idempotent; re-running the workflow after a transient failure usually succeeds. For partial-import states, fix the root cause and re-run rather than manually patching the env.
 - **`/audit-permissions` before each prod promotion** — run the Lab 02 plugin command against the integration env before the weekly Pipelines promotion to catch unintended access grants.
 
-### Cost Considerations
+### Cost considerations
 
 - **GitHub Actions runner minutes** — free for public repos; private repos get 2,000 free Linux-equivalent minutes/month, then meter. `windows-latest` minutes count 2x; `macos-latest` counts 10x. The lab's `windows-latest` choice is the safest for tooling compatibility but the most expensive runner. For high-volume CI, switching to `ubuntu-latest` is worth testing.
 - **Power Platform Pipelines** — requires Premium licenses for users who trigger pipeline runs. Stage definitions and host environment storage are included.
@@ -104,7 +104,7 @@ Once you've completed the track, here's how to take what you built into your own
 
 The full pricing detail is at [Power Platform licensing](https://learn.microsoft.com/power-platform/admin/pricing-billing-skus) and [GitHub Actions billing](https://docs.github.com/billing/managing-billing-for-github-actions/about-billing-for-github-actions).
 
-### Official Documentation
+### Official documentation
 
 - **Power Pages docs:** https://learn.microsoft.com/power-pages
 - **Power Pages SPA sites:** https://learn.microsoft.com/power-pages/configure/create-code-sites
@@ -125,7 +125,7 @@ The full pricing detail is at [Power Platform licensing](https://learn.microsoft
 - **Power Pages Ideas portal:** https://ideas.powerpages.microsoft.com/
 - **Power Apps / Power Platform GitHub samples:** https://github.com/microsoft/PowerApps-Samples
 
-### Tips and Best Practices
+### Tips and best practices
 
 For prompting patterns and AI-assisted-development habits that keep paying off long after the lab track, see the official guidance:
 

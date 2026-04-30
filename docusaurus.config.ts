@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 import rehypeExternalLinks from 'rehype-external-links';
 
 const config: Config = {
-  title: 'Power Pages Agentic Site Authoring',
+  title: 'Power Pages',
   tagline: 'A self-paced lab track for Power Pages SPA sites',
 
   url: 'https://neerajnandwana-msft.github.io',
@@ -57,13 +57,13 @@ const config: Config = {
 
   themeConfig: {
     navbar: {
-      title: 'Power Pages Agentic Site Authoring',
+      title: 'Power Pages',
       items: [
         {
           type: 'docSidebar',
           sidebarId: 'labSidebar',
           position: 'left',
-          label: 'Lab Guide',
+          label: 'Agentic Site Authoring Lab guide',
         },
         {
           href: 'pathname:///pdf/lab-guide.pdf',
@@ -85,7 +85,7 @@ const config: Config = {
     },
     prism: {
       theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      darkTheme: prismThemes.oneDark,
       additionalLanguages: ['bash', 'json', 'yaml', 'typescript', 'powershell'],
     },
     colorMode: {

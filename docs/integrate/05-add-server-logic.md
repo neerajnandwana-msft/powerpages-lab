@@ -6,18 +6,18 @@ title: "Lab 05: Add Server Logic"
 
 # Lab 05: Add Server Logic
 
-## What You Will Build
+## What you will build
 
 A tamper-proof duplicate-PO check on the Submit Invoice form: a server-side endpoint that validates uniqueness **and** creates the invoice in a single call, so the client cannot bypass the rule.
 
 ## Prerequisites
 
-- Completed [Lab 04: Pick the Right Backend Pattern](./04-pick-backend-pattern.md)
+- Completed [Lab 04: Plan the Service Layer with /integrate-backend](./04-pick-backend-pattern.md)
 - Working portal deployed (`.powerpages-site` folder exists)
 - `/add-server-logic` available in your AI coding CLI session
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`) — the agent uses PAC CLI to deploy the generated server-logic files and the `az` token for any Dataverse calls it makes while wiring them up. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the plugin uses AAD-scoped tokens, which work without one.
 
-## Learning Objectives
+## Learning objectives
 
 By the end of this lab you will be able to:
 
@@ -32,9 +32,9 @@ The scenario: your Submit Invoice form currently lets a supplier submit the same
 
 ---
 
-## When to Use Server-Side Business Logic
+## When to use Server-Side business logic
 
-Before diving into the lab scenario, here's the broader picture of where server logic earns its place. Each row below describes a class of problem where running on the server -- not the browser -- is the right call.
+Before diving into the lab scenario, here's the broader picture of where server logic earns its place. Each row below describes a class of problem where running on the server — not the browser — is the right call.
 
 | Category | Use Case | Example |
 |---|---|---|
@@ -59,11 +59,11 @@ Before diving into the lab scenario, here's the broader picture of where server 
 
 ---
 
-## Part 1: Sandbox Constraints and the Validate-and-Execute Pattern
+## Part 1: sandbox constraints and the Validate-and-Execute pattern
 
-### What Server Logic Can Do
+### What server logic can do
 
-Server logic is JavaScript that runs in a Power Pages-managed sandbox. Each file lives at `.powerpages-site/server-logic/<name>/<name>.js` and exposes up to five top-level functions: `get`, `post`, `put`, `patch`, `del` (not `delete` -- reserved keyword). Each function takes nothing and returns a string. Power Pages exposes the file at `/_api/serverlogics/<name>`.
+Server logic is JavaScript that runs in a Power Pages-managed sandbox. Each file lives at `.powerpages-site/server-logic/<name>/<name>.js` and exposes up to five top-level functions: `get`, `post`, `put`, `patch`, `del` (not `delete` — reserved keyword). Each function takes nothing and returns a string. Power Pages exposes the file at `/_api/serverlogics/<name>`.
 
 Available SDK objects inside the sandbox:
 
@@ -76,17 +76,32 @@ Available SDK objects inside the sandbox:
 | `Server.Sitesetting` | Read site setting values (for secrets, config) |
 | `Server.Logger` | Log to Power Pages diagnostics |
 
-### What Server Logic Cannot Do
+### What server logic cannot do
 
 | Constraint | What fails |
 |-----------|------------|
 | No npm packages | `require('axios')`, `import { foo } from 'bar'` |
 | No browser APIs | `fetch`, `XMLHttpRequest`, `setTimeout`, `document`, `window` |
-| No async Dataverse | `await Server.Connector.Dataverse.RetrieveMultipleRecords(...)` -- these are synchronous |
+| No async Dataverse | `await Server.Connector.Dataverse.RetrieveMultipleRecords(...)` — these are synchronous |
 | Execution timeout | Default 120 seconds, configurable up to 240 seconds via `ServerLogic/TimeoutInSeconds` site setting. Anything longer must move to a cloud flow. |
 | ECMAScript 2023 only | Recent stage-3 proposals may not be available |
 
-### The Validate-and-Execute Pattern
+### The Validate-and-Execute pattern
+
+```mermaid
+flowchart LR
+    subgraph Bypassable["❌ Bypassable: validate-only"]
+        B1["Browser"] -->|"1. is PO unique?"| SL1["Server Logic"]
+        SL1 -->|"2. { valid: true }"| B1
+        B1 -->|"3. POST /_api/cr_invoices<br/>(skips step 1!)"| DV1["Dataverse"]
+    end
+    subgraph Tamperproof["✅ Tamper-proof: validate-and-execute"]
+        B2["Browser"] -->|"1. create invoice with these fields"| SL2["Server Logic"]
+        SL2 -->|"2a. check for PO conflict"| DV2["Dataverse"]
+        SL2 -->|"2b. write invoice atomically"| DV2
+        SL2 -->|"3. { invoice }"| B2
+    end
+```
 
 The anti-pattern to avoid:
 
@@ -96,7 +111,7 @@ The anti-pattern to avoid:
 3. Client → Web API: POST /_api/cr_invoices (creates the invoice)
 ```
 
-Step 3 can happen without step 1. The client simply skips the validation call.
+Step 3 can happen without step 1. The client skips the validation call.
 
 The pattern that actually protects the rule:
 
@@ -112,9 +127,9 @@ One server round-trip. The validation and the write are atomic. The client has n
 
 ---
 
-## Part 2: Run /add-server-logic and Review the Output
+## Part 2: run /add-server-logic and review the output
 
-### Step 2.1: Describe the Intent to Claude Code
+### Step 2.1: describe the intent to Claude Code
 
 In your AI coding CLI session:
 
@@ -134,12 +149,12 @@ Claude Code runs the 11-phase workflow from the skill. It will:
 1. Verify the site is deployed (needs `.powerpages-site` folder from Lab 01)
 2. Ask clarifying questions if anything is ambiguous
 3. Fetch the latest Server Logic docs from Microsoft Learn
-4. Render an HTML plan in your browser -- review before approving
+4. Render an HTML plan in your browser — review before approving
 5. Create the code files, metadata YAML, and table permissions
 6. Wire the UI
 7. Offer to deploy
 
-### Step 2.2: Review the HTML Plan
+### Step 2.2: review the HTML plan
 
 The plan that opens in your browser should show:
 
@@ -147,19 +162,19 @@ The plan that opens in your browser should show:
 - [ ] HTTP method: POST
 - [ ] SDK features: `Server.Connector.Dataverse`, `Server.Context`, `Server.Logger`, `Server.User`
 - [ ] Web roles assigned: Authenticated Users (from Lab 02)
-- [ ] Table permissions to verify: cr_invoice -- Read, Create
+- [ ] Table permissions to verify: cr_invoice — Read, Create
 - [ ] No secrets needed
 - [ ] Files to create: `<name>.js`, `<name>.serverlogic.yml`
 
-If something is off, click "Request changes" and describe the edit. Otherwise approve.
+If something is off, select "Request changes" and describe the edit. Otherwise approve.
 
-### Step 2.3: Review the Generated Files
+### Step 2.3: review the generated files
 
 > **Reference only — your output may differ.** The code shown below illustrates what the plugin *typically* generates. The plugin adapts its output to your exact project (variable names, helper structure, comment style, error-handling shape), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece — do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
 
 After approval, four artifacts land in your repo.
 
-**1. `.powerpages-site/server-logic/validate-and-create-invoice/validate-and-create-invoice.js`** -- the sandbox code. The body should look roughly like:
+**1. `.powerpages-site/server-logic/validate-and-create-invoice/validate-and-create-invoice.js`** — the sandbox code. The body should look roughly like:
 
 ```javascript
 function post() {
@@ -216,11 +231,11 @@ function post() {
 
 Walk through what makes this tamper-proof:
 
-- The duplicate check reads live Dataverse data -- stale client-side caches cannot fool it
+- The duplicate check reads live Dataverse data — stale client-side caches cannot fool it
 - The `CreateRecord` call happens only after the check passes, in the same sandbox call
-- The Contact ID comes from `Server.User`, not the request body -- the client cannot impersonate another supplier
+- The Contact ID comes from `Server.User`, not the request body — the client cannot impersonate another supplier
 
-**2. `.powerpages-site/server-logic/validate-and-create-invoice/validate-and-create-invoice.serverlogic.yml`** -- the metadata:
+**2. `.powerpages-site/server-logic/validate-and-create-invoice/validate-and-create-invoice.serverlogic.yml`** — the metadata:
 
 ```yaml
 adx_serverlogic_adx_webrole:
@@ -233,11 +248,11 @@ name: validate-and-create-invoice
 
 **3. Table permissions update (if not already covering Create):** Claude Code may add Create to the cr_invoice table permission or leave it if Lab 02 already covered it. Verify in `.powerpages-site/table-permissions/`.
 
-**4. Frontend changes** -- see Part 3.
+**4. Frontend changes** — see Part 3.
 
 ---
 
-## Part 3: Wire the Endpoint into Submit Invoice
+## Part 3: wire the endpoint into submit invoice
 
 Claude Code updates `src/pages/SubmitInvoice.tsx` (or equivalent) to call the new endpoint instead of the direct Web API POST. The change should look like:
 
@@ -291,9 +306,9 @@ Verify:
 
 ---
 
-## Part 4: Deploy and Test
+## Part 4: deploy and test
 
-### Step 4.1: Deploy
+### Step 4.1: deploy
 
 Accept Claude Code's offer to deploy, or run manually:
 
@@ -301,9 +316,9 @@ Accept Claude Code's offer to deploy, or run manually:
 /deploy-site
 ```
 
-Server logic only becomes reachable after deployment -- you cannot test on localhost.
+Server logic only becomes reachable after deployment — you cannot test on localhost.
 
-### Step 4.2: Happy Path Test
+### Step 4.2: happy path test
 
 1. Open the deployed site in an incognito window
 2. Sign in with your work account
@@ -311,14 +326,14 @@ Server logic only becomes reachable after deployment -- you cannot test on local
 4. Expected: success message, redirect to Invoice List, new record shows in the list
 5. Open make.powerapps.com and confirm the new invoice exists in the cr_invoice table
 
-### Step 4.3: Duplicate PO Test
+### Step 4.3: duplicate PO test
 
 1. Go back to Submit Invoice
 2. Re-enter `PO-2026-042` (the one you just submitted)
 3. Expected: inline error "This PO number has already been submitted."
-4. No record is created (verify in Dataverse -- there should still be exactly one PO-2026-042)
+4. No record is created (verify in Dataverse — there should still be exactly one PO-2026-042)
 
-### Step 4.4: Tamper Test (Optional)
+### Step 4.4: tamper test (optional)
 
 To prove the rule is tamper-proof, open DevTools Network tab and try to post directly to the Web API:
 
@@ -358,9 +373,9 @@ Then confirm that the Submit Invoice page still works.
 | 404 on `/_api/serverlogics/<name>` | Endpoint not found | Site not deployed after adding server logic | Run `/deploy-site` |
 | 403 on POST | Forbidden | Missing CSRF token or web role | Ensure `__RequestVerificationToken` header is sent; verify Authenticated Users role is assigned in the YAML |
 | Response `{ status: "error", message: "Cannot read property 'value' of undefined" }` | Dataverse call silently returned nothing | Missing or wrong table permission on cr_invoice | Add Read permission on cr_invoice for the Authenticated Users role, then redeploy |
-| `Expected Guid for primary key 'id'` on deploy | PAC CLI crash | `.serverlogic.yml` missing `id` field | Claude Code uses the deterministic script which generates the GUID -- re-run `/add-server-logic` if you hand-edited |
+| `Expected Guid for primary key 'id'` on deploy | PAC CLI crash | `.serverlogic.yml` missing `id` field | Claude Code uses the deterministic script which generates the GUID — re-run `/add-server-logic` if you hand-edited |
 | Timeout (default 120s, max 240s) | Request hangs, eventually fails | External API call or loop taking too long | Raise `ServerLogic/TimeoutInSeconds` up to 240 if the work is bounded, or move to a cloud flow for anything longer |
-| `Server.Connector.Dataverse.RetrieveMultipleRecords is not a function` | Sandbox error | Used `fetch` instead of the SDK, or imported something | Server logic has no `fetch` -- use `Server.Connector.HttpClient` for external calls and `Server.Connector.Dataverse` for Dataverse |
+| `Server.Connector.Dataverse.RetrieveMultipleRecords is not a function` | Sandbox error | Used `fetch` instead of the SDK, or imported something | Server logic has no `fetch` — use `Server.Connector.HttpClient` for external calls and `Server.Connector.Dataverse` for Dataverse |
 
 ## Verification
 
@@ -374,7 +389,7 @@ You have completed this lab when:
 - [ ] Happy path creates an invoice
 - [ ] Duplicate PO returns an inline error and does not create a record
 
-### Generic Debug Prompt
+### Generic debug prompt
 
 If anything fails and you're not sure where to start, paste this into Claude Code:
 
@@ -391,17 +406,17 @@ If `/add-server-logic` fails to deploy:
 1. Verify `.powerpages-site/` exists (server logic requires the deployed folder structure)
 2. Run `pac auth who` to confirm the environment matches
 3. Try `/deploy-site` first, then re-run `/add-server-logic`
-4. If the generated `.js` has a syntax error, open it and check for `fetch`, `require`, or `async` on a function that doesn't use `await` -- the sandbox rejects these
+4. If the generated `.js` has a syntax error, open it and check for `fetch`, `require`, or `async` on a function that doesn't use `await` — the sandbox rejects these
 
-## Key Takeaways
+## Key takeaways
 
 - Server logic solves the "browser can skip my validation" problem by running validation and the Dataverse write in one sandbox call
-- The five function names are fixed (`get`, `post`, `put`, `patch`, `del`) -- no `delete`, no custom names
+- The five function names are fixed (`get`, `post`, `put`, `patch`, `del`) — no `delete`, no custom names
 - Every function returns a string; use `JSON.stringify` for structured responses
 - `Server.Connector.Dataverse` is synchronous; `Server.Connector.HttpClient` is async
 - Validate-and-execute only wins if the direct Web API path is equally locked down
 - The `/add-server-logic` plugin takes care of the boilerplate (web roles, metadata GUID, CSRF handling on the client)
 
-## What's Next
+## What's next
 
 → [Lab 06: Add Power Automate Flows](./06-add-power-automate-flows.md)

@@ -6,7 +6,7 @@ title: "Lab 11: Branching Strategy and Developer Workflows"
 
 # Lab 11: Branching Strategy and Developer Workflows
 
-## What You Will Build
+## What you will build
 
 A working understanding of trunk-based development applied to an SPA-site repo, exercised through three real workflows: feature development (with combined SPA + Dataverse PR), rollback via `git revert`, and a hotfix that promotes faster than the weekly cadence.
 
@@ -14,9 +14,9 @@ A working understanding of trunk-based development applied to an SPA-site repo, 
 
 - Completed [Lab 09: Source Control](./09-source-control.md) (Git repo on GitHub)
 - Completed [Lab 10: Solution Packaging and Dataverse Dependencies](./10-solution-and-dependencies.md) (`src/solution/` tree committed)
-- Branch protection on `main` enabled (Lab 09, Step 6) -- if you skipped it, enable it now or expect direct pushes to `main` instead of PRs
+- Branch protection on `main` enabled (Lab 09, Step 6) — if you skipped it, enable it now or expect direct pushes to `main` instead of PRs
 
-## Learning Objectives
+## Learning objectives
 
 By the end of this lab you will be able to:
 
@@ -26,9 +26,9 @@ By the end of this lab you will be able to:
 
 ---
 
-## Part 1: Branching Strategy
+## Part 1: branching strategy
 
-### The Three Pillars (per Microsoft Git Branching Guidance)
+### The three pillars (per Microsoft git branching guidance)
 
 The strategy in this lab is the one Microsoft documents in [Adopt a Git branching strategy](https://learn.microsoft.com/azure/devops/repos/git/git-branching-guidance). It rests on three pillars:
 
@@ -38,7 +38,7 @@ The strategy in this lab is the one Microsoft documents in [Adopt a Git branchin
 
 A strategy that extends these three pillars without contradicting them is the strategy your team should pick.
 
-### Why This Fits SPA Sites
+### Why this fits SPA sites
 
 SPA-site repos suit the feature-branch workflow especially well:
 
@@ -46,11 +46,11 @@ SPA-site repos suit the feature-branch workflow especially well:
 - The unpack pattern from Lab 10 means no opaque-blob conflicts on Dataverse changes
 - The integration environment in Lab 12 acts as a "production-like" gate — breakage caught there in hours beats breakage caught in a release branch a week later
 
-### What About GitFlow?
+### What about GitFlow?
 
 [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) introduces a long-lived `develop` branch alongside `main`, plus release branches that stabilize before merging back. It can suit large teams with fortnightly release calendars and multiple parallel features that need long stabilization. For a typical Power Pages portal — small team, continuous deployment to integration, a managed solution flowing through Power Platform Pipelines — GitFlow adds friction (the `develop` branch drifts from `main`) without solving a problem you have. Skip it.
 
-### Releases: Power Platform Pipelines, Not Release Branches
+### Releases: Power Platform pipelines, not release branches
 
 Microsoft's branching guidance documents **release branches** as the way to coordinate and stabilize a release. We deviate from that recommendation here for one reason: in a Power Pages SPA-site repo, the release artifact isn't just a code bundle — it's a Dataverse managed solution plus per-environment variable values plus a site reactivation step. **Power Platform Pipelines** (Lab 13) handles all three; a Git release branch alone cannot.
 
@@ -60,7 +60,7 @@ So in this track:
 - Promotion from integration → pre-prod → prod is owned by **Pipelines**, not by Git release branches
 - If your team adopts long-lived release branches later (for example, you're maintaining a v1 portal in prod while v2 develops on `main`), follow the MS pattern: branch off `main` as `release/<version>`, fix bugs in the release branch via PRs, and **cherry-pick** fixes back to `main` to keep the mainline current. Workflow C below shows the cherry-pick mechanic.
 
-### Pull Request Quality Bar
+### Pull request quality bar
 
 The MS guidance is opinionated about how PRs should run:
 
@@ -71,11 +71,11 @@ The MS guidance is opinionated about how PRs should run:
 
 Lab 09's branch protection requires 1 approval; bump to 2 for a real team and add a CODEOWNERS file so reviewers are assigned automatically.
 
-### Long-Running Branches and Feature Flags
+### Long-Running branches and feature flags
 
 The whole strategy assumes branches are short-lived (hours to days). When a feature genuinely needs weeks — a redesign that ships behind a toggle, a phased migration — don't keep the branch alive that long. Merge to `main` early and gate the unfinished feature with a [feature flag](http://martinfowler.com/articles/feature-toggles.html). For a Power Pages SPA, a flag can be as simple as a site setting (`Features/InvoiceRedesign/Enabled`) read at app boot and used to switch the rendered component.
 
-### Branch Naming Conventions
+### Branch naming conventions
 
 The MS guide suggests several patterns. Pick one and stick with it across your team. The scheme we'll use for the rest of this track:
 
@@ -93,11 +93,11 @@ Further reading: [Microsoft Git branching guidance](https://learn.microsoft.com/
 
 ---
 
-## Part 2: Workflow A -- Feature Development
+## Part 2: workflow A — feature development
 
 You'll add a `cr_memo` column to the invoice table, expose it in the SPA, and watch the PR show both the React change *and* the XML schema change side-by-side.
 
-### Step 1: Branch from main
+### Step 1: branch from main
 
 ```bash
 git switch main
@@ -105,26 +105,26 @@ git pull
 git switch -c feature/invoice-memo-column
 ```
 
-### Step 2: Make the Dataverse Change in Dev
+### Step 2: make the Dataverse change in dev
 
-1. Open the maker portal -- your dev env, your solution
+1. Open the maker portal — your dev env, your solution
 2. On `cr_invoice`, add a column: **Display name** "Memo", **Name** `cr_memo`, **Type** "Text", **Max length** 500
 3. Save
 
-### Step 3: Refresh the Unpacked Solution
+### Step 3: refresh the unpacked solution
 
 ```bash
 pac solution export --name SupplierPortal --path build --overwrite
 pac solution unpack --zipfile build/SupplierPortal.zip --folder src/solution --packagetype Unmanaged
 ```
 
-Quick `git status` -- you should see one or two changed files under `src/solution/Entities/cr_invoice/` reflecting the new column.
+Quick `git status` — you should see one or two changed files under `src/solution/Entities/cr_invoice/` reflecting the new column.
 
-### Step 4: Wire the Memo into the SPA
+### Step 4: wire the memo into the SPA
 
-Two edits, one in the typed service and one in the list component. Paths assume the React scaffolding from Lab 01 -- adjust if you used Vue, Angular, or Astro.
+Two edits, one in the typed service and one in the list component. Paths assume the React scaffolding from Lab 01 — adjust if you used Vue, Angular, or Astro.
 
-**`src/services/invoiceService.ts`** -- add `cr_memo` to the OData `$select` so the new column comes back in API responses:
+**`src/services/invoiceService.ts`** — add `cr_memo` to the OData `$select` so the new column comes back in API responses:
 
 ```typescript
 // before
@@ -134,7 +134,7 @@ const fields = "cr_invoiceid,cr_invoicenumber,cr_amount,cr_status";
 const fields = "cr_invoiceid,cr_invoicenumber,cr_amount,cr_status,cr_memo";
 ```
 
-**`src/components/invoices/InvoiceList.tsx`** -- render the new column in the table:
+**`src/components/invoices/InvoiceList.tsx`** — render the new column in the table:
 
 ```tsx
 // in the table header row
@@ -151,7 +151,7 @@ npm run dev
 # Browse the portal, confirm the memo column appears (empty for existing rows -- that's expected)
 ```
 
-### Step 5: Commit, Push, Open the PR
+### Step 5: commit, push, open the PR
 
 ```bash
 git add .
@@ -164,43 +164,43 @@ git push -u origin feature/invoice-memo-column
 gh pr create --fill
 ```
 
-### Step 6: Review the PR
+### Step 6: review the PR
 
 Open the PR in the GitHub web view. You'll see two kinds of changes in the same review:
 
-- **SPA changes** -- TypeScript and TSX files showing the new column wired up
-- **Dataverse changes** -- XML in `src/solution/Entities/cr_invoice/` showing the schema change
+- **SPA changes** — TypeScript and TSX files showing the new column wired up
+- **Dataverse changes** — XML in `src/solution/Entities/cr_invoice/` showing the schema change
 
 This is the payoff from Lab 10's unpack pattern. A reviewer sees the full picture of what's shipping in one diff.
 
-### Step 7: Merge
+### Step 7: merge
 
-Approve the PR (or have a teammate approve it). Merge into `main`. Lab 12's CI will deploy both artifacts -- the new column to Dataverse, the new bundle to the site -- on the merge.
+Approve the PR (or have a teammate approve it). Merge into `main`. Lab 12's CI will deploy both artifacts — the new column to Dataverse, the new bundle to the site — on the merge.
 
 ---
 
-## Part 3: Workflow B -- Rollback
+## Part 3: workflow B — rollback
 
 You'll roll back the memo column you just shipped in Workflow A. The exercise is end-to-end: undo the SPA change, undo the Dataverse schema change, push a revert PR, and watch the integration environment return to its pre-memo state.
 
-### The Scenario
+### The scenario
 
 After the memo column landed in integration, finance reviewers started using it as a free-text status field — bypassing the actual `cr_status` choice column. Stakeholders complained that reports built on `cr_status` no longer match what people see on the portal. The decision is to pull `cr_memo` out of production and design a constrained replacement later.
 
-### Forward-Fix or Roll Back?
+### Forward-Fix or roll back?
 
 Reverting a Dataverse-coupled commit is more destructive than reverting a code-only commit. Decide before you start:
 
 | Situation | Roll back? |
 |---|---|
-| The change is only in code (TypeScript, CSS, config) | **Yes** -- reverting is cheap |
-| The change added a Dataverse column and the column is empty in every environment | **Yes** -- column drops cleanly |
-| The change added a column and **users have written values into it** in prod | **No, forward-fix instead** -- reverting the import drops the column and the data with it. Hide the field in UI, archive the values, then plan a clean removal |
-| The change added a relationship or table that downstream apps already query | **No, forward-fix** -- breaking a dependency contract via revert is worse than the original bug |
+| The change is only in code (TypeScript, CSS, config) | **Yes** — reverting is cheap |
+| The change added a Dataverse column and the column is empty in every environment | **Yes** — column drops cleanly |
+| The change added a column and **users have written values into it** in prod | **No, forward-fix instead** — reverting the import drops the column and the data with it. Hide the field in UI, archive the values, then plan a clean removal |
+| The change added a relationship or table that downstream apps already query | **No, forward-fix** — breaking a dependency contract via revert is worse than the original bug |
 
 For our memo exercise the column is empty in integration (just deployed, no real data), so a clean revert is fine. In prod with data, you'd take the forward-fix path.
 
-### Why `git revert`, Not `git reset`
+### Why `git revert`, not `git reset`
 
 | Command | What it does | When to use |
 |---|---|---|
@@ -209,7 +209,7 @@ For our memo exercise the column is empty in integration (just deployed, no real
 
 For `main`, always revert. Never reset.
 
-### Step 1: Find the Merge Commit
+### Step 1: find the merge commit
 
 ```bash
 git switch main
@@ -221,7 +221,7 @@ git log --oneline -5
 
 Copy the merge SHA (`d4e5f6` in the example).
 
-### Step 2: Branch and Revert
+### Step 2: branch and revert
 
 ```bash
 git switch -c bugfix/revert-invoice-memo
@@ -232,9 +232,9 @@ git revert -m 1 <merge-sha>
 
 The revert produces one new commit that undoes **both** the React/TypeScript edits and the XML changes under `src/solution/Entities/cr_invoice/`. Open `git diff HEAD~1` to confirm the column wiring is gone from both `invoiceService.ts`, `InvoiceList.tsx`, and the `cr_invoice` entity XML.
 
-> **Squash-merge variant.** GitHub's default for many repos is squash-merge, which produces a single commit on `main` rather than a merge commit. In that case, drop `-m 1` and revert the squashed commit directly: `git revert <commit-sha>`. Look for the squashed commit's hash in `git log --oneline -5` -- it'll be a normal commit, not a merge.
+> **Squash-merge variant.** GitHub's default for many repos is squash-merge, which produces a single commit on `main` rather than a merge commit. In that case, drop `-m 1` and revert the squashed commit directly: `git revert <commit-sha>`. Look for the squashed commit's hash in `git log --oneline -5` — it'll be a normal commit, not a merge.
 
-### Step 3: Verify Locally
+### Step 3: verify locally
 
 Before opening the PR, confirm the SPA still builds and behaves as expected without the memo column:
 
@@ -246,7 +246,7 @@ npm run dev
 
 If the build fails, the revert touched something the rest of the codebase depends on (e.g., a type imported elsewhere). Fix the dependency on the same branch before pushing — never push a known-broken revert and "fix forward".
 
-### Step 4: Push and Open the Revert PR
+### Step 4: push and open the revert PR
 
 ```bash
 git push -u origin bugfix/revert-invoice-memo
@@ -255,14 +255,14 @@ gh pr create --fill --title "Revert: Add memo column to invoice list"
 
 In the PR body, **link to the original PR** and write one or two sentences on *why* the revert is happening. Reviewers (and the next person reading `git log` six months from now) need this context to avoid re-introducing the same change blindly.
 
-### Step 5: Merge and Watch CI
+### Step 5: merge and watch CI
 
 Approve and merge the revert PR. Lab 12's CI runs the same workflow it ran for the original feature merge:
 
 1. **SPA bundle** is rebuilt without the memo column wiring and uploaded to the integration env.
 2. **Solution** is re-packed from the now-reverted `src/solution/` and re-imported. The `cr_memo` column is removed from the `cr_invoice` entity in Dataverse.
 
-### What Success Looks Like
+### What success looks like
 
 After the CI run goes green:
 
@@ -273,26 +273,26 @@ After the CI run goes green:
 
 ---
 
-## Part 4: Workflow C -- Hotfix
+## Part 4: workflow C — hotfix
 
 Hotfixes are for **production breakage that cannot wait** for the next weekly promotion. They skip the normal feature cadence.
 
-### When to Hotfix
+### When to hotfix
 
 | Situation | Hotfix? |
 |---|---|
 | Login redirect loops; nobody can sign in | **Yes** |
 | Submitting an invoice writes to the wrong table | **Yes** |
-| Dashboard chart label is misspelled | **No** -- next feature release |
-| Performance is 2x slower than usual | **Probably no** -- investigate first; not every regression needs a hotfix |
+| Dashboard chart label is misspelled | **No** — next feature release |
+| Performance is 2x slower than usual | **Probably no** — investigate first; not every regression needs a hotfix |
 
-### The Pattern
+### The pattern
 
 1. Branch from `main` directly (you skip `feature/` because you're not iterating)
 2. Use the `hotfix/` prefix as a clear signal in the PR title and CI logs
-3. Open a PR with a tight, focused diff -- no refactoring, no scope creep
+3. Open a PR with a tight, focused diff — no refactoring, no scope creep
 4. Get expedited review (one approver, sometimes the reviewer is the on-call engineer)
-5. Merge -- Lab 12's CI deploys the hotfix to integration just like a `feature/` merge would
+5. Merge — Lab 12's CI deploys the hotfix to integration just like a `feature/` merge would
 6. To get the hotfix into prod faster than the weekly cadence: **trigger the Pipelines pre-prod → prod stage manually** from the maker portal once the integration deploy is green and you've smoke-tested. The approval flow still runs (Lab 13); a hotfix doesn't skip approval, it skips the *waiting* part of the weekly schedule.
 7. **Forward-port if needed.** In our setup the hotfix branches from `main` and merges back to `main`, so the fix is already on `main` — nothing to forward-port. The forward-port problem only appears once you adopt long-lived release branches (see Part 1, "Releases: Power Platform Pipelines, Not Release Branches"). At that point the fix is made on the release branch first, and you cherry-pick it to `main` so the next release doesn't regress. The MS-recommended mechanic looks like this:
 
@@ -329,9 +329,9 @@ The PR is one-line. Reviewer approves in 30 seconds. Merge ships through Lab 12'
 
 ---
 
-## Workflow Diagrams
+## Workflow diagrams
 
-### Branches and Merges
+### Branches and merges
 
 The three workflows on a single timeline, mapped onto the [MS feature-branch model](https://learn.microsoft.com/azure/devops/repos/git/git-branching-guidance) — feature branches off `main`, PR review, merge back:
 
@@ -354,7 +354,7 @@ gitGraph
 
 PR review and the required build check sit between each branch's last commit and the merge into `main` — they're enforced by branch protection (Lab 09) and don't show up as commits in Git history.
 
-### End-to-End Deployment Flow
+### End-to-End deployment flow
 
 What happens after each merge, combining Lab 12 (CI to integration) and Lab 13 (Pipelines to pre-prod and prod):
 
@@ -393,7 +393,16 @@ You have completed this lab when:
 
 ---
 
-## Key Takeaways
+## Fallback
+
+If branch protection cannot be applied via `gh` or the GitHub UI:
+
+1. **Org-level enforcement.** If your repo lives in an organisation with org-wide rulesets, branch protection on the repo may be disabled or overridden. Talk to your org admin to grant the repo a ruleset that includes "require pull request before merging" and "require review from code owners" on `main`.
+2. **Free plan limitation.** Branch protection on the GitHub Free plan only applies to public repos. If the repo is private and you need branch protection, either make the repo public (per the deploy setup in the early labs), upgrade to GitHub Pro/Team, or document the workflow rules in `CONTRIBUTING.md` and rely on team discipline until a paid plan is available.
+3. **Workflow without enforcement.** All four branching workflows in this lab (feature, rollback, hotfix) function correctly without branch protection — the protection upgrades them from "convention" to "enforced". Continue with the lab; revisit protection after the access issue is resolved.
+4. **PR review still works.** Even without enforcement, you can require PRs by team agreement. `gh pr create` and `gh pr review` work on any repo regardless of branch protection.
+
+## Key takeaways
 
 - The MS branching guidance reduces to three pillars: feature branches, PR-based merge, and a high-quality `main`. Don't pick GitFlow for a typical Power Pages portal — it adds friction without solving a problem you have
 - Power Platform Pipelines (Lab 13) takes the place of long-lived release branches in this stack because the release artifact is solution + env-variable values + reactivation, not just a code bundle
@@ -403,6 +412,6 @@ You have completed this lab when:
 - Hotfix branches use the same CI as feature branches; what changes is *promotion*: a hotfix triggers Pipelines manually instead of waiting for the weekly cadence
 - If your team adopts long-lived release branches later, **cherry-pick** fixes back to `main` per MS guidance — never merge a release branch into `main`
 
-## What's Next
+## What's next
 
 → [Lab 12: CI/CD with GitHub Actions](./12-cicd-github-actions.md)

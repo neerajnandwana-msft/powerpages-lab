@@ -6,7 +6,7 @@ title: "Lab 09: Source Control"
 
 # Lab 09: Source Control
 
-## Why ALM Matters
+## Why ALM matters
 
 The portal you built through the previous labs ends with a one-shot `/deploy-site` to a single environment. That works for a demo. It breaks the moment a teammate joins.
 
@@ -18,7 +18,7 @@ Imagine three things happen this week:
 
 Each of these is a normal Tuesday in production. ALM is the practice that makes them survivable. This lab is the first step: putting your portal under source control.
 
-## What You Will Build
+## What you will build
 
 A Git repository containing your portal source, pushed to GitHub, with a `.gitignore` that protects secrets and build artifacts and (optionally) branch protection on `main` enforcing PR reviews.
 
@@ -29,7 +29,7 @@ A Git repository containing your portal source, pushed to GitHub, with a `.gitig
 - `gh` (GitHub CLI) installed and authenticated (`gh auth status`)
 - Portal directory accessible on disk (the folder where you ran `/create-site`)
 
-## Learning Objectives
+## Learning objectives
 
 By the end of this lab you will be able to:
 
@@ -39,7 +39,7 @@ By the end of this lab you will be able to:
 
 ---
 
-## Step 1: Initialize the Repo
+## Step 1: initialize the repo
 
 Open a terminal in your portal root (the folder that contains `package.json` and `.powerpages-site/`).
 
@@ -55,27 +55,27 @@ git init
 git status
 ```
 
-`git status` should list every file in the directory as "Untracked". Don't commit anything yet -- the next step adds a `.gitignore` so we don't commit secrets or build output.
+`git status` should list every file in the directory as "Untracked". Don't commit anything yet — the next step adds a `.gitignore` so we don't commit secrets or build output.
 
 ---
 
-## Step 2: Write the `.gitignore`
+## Step 2: write the `.gitignore`
 
 An SPA-site repo has files that should never enter source control:
 
-- **`node_modules/`** -- 100k+ files, fully reproducible from `package-lock.json`
-- **`dist/`** -- build output, regenerated on every CI run
-- **`.env`, `.env.local`** -- secrets, API keys, local connection details
-- **`.pac/`** -- PAC CLI auth profiles (contain refresh tokens)
-- **`build/`** -- the staging folder we'll use in Lab 10 for solution zips
-- **OS junk** -- `.DS_Store`, `Thumbs.db`
+- **`node_modules/`** — 100k+ files, fully reproducible from `package-lock.json`
+- **`dist/`** — build output, regenerated on every CI run
+- **`.env`, `.env.local`** — secrets, API keys, local connection details
+- **`.pac/`** — PAC CLI auth profiles (contain refresh tokens)
+- **`build/`** — the staging folder we'll use in Lab 10 for solution zips
+- **OS junk** — `.DS_Store`, `Thumbs.db`
 
 Files that **are** committed (don't accidentally ignore them):
 
-- `src/` -- your SPA source code
-- `.powerpages-site/` -- portal configuration YAML (web roles, table permissions, site settings)
-- `src/solution/` -- the unpacked Dataverse solution created in Lab 10 (env-specific site settings live here as environment variable references; values are supplied per target env at solution import time)
-- `CLAUDE.md` (and `AGENTS.md` if Copilot CLI created one) -- project context for the AI coding CLI; commit so teammates' AI sessions get the same baseline
+- `src/` — your SPA source code
+- `.powerpages-site/` — portal configuration YAML (web roles, table permissions, site settings)
+- `src/solution/` — the unpacked Dataverse solution created in Lab 10 (env-specific site settings live here as environment variable references; values are supplied per target env at solution import time)
+- `CLAUDE.md` (and `AGENTS.md` if Copilot CLI created one) — project context for the AI coding CLI; commit so teammates' AI sessions get the same baseline
 
 Create `.gitignore` at the repo root:
 
@@ -117,7 +117,7 @@ npm-debug.log*
 EOF
 ```
 
-**Why `*.zip` is here:** Lab 10 will export Dataverse solutions as `.zip`, then immediately unpack them into `src/solution/` for source control. The zip itself is a build artifact -- ignore it. This is the **unpack-to-source-control pattern** that's the heart of the ALM phase.
+**Why `*.zip` is here:** Lab 10 will export Dataverse solutions as `.zip`, then immediately unpack them into `src/solution/` for source control. The zip itself is a build artifact — ignore it. This is the **unpack-to-source-control pattern** that's the heart of the ALM phase.
 
 Verify your `.gitignore` works:
 
@@ -129,7 +129,7 @@ You should no longer see `node_modules/` or `dist/` in the untracked list.
 
 ---
 
-## Step 3: First Commit
+## Step 3: first commit
 
 ```bash
 git add .
@@ -148,7 +148,7 @@ Conventions worth picking now (and keeping for the rest of the ALM phase):
 
 ---
 
-## Step 4: Create the GitHub Repo
+## Step 4: create the GitHub repo
 
 We'll create the remote repo from the command line so you don't have to bounce to a browser.
 
@@ -172,11 +172,11 @@ git remote -v
 gh repo view --web    # opens the repo page in your browser
 ```
 
-You should see the supplier-portal source files in GitHub. Spend 30 seconds clicking through the directory listing -- this is what your reviewers will see when they open a PR.
+You should see the supplier-portal source files in GitHub. Spend 30 seconds clicking through the directory listing — this is what your reviewers will see when they open a PR.
 
 ---
 
-## Step 5: Inspect What's NOT in the Repo
+## Step 5: inspect What's NOT in the repo
 
 Open the GitHub web view and confirm:
 
@@ -199,9 +199,9 @@ git push
 
 ---
 
-## Step 6: Branch Protection (Optional)
+## Step 6: branch protection (optional)
 
-If your GitHub plan supports it, turn on branch protection for `main` now -- it pays off in Lab 11.
+If your GitHub plan supports it, turn on branch protection for `main` now — it pays off in Lab 11.
 
 The simplest path is the GitHub web UI:
 
@@ -213,7 +213,7 @@ The simplest path is the GitHub web UI:
 
 This says: nobody can push directly to `main`; every change has to go through a PR with at least one approval. Lab 11 exercises this in the feature-development workflow.
 
-> **Tip:** if your account is on GitHub Free for personal repos, branch protection requires the repo to be public OR a GitHub Pro / Team / Enterprise plan. If unavailable, skip this step -- Lab 11 still works, you'll just have to discipline yourself not to push to `main` directly.
+> **Tip:** if your account is on GitHub Free for personal repos, branch protection requires the repo to be public OR a GitHub Pro / Team / Enterprise plan. If unavailable, skip this step — Lab 11 still works, you'll need to discipline yourself not to push to `main` directly.
 
 ---
 
@@ -237,16 +237,31 @@ You have completed this lab when:
 | `gh repo create` says "name already exists" | Pick a different name, or `gh repo delete <name>` (asks for confirmation) |
 | `gh: command not found` | Install GitHub CLI from https://cli.github.com/, restart terminal |
 | `Permission denied (publickey)` on push | You're using SSH but `gh` set up HTTPS. Run `gh auth setup-git` to fix the credential helper. |
-| Accidentally committed `.env` | `git rm --cached .env && git commit -m "Remove .env from tracking"`. **Rotate any secrets that were in it** -- they are now in your Git history forever. |
+| Accidentally committed `.env` | `git rm --cached .env && git commit -m "Remove .env from tracking"`. **Rotate any secrets that were in it** — they are now in your Git history forever. |
+
+## Fallback
+
+If `gh` (the GitHub CLI) will not authenticate or `gh repo create` keeps failing:
+
+1. Run `gh auth status` to see whether you are signed in. If not, `gh auth login` and pick **GitHub.com → HTTPS → authenticate via web browser**.
+2. If your work account has SSO restrictions, run `gh auth refresh -s repo,workflow,admin:org` to grant the scopes the lab needs (repo create, workflows, branch protection).
+3. As a last resort, create the repo manually in the GitHub web UI, then wire it up locally:
+   ```bash
+   git remote add origin https://github.com/<you>/<repo>.git
+   git branch -M main
+   git push -u origin main
+   ```
+   You can come back to `gh` for branch protection in Step 6 once auth is healthy.
+4. If `git push` itself fails with `Permission denied (publickey)` and you are stuck on SSH, run `gh auth setup-git` to switch the credential helper to HTTPS and retry.
 
 ---
 
-## Key Takeaways
+## Key takeaways
 
 - A good `.gitignore` is your first line of defense against committing secrets and build output
 - `gh repo create --source=. --push` is a one-shot "init repo and ship to GitHub" command
 - Branch protection on `main` makes the workflows in Lab 11 enforceable, not merely suggested
 
-## What's Next
+## What's next
 
 → [Lab 10: Solution Packaging and Dataverse Dependencies](./10-solution-and-dependencies.md)

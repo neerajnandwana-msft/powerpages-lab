@@ -196,19 +196,19 @@ Five prompting mistakes to avoid as you work through the labs.
 **Bad:** "Make the dashboard better."
 **Good:** "Increase the gap between metric cards from 4 to 8, and right-align their numeric values."
 
-Tell the AI *what* to change and *to what*. "Better" is subjective -- the model will guess.
+Tell the AI *what* to change and *to what*. "Better" is subjective — the model will guess.
 
 ### 2. Mixing concerns in one prompt
 
 **Bad:** "Create the invoice form, save it to Dataverse, add validation, and send an approval email."
-**Good:** Break into separate prompts -- form UI, Web API integration, validation, flow trigger -- and verify each before moving on.
+**Good:** Break into separate prompts — form UI, Web API integration, validation, flow trigger — and verify each before moving on.
 
 Large prompts produce large, hard-to-review diffs and compound errors across unrelated layers.
 
 ### 3. Skipping context
 
 **Bad:** "Build a status badge component."
-**Good:** "Build a status badge component using Tailwind, Lucide icons, Fluent Design, max font-weight 600 -- see @src/components/MetricCard.tsx for the existing pattern."
+**Good:** "Build a status badge component using Tailwind, Lucide icons, Fluent Design, max font-weight 600 — see @src/components/MetricCard.tsx for the existing pattern."
 
 If your `CLAUDE.md` already covers tech stack and design, you can skip restating it; otherwise include it every time.
 
@@ -249,7 +249,7 @@ Use these tokens in your prompts to maintain visual consistency across the labs.
 |----------|-------|
 | Font stack | `'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif` |
 | Rendering | Antialiased |
-| Max heading weight | `font-semibold` (600) -- never use bold/700+ |
+| Max heading weight | `font-semibold` (600) — never use bold/700+ |
 | Body line-height | 1.5 |
 | Style | No italic, no uppercase tracking |
 
@@ -270,8 +270,8 @@ When prompting for UI, naming a mature design system implicitly covers typograph
 
 | System | Best For | Covers Implicitly | Lab Fit |
 |--------|----------|-------------------|---------|
-| **Fluent Design** | Enterprise dashboards, data-heavy apps | Depth, subtle motion, accessibility, Microsoft ecosystem alignment | **Primary** -- matches Power Pages context |
-| **Material Design 3** | Most complete "single-name" coverage | Type scale, elevation, motion durations/easing, responsive breakpoints, design tokens | **Secondary** -- pair with Fluent for layout/motion completeness |
+| **Fluent Design** | Enterprise dashboards, data-heavy apps | Depth, subtle motion, accessibility, Microsoft ecosystem alignment | **Primary** — matches Power Pages context |
+| **Material Design 3** | Most complete "single-name" coverage | Type scale, elevation, motion durations/easing, responsive breakpoints, design tokens | **Secondary** — pair with Fluent for layout/motion completeness |
 | **Apple HIG** | Polished, minimal consumer UX | Typography hierarchy, micro-interactions, content-first layouts | Less prescriptive on shadows/elevation |
 | **Ant Design** | Forms, tables, admin panels | Strong enterprise component defaults, dense data patterns | Less emphasis on motion |
 
@@ -281,7 +281,7 @@ For the Supplier Invoice Portal example used in these labs, lead with **Fluent**
 
 ### Copy-Paste Prompt Lines
 
-**Fluent Design (Primary -- recommended default):**
+**Fluent Design (Primary — recommended default):**
 
 ```text
 Use Microsoft Fluent Design System with emphasis on depth, subtle motion, and accessible components.
@@ -421,9 +421,9 @@ Keep the route and visible behavior the same, but:
 
 Beyond individual prompts, *context engineering* is about giving the AI the right background information across your entire session. Three techniques cover most of the value.
 
-### CLAUDE.md -- Persistent Project Context
+### CLAUDE.md — Persistent Project Context
 
-A `CLAUDE.md` file at your project root gives Claude Code persistent context about your project. Every time you start a conversation in that directory, Claude reads this file automatically -- so anything in it is "free" context that you don't have to restate.
+A `CLAUDE.md` file at your project root gives Claude Code persistent context about your project. Every time you start a conversation in that directory, Claude reads this file automatically — so anything in it is "free" context that you don't have to restate.
 
 **What to include in `CLAUDE.md`:**
 
@@ -435,7 +435,7 @@ A `CLAUDE.md` file at your project root gives Claude Code persistent context abo
 
 A ready-to-use sample is in the next section.
 
-### `@file` References -- Load Specific Files
+### `@file` References — Load Specific Files
 
 When you want Claude to look at existing code before making changes, point at the file directly:
 
@@ -444,14 +444,14 @@ Look at @src/components/MetricCard.tsx and create a similar
 SupplierCard component following the same patterns.
 ```
 
-This loads the file into Claude's context so new code matches your existing style. Use it whenever you say "follow the same pattern as..." -- the agent does a noticeably better job when it can see the reference instead of guessing.
+This loads the file into Claude's context so new code matches your existing style. Use it whenever you say "follow the same pattern as..." — the agent does a noticeably better job when it can see the reference instead of guessing.
 
 ### Managing the Context Window with `/compact` and `/clear`
 
 Claude Code has a limited context window. As you work, the conversation accumulates context. When it gets full:
 
-- **`/compact`** -- Compresses conversation history while retaining key information. Use within a task when context gets long but you want to keep going.
-- **`/clear`** -- Starts a completely fresh conversation. Use between tasks, or when context has become cluttered with irrelevant turns.
+- **`/compact`** — Compresses conversation history while retaining key information. Use within a task when context gets long but you want to keep going.
+- **`/clear`** — Starts a completely fresh conversation. Use between tasks, or when context has become cluttered with irrelevant turns.
 
 **Rule of thumb:** Use `/compact` *within* a task. Use `/clear` *between* tasks. If you find yourself re-explaining the same thing every `/clear`, move it into `CLAUDE.md`.
 

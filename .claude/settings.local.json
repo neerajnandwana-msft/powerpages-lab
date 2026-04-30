@@ -17,7 +17,16 @@
       "Bash(git push *)",
       "Bash(git check-ignore *)",
       "Bash(rm -f static/img/power-pages-logo.svg)",
-      "Bash(rmdir static/img)"
+      "Bash(rmdir static/img)",
+      "Bash(grep -n \"^/\\\\|Run \\\\`/\\\\|Type \\\\`/\\\\|Execute \\\\`/\" /c/code/powerpages-lab/docs/build/01-scaffold-spa-portal.md /c/code/powerpages-lab/docs/integrate/05-add-server-logic.md /c/code/powerpages-lab/docs/integrate/06-add-power-automate-flows.md)",
+      "WebFetch(domain:code.visualstudio.com)",
+      "Bash(grep -v \":0$\")",
+      "Bash(cp docs/intro.md /tmp/intro-original.md)",
+      "Bash(python scripts/ms-learn-style-sweep.py docs/intro.md)",
+      "Read(//tmp/**)",
+      "Bash(py --version)",
+      "Bash(node scripts/ms-learn-style-sweep.mjs docs/intro.md)",
+      "Bash(node scripts/ms-learn-style-sweep.mjs docs/)"
     ]
   }
 }

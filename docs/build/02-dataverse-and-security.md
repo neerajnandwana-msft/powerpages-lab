@@ -6,7 +6,7 @@ title: "Lab 02: Set Up Dataverse and Security"
 
 # Lab 02: Set Up Dataverse and Security
 
-## What You Will Build
+## What you will build
 
 The full Dataverse backend for your portal: real tables, sample records, web roles, and the three-layer security model that gates Web API access.
 
@@ -15,7 +15,7 @@ The full Dataverse backend for your portal: real tables, sample records, web rol
 - Completed [Lab 01: Scaffold an SPA Portal](./01-scaffold-spa-portal.md) (supplier portal scaffolded and running locally)
 - Active PAC CLI and Azure CLI sessions — re-authenticate if expired (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the plugin only needs AAD-scoped tokens, and downstream `az` commands run normally afterward.
 
-## Learning Objectives
+## Learning objectives
 
 By the end of this lab you will be able to:
 
@@ -30,9 +30,9 @@ By the end of this lab you will be able to:
 
 ---
 
-## Part 1: Create Dataverse Tables
+## Part 1: create Dataverse tables
 
-### Concept: The Data Model
+### Concept: the data model
 
 Below is an **example** data model for the supplier invoice portal scenario. Your own schema will depend on what you asked the plugin to build in Lab 01, so treat this table as a reference — not a checklist.
 
@@ -46,7 +46,7 @@ Below is an **example** data model for the supplier invoice portal scenario. You
 
 > **One constant, regardless of your schema: Contact always represents the logged-in user.** Power Pages authentication is wired to the standard Contact table — every signed-in visitor maps to exactly one Contact row, and every Contact-scoped permission resolves through it. Do not replace Contact with a custom "User" or "Supplier" table, and do not rename it. If you need extra per-user fields, add columns to Contact or link a child table to it. Everything else in your data model is free to change.
 
-### Step 1.1: Deploy Your Site First
+### Step 1.1: deploy your site first
 
 Before creating tables, deploy your site so it exists in Power Pages:
 
@@ -68,7 +68,7 @@ Your AI coding CLI will suggest a subdomain (e.g., `supplier-portal`) and provis
 
 > **Note:** Site activation takes 2-5 minutes. Wait for the URL to be confirmed before proceeding.
 
-### Step 1.2: Run `/setup-datamodel`
+### Step 1.2: run `/setup-datamodel`
 
 In your AI coding CLI session:
 
@@ -81,7 +81,7 @@ Your AI coding CLI will:
 2. Query Dataverse for existing tables (avoids duplicates)
 3. Propose a schema with an ER diagram
 
-### Step 1.3: Review the Schema Proposal
+### Step 1.3: review the schema proposal
 
 Before approving, verify the proposal includes:
 
@@ -109,29 +109,29 @@ The proposal looks good, but I need the Status choice to include "Paid" as an op
 Also make sure the Submitted By lookup points to Contact, not a custom table.
 ```
 
-### Step 1.4: Approve and Create
+### Step 1.4: approve and create
 
 Approve the proposal. Claude Code creates the table and columns via the Dataverse OData API.
 
-### Step 1.5: Verify the Schema in Power Pages Studio
+### Step 1.5: verify the schema in Power Pages Studio
 
 Power Pages Studio has a built-in **Data workspace** that shows the Dataverse tables used by your site. Use it to confirm your new invoice table looks right. ([Data workspace overview](https://learn.microsoft.com/power-pages/getting-started/use-data-workspace) · [Create and modify tables in the Data workspace](https://learn.microsoft.com/power-pages/configure/data-workspace-tables))
 
 1. Open [Power Pages Studio](https://make.powerpages.microsoft.com/).
-2. Select your environment (top-right switcher) and click into your site.
-3. In the left navigation, click the **Data** workspace icon.
-4. Find your invoice table in the list (look for a `cr_` prefix, e.g. `cr_invoice` / "Invoice"). If it is not listed yet, click **+ New table** → **Choose existing table** and add it from Dataverse.
+2. Select your environment (top-right switcher) and select your site.
+3. In the left navigation, select the **Data** workspace icon.
+4. Find your invoice table in the list (look for a `cr_` prefix, e.g. `cr_invoice` / "Invoice"). If it is not listed yet, select **+ New table** → **Choose existing table** and add it from Dataverse.
 5. Select the invoice table. You will see its columns, types, and any choice values. Verify:
    - [ ] All columns exist with the correct types
    - [ ] Status choice has all 6 values
    - [ ] Autonumber format is `INV-{SEQNUM:6}`
    - [ ] Lookups to Contact and Account are present
 
-> **Concept: Publisher Prefix.** Every custom table and column gets a prefix (e.g., `cr_`) from your environment's default publisher. This prefix appears in all API calls: `cr_invoices`, `cr_ponumber`, `cr_amount`. Note your prefix -- you will need it in later sessions.
+> **Concept: Publisher Prefix.** Every custom table and column gets a prefix (e.g., `cr_`) from your environment's default publisher. This prefix appears in all API calls: `cr_invoices`, `cr_ponumber`, `cr_amount`. Note your prefix — you will need it in later sessions.
 
 > **Alternative:** You can also verify in the Power Apps maker portal at https://make.powerapps.com → **Tables** → your invoice table. Power Pages Studio is preferred because it shows only the tables your site uses.
 
-### Progress Checkpoint
+### Progress checkpoint
 
 At this point you should have:
 - A deployed Power Pages site with a public URL
@@ -140,9 +140,9 @@ At this point you should have:
 
 ---
 
-## Part 2: Add Sample Data
+## Part 2: add sample data
 
-### Step 2.1: Run `/add-sample-data`
+### Step 2.1: run `/add-sample-data`
 
 ```
 /add-sample-data
@@ -150,7 +150,7 @@ At this point you should have:
 
 Your AI coding CLI will present an insertion plan.
 
-### Step 2.2: Review the Insertion Plan
+### Step 2.2: review the insertion plan
 
 Verify the plan includes:
 - [ ] 1 Account: "Adventure Works (sample)"
@@ -170,7 +170,7 @@ Verify the plan includes:
 | INV-100009 | PO-2026-009 | $2,100 | Rejected |
 | INV-100010 | PO-2026-010 | $85,000 | Draft |
 
-### Step 2.3: Approve and Insert
+### Step 2.3: approve and insert
 
 Approve the plan. The agent inserts records in **dependency order**:
 1. Account first (no dependencies)
@@ -181,9 +181,9 @@ Approve the plan. The agent inserts records in **dependency order**:
 > ```json
 > "cr_submittedby@odata.bind": "/contacts(<contact-guid>)"
 > ```
-> This special `@odata.bind` syntax sets foreign key relationships -- in our sample data, the contact GUID points to Nancy Anderson (sample). Claude handles this automatically.
+> This special `@odata.bind` syntax sets foreign key relationships — in our sample data, the contact GUID points to Nancy Anderson (sample). Claude handles this automatically.
 
-### Step 2.4: Verify Sample Data in Power Pages Studio
+### Step 2.4: verify sample data in Power Pages Studio
 
 Back in [Power Pages Studio](https://make.powerpages.microsoft.com/) → **Data** workspace, select your invoice table. The records view should now populate with the newly inserted sample data.
 
@@ -192,13 +192,13 @@ Verify:
 - [ ] 10 records appear in the grid
 - [ ] Each row has an auto-generated Invoice Number (`INV-100001` through `INV-100010`)
 - [ ] Amount and Status values match the table in Step 2.2
-- [ ] Click into one record — the **Submitted By** and **Supplier Company** lookups are populated (not blank)
+- [ ] Open one record — the **Submitted By** and **Supplier Company** lookups are populated (not blank)
 
-If the grid looks empty, click the refresh icon or reload the Data workspace — newly inserted records can take a few seconds to appear.
+If the grid looks empty, select the refresh icon or reload the Data workspace — newly inserted records can take a few seconds to appear.
 
 > **Alternative:** You can also view the records at https://make.powerapps.com → **Tables** → your invoice table → "Active Invoices" view.
 
-### Step 2.5: Sign In Once and Link Sample Invoices to Your Contact
+### Step 2.5: sign in once and link sample invoices to your contact
 
 The sample data is linked to a mock Contact ("Nancy Anderson (sample)"). In Lab 03 you will test Contact-scoped Web API calls, and those calls only return invoices linked to **your** Contact record. You need to (a) create your Contact by signing in to the deployed site once, then (b) re-link a few sample invoices to it.
 
@@ -210,7 +210,7 @@ The sample data is linked to a mock Contact ("Nancy Anderson (sample)"). In Lab 
 4. Open the **cr_invoice** table. Pick 3-5 invoices and update the **Submitted By** lookup from "Nancy Anderson (sample)" to your Contact. Save each record.
 5. (Optional) Leave the remaining invoices linked to Nancy Anderson (sample) so you can later demonstrate what Contact scoping blocks.
 
-### Progress Checkpoint
+### Progress checkpoint
 
 At this point you should have:
 - 10 invoice records in Dataverse
@@ -220,11 +220,11 @@ At this point you should have:
 
 ---
 
-## Part 3: Configure Permissions and Web Roles
+## Part 3: configure permissions and web roles
 
 This is the most important section for security. Power Pages uses a three-layer security model that controls who can access what data through the Web API.
 
-### Concept: The Three-Layer Security Model
+### Concept: the Three-Layer security model
 
 ```
 Layer 1: Site Settings
@@ -241,7 +241,7 @@ Layer 3: Table Permissions
 
 All three layers must be configured for the Web API to work. If any layer is missing, the API returns 403 Forbidden.
 
-### Concept: Permission Scopes
+### Concept: permission scopes
 
 Table permissions have a **scope** that controls which records a user can access:
 
@@ -255,7 +255,7 @@ Table permissions have a **scope** that controls which records a user can access
 
 For the supplier portal, we use **Contact scope** for invoices. This means each supplier user only sees invoices where the Submitted By lookup points to their Contact record.
 
-### The Permissions Matrix
+### The permissions matrix
 
 | Table | Role | Read | Create | Write | Delete | Scope |
 |-------|------|:----:|:------:|:-----:|:------:|-------|
@@ -268,7 +268,7 @@ For the supplier portal, we use **Contact scope** for invoices. This means each 
 - **contact, Self scope:** Users can read their own Contact record (for profile display) but cannot modify it.
 - **account, Contact scope:** Users can read the Account linked to their Contact (for company info display).
 
-### Step 3.1: Understand the YAML Files
+### Step 3.1: understand the YAML files
 
 Permissions, roles, and site settings are configured as YAML files in the `.powerpages-site/` directory. When you deploy with `pac pages upload-code-site`, these files are applied to your Power Pages environment.
 
@@ -283,7 +283,7 @@ name: Webapi/cr_invoice/fields
 value: "cr_invoiceid,cr_ponumber,cr_amount,cr_description,cr_status,cr_submissiondate,cr_duedate,_cr_submittedby_value,_cr_suppliercompany_value"
 ```
 
-> **Important:** Always list fields explicitly. Never use `*` -- it exposes every column, including system fields that should remain private.
+> **Important:** Always list fields explicitly. Never use `*` — it exposes every column, including system fields that should remain private.
 
 > **Note on lookup fields:** In the API response, lookup fields are returned with `_` prefix and `_value` suffix. For example, the `cr_submittedby` lookup becomes `_cr_submittedby_value` in API responses and must be listed that way in the fields setting.
 
@@ -307,7 +307,7 @@ name: Authenticated Users
 authenticatedusersrole: true
 ```
 
-### Step 3.2: Generate Permissions Configuration
+### Step 3.2: generate permissions configuration
 
 Claude Code generates these files as part of the Web API integration. You can either:
 
@@ -322,7 +322,7 @@ Use the permissions matrix: cr_invoice with Contact-scoped read/create/write for
 Authenticated Users, contact with Self-scoped read, account with Contact-scoped read.
 ```
 
-### Step 3.3: Review the Generated Files
+### Step 3.3: review the generated files
 
 After Claude generates the YAML files, verify the `.powerpages-site/` directory contains one YAML file per site setting. The file names use hyphens (file system-safe), but the `name` field inside each file uses slashes (the actual site setting name that Power Pages reads).
 
@@ -345,7 +345,7 @@ After Claude generates the YAML files, verify the `.powerpages-site/` directory 
 **Web Roles** (`web-roles/`):
 - [ ] Authenticated Users role with `authenticatedusersrole: true`
 
-### Step 3.4: Security Discussion
+### Step 3.4: security discussion
 
 Take a moment to understand why this setup is secure:
 
@@ -355,7 +355,7 @@ Take a moment to understand why this setup is secure:
 
 **What deleting is blocked prevents:** Suppliers cannot accidentally or intentionally delete invoice records. Deletion is only possible through the model-driven app by internal users with higher privileges.
 
-### Progress Checkpoint
+### Progress checkpoint
 
 At this point you should have:
 - YAML files in `.powerpages-site/` for site settings, table permissions, and web roles
@@ -364,9 +364,9 @@ At this point you should have:
 
 ---
 
-## Part 4: Deploy and Test the Application
+## Part 4: deploy and test the application
 
-### Step 4.1: Build and Deploy
+### Step 4.1: build and deploy
 
 Deploy the site with all the new configuration:
 
@@ -382,7 +382,7 @@ Or use your AI coding CLI:
 
 PAC CLI uploads both the compiled site and the `.powerpages-site/` YAML files (permissions, roles, settings).
 
-### Step 4.2: Open the App and Monitor the Console
+### Step 4.2: open the app and monitor the console
 
 Open your deployed site URL in a browser and sign in with a test account. Now open DevTools (press **F12**) and keep two tabs visible while you test:
 
@@ -392,24 +392,24 @@ Open your deployed site URL in a browser and sign in with a test account. Now op
 Use the app the way a supplier would:
 
 1. Navigate to the Invoice List page — does data load?
-2. Click into an individual invoice — does the detail view populate?
+2. Open an individual invoice — does the detail view populate?
 3. Try any other page or action wired up in your scaffolded site.
 
-As you click around, glance at the Network tab. Each `/_api/cr_invoices...` request should be green (200 OK). Click a request and check the **Response** tab to confirm the data looks right.
+As you navigate, glance at the Network tab. Each `/_api/cr_invoices...` request should be green (200 OK). Select a request and check the **Response** tab to confirm the data looks right.
 
-### Step 4.3: Verify Contact Scoping
+### Step 4.3: verify contact scoping
 
 Because you re-linked 3-5 invoices to your Contact in Step 2.5, the Invoice List page should show only those records — not all 10. This confirms that Contact-scoped permissions are working: the server is enforcing isolation, not just the UI hiding records.
 
 If time permits, sign in as a different user whose Contact has no invoices linked. The Invoice List page should appear empty. Same query, different identity, different data.
 
-### Step 4.4: If You See an Error — Use the Error-Paste-and-Fix Pattern
+### Step 4.4: if you see an error — use the Error-Paste-and-Fix pattern {#step-44-if-you-see-an-error-use-the-error-paste-and-fix-pattern}
 
 When something does not work — the list is empty when it shouldn't be, a request returns 403 or 400, the Console shows a red error, the app crashes — **don't debug manually**. Use the **Error-Paste-and-Fix** pattern from your prompt cheat sheet (Pattern 8).
 
 The flow:
 
-1. **Copy the error.** In DevTools Console, select the full red message including the stack trace and copy it. If the failure is a network request, also open the Network tab, click the failed call, go to the **Response** tab, and copy the error body too.
+1. **Copy the error.** In DevTools Console, select the full red message including the stack trace and copy it. If the failure is a network request, also open the Network tab, select the failed call, go to the **Response** tab, and copy the error body too.
 2. **Paste into your AI coding CLI with context** — say what you were doing, what you expected, and what you saw. Example:
 
    ```
@@ -447,7 +447,7 @@ You have completed this lab when:
 - [ ] Signed-in user sees only their own invoices on the Invoice List page (Contact-scoped)
 - [ ] DevTools Network tab shows `/_api/cr_invoices` requests returning 200 OK while using the app
 - [ ] DevTools Console stays clean (no red errors) while navigating the app
-- [ ] Optional: run `/audit-permissions` and review the HTML report it generates -- it cross-checks your YAML against the deployed site and flags any over- or under-permissive grants
+- [ ] Optional: run `/audit-permissions` and review the HTML report it generates — it cross-checks your YAML against the deployed site and flags any over- or under-permissive grants
 
 ---
 
@@ -456,7 +456,7 @@ You have completed this lab when:
 | Problem | Solution |
 |---------|----------|
 | `/setup-datamodel` fails with 403 | You need System Administrator or System Customizer role on the Dataverse environment. Contact your admin. |
-| Publisher prefix is unexpected (e.g., `new_` instead of `cr_`) | The prefix comes from your environment's Default Solution publisher. Check in make.powerapps.com > Solutions > Default Solution > Publisher. The prefix works fine -- just note it for API calls. |
+| Publisher prefix is unexpected (e.g., `new_` instead of `cr_`) | The prefix comes from your environment's Default Solution publisher. Check in make.powerapps.com > Solutions > Default Solution > Publisher. The prefix works fine — just note it for API calls. |
 | `/_api/cr_invoices` returns 403 Forbidden | All three layers must be configured: (1) site setting `Webapi/cr_invoice/enabled = true`, (2) web role exists, (3) table permission linked to role. Redeploy after fixing. |
 | `/_api/cr_invoices` returns empty `{"value":[]}` | Data exists but permissions do not match. Check: Is the scope Contact? Does the logged-in user's Contact record match the `cr_submittedby` on the invoices? |
 | Specific field returns 400 error | The field is not in the allowed list. Add it to `Webapi/cr_invoice/fields` in the site setting YAML. Remember lookup fields need the `_` prefix and `_value` suffix. |
@@ -473,15 +473,15 @@ If Dataverse table creation fails via API, create the table manually:
 
 ---
 
-## Key Takeaways
+## Key takeaways
 
-- Reuse standard Dataverse tables (Account, Contact) instead of creating custom ones when possible -- Power Pages auth is tied to Contact
+- Reuse standard Dataverse tables (Account, Contact) instead of creating custom ones when possible — Power Pages auth is tied to Contact
 - The three-layer security model (Site Settings + Web Roles + Table Permissions) must all be configured for the Web API to work
 - Contact-scoped permissions ensure data isolation: each supplier sees only their own invoices
-- Always list API fields explicitly -- never use `*`
+- Always list API fields explicitly — never use `*`
 - Lookup fields have different names in API responses: `cr_submittedby` becomes `_cr_submittedby_value`
 - Dependency order matters for data insertion: parent records (Account) before child records (Contact, Invoice)
 
-## What's Next
+## What's next
 
 → [Lab 03: Connect to Live Data via Web API](./03-web-api-integration.md)

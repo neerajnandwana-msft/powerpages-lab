@@ -6,17 +6,17 @@ title: "Lab 12: CI/CD with GitHub Actions"
 
 # Lab 12: CI/CD with GitHub Actions
 
-## What You Will Build
+## What you will build
 
 A GitHub Actions workflow that, on every merge to `main`, packs your unpacked solution and imports it to the integration env, builds the SPA, and uploads the bundle — all authenticated as a service principal. The same workflow shape (with different variables) deploys to pre-prod and prod via the Pipelines flow in Lab 13.
 
 ## Prerequisites
 
-- Completed [Lab 09: Source Control](./09-source-control.md), [Lab 10: Solution and Dependencies](./10-solution-and-dependencies.md), [Lab 11: Branching and Workflows](./11-branching-and-workflows.md) (Git repo, unpacked solution committed, workflows understood)
+- Completed [Lab 09: Source Control](./09-source-control.md), [Lab 10: Solution Packaging and Dataverse Dependencies](./10-solution-and-dependencies.md), [Lab 11: Branching Strategy and Developer Workflows](./11-branching-and-workflows.md) (Git repo, unpacked solution committed, workflows understood)
 - Tenant admin access (or willingness to ask your admin) to create a Microsoft Entra ID app registration
 - Your "integration" environment for this exercise is your existing Power Platform env — we're reframing it for the workflow
 
-## Learning Objectives
+## Learning objectives
 
 By the end of this lab you will be able to:
 
@@ -27,7 +27,7 @@ By the end of this lab you will be able to:
 
 ---
 
-## The Two Artifacts CI Deploys
+## The two artifacts CI deploys
 
 Every push to `main` deploys **two artifacts** from the same repo:
 
@@ -36,15 +36,15 @@ Every push to `main` deploys **two artifacts** from the same repo:
 | **Dataverse solution** | `src/solution/` (committed XML) | `pack-solution` action → `build/SupplierPortal.zip` | `import-solution` action into the integration env |
 | **SPA bundle** | `src/` (TypeScript / React) | `npm run build` → `dist/` | `upload-paportal` action with `model-version: 2` to the integration env |
 
-Order matters: the solution must import **first** (so the data model is in place when the SPA boots and queries it). The SPA upload runs second. Env-specific site setting values flow through the solution import via environment variables (set up in Lab 10) -- the workflow itself is the same shape for every environment.
+Order matters: the solution must import **first** (so the data model is in place when the SPA boots and queries it). The SPA upload runs second. Env-specific site setting values flow through the solution import via environment variables (set up in Lab 10) — the workflow itself is the same shape for every environment.
 
 ---
 
-## Step 1: Create a Service Principal
+## Step 1: create a service principal
 
-CI cannot use your personal `pac auth create --environment <url>` -- that uses interactive sign-in. Instead, CI authenticates as a **service principal** (an app identity in Microsoft Entra ID).
+CI cannot use your personal `pac auth create --environment <url>` — that uses interactive sign-in. Instead, CI authenticates as a **service principal** (an app identity in Microsoft Entra ID).
 
-### 1a. Register the App in Microsoft Entra ID
+### 1a. register the app in Microsoft Entra ID
 
 You can do this in the Azure portal (Microsoft Entra ID > App registrations > New registration) or with the Azure CLI:
 
@@ -54,11 +54,11 @@ az ad app create --display-name "supplier-portal-cicd"
 
 Record the resulting `appId` (client ID).
 
-> **No Azure subscription?** `az ad app create` and `az ad app credential reset` are Microsoft Graph (AAD-only) operations -- they don't need an Azure subscription. If your Microsoft account has no subscription attached, sign in once with `az login --allow-no-subscriptions` (the flag belongs on `az login` only). After that, the `az ad ...` commands below run normally -- you do not pass the flag again.
+> **No Azure subscription?** `az ad app create` and `az ad app credential reset` are Microsoft Graph (AAD-only) operations — they don't need an Azure subscription. If your Microsoft account has no subscription attached, sign in once with `az login --allow-no-subscriptions` (the flag belongs on `az login` only). After that, the `az ad ...` commands below run normally — you do not pass the flag again.
 
-### 1b. Create a Client Secret
+### 1b. create a client secret
 
-In the Azure portal: open the app registration → Certificates & secrets → New client secret. **Copy the secret value immediately** -- it won't show again.
+In the Azure portal: open the app registration → Certificates & secrets → New client secret. **Copy the secret value immediately** — it won't show again.
 
 Or via CLI:
 
@@ -68,17 +68,17 @@ az ad app credential reset --id <appId> --append
 
 Record the `password` (client secret).
 
-### 1c. Create the Application User in Power Platform
+### 1c. create the application user in Power Platform
 
 A service principal needs an "Application user" inside your Power Platform environment, with a security role:
 
 1. Open the Power Platform Admin Center (https://admin.powerplatform.microsoft.com)
 2. Select your integration environment → **Settings** → **Users + permissions** → **Application users**
 3. **+ New app user** → search for the app by client ID
-4. Add the **System Administrator** role (or **System Customizer** + **Deployment Pipeline User** for least-privilege; this lab uses System Administrator to keep the focus on the deployment flow -- scope down once your pipeline is stable)
+4. Add the **System Administrator** role (or **System Customizer** + **Deployment Pipeline User** for least-privilege; this lab uses System Administrator to keep the focus on the deployment flow — scope down once your pipeline is stable)
 5. Create
 
-### 1d. Verify with PAC CLI
+### 1d. verify with PAC CLI
 
 Locally, test that the service principal can authenticate:
 
@@ -91,14 +91,14 @@ You should see the integration env's name and URL.
 
 ---
 
-## Step 2: Env-Specific Values -- Already Handled by Environment Variables
+## Step 2: Env-Specific values — already handled by environment variables
 
 Before we wire the workflow, a quick refresher on how env-specific values reach each environment.
 
 You did the work in Lab 10: `Search/Enabled` is wired to the `cr_searchenabled` environment variable, and the variable definition is part of the solution. That means:
 
 - The **integration env** uses whatever value you set on the `cr_searchenabled` variable in that env (or the default value from the variable definition)
-- When Lab 13 promotes the solution to **pre-prod** via Power Platform Pipelines, the operator is prompted to set the pre-prod value -- the variable definition crosses environments, the value does not
+- When Lab 13 promotes the solution to **pre-prod** via Power Platform Pipelines, the operator is prompted to set the pre-prod value — the variable definition crosses environments, the value does not
 - Same flow for **prod**
 
 There is **no extra step in the GitHub Actions workflow** to apply env-specific site setting values. They flow with the solution.
@@ -107,12 +107,12 @@ Further reading: [Use environment variables with site settings](https://learn.mi
 
 ---
 
-## Step 3: Store CI Configuration in GitHub Actions
+## Step 3: store CI configuration in GitHub actions
 
 Two GitHub Actions storage primitives, used differently:
 
-- **Secrets** (`gh secret set`) -- masked in logs, only one we need is `CLIENT_SECRET`
-- **Variables** (`gh variable set`) -- visible in logs, fine for identifiers like tenant ID, app ID, env URL
+- **Secrets** (`gh secret set`) — masked in logs, only one we need is `CLIENT_SECRET`
+- **Variables** (`gh variable set`) — visible in logs, fine for identifiers like tenant ID, app ID, env URL
 
 This split keeps the workflow YAML reusable across cohorts and orgs without editing inline.
 
@@ -132,17 +132,17 @@ gh secret list
 gh variable list
 ```
 
-You should see `CLIENT_SECRET` in secrets and the four config keys in variables. Secret values can't be recovered after setting -- rotate via `gh secret set` if forgotten.
+You should see `CLIENT_SECRET` in secrets and the four config keys in variables. Secret values can't be recovered after setting — rotate via `gh secret set` if forgotten.
 
 > **Org-managed scenarios:** if your org centrally manages SP credentials, the secret and variables can live at the organization level (`gh secret set <NAME> --org <YOUR-ORG>` / `gh variable set <NAME> --org <YOUR-ORG>`) and inherit into all repos. The workflow YAML doesn't change; `${{ secrets.X }}` and `${{ vars.X }}` resolve org-level values automatically.
 
 ---
 
-## Step 4: Path A -- GitHub Actions (recommended)
+## Step 4: path A — GitHub actions (recommended)
 
 GitHub Actions is the recommended path because the repo already lives on GitHub.
 
-### 4a. Create the Workflow File
+### 4a. create the workflow file
 
 In your repo:
 
@@ -228,24 +228,24 @@ jobs:
           model-version: 2
 ```
 
-### 4b. What This Workflow Does Differently
+### 4b. what this workflow does differently
 
-A few choices worth calling out -- they're the difference between a workflow that barely works and one a team can live with:
+A few choices worth calling out — they're the difference between a workflow that barely works and one a team can live with:
 
 - **`workflow_dispatch`** lets you re-run the deploy from the GitHub Actions UI without committing anything. Handy for forcing a deploy after a manual fix in dev.
 - **`schedule: cron: '0 0 * * *'`** runs the deploy nightly. Catches drift if anyone touched the dev env outside the normal flow.
-- **`vars.*` for non-secret IDs, `secrets.*` for the client secret** -- tenant ID, app ID, and environment URL are identifiers, not secrets. Storing them as GitHub Actions *variables* (not secrets) keeps the workflow YAML reusable across orgs without editing inline.
-- **`upload-paportal` with `model-version: 2`** -- the official Microsoft action for uploading portal/SPA content. `model-version: 2` is the [enhanced data model](https://learn.microsoft.com/power-pages/admin/enhanced-data-model) that SPA sites use. Prefer this over a raw `pac` invocation in CI.
-- **Env-specific site setting values flow with the solution** -- the environment variables you wired in Lab 10 carry the variable definitions; each target env supplies its own value at import time. No extra workflow plumbing needed.
-- **`runs-on: windows-latest`** -- the Power Platform actions are tested most heavily on Windows. Linux runners often work but Windows is the safer default for this stack.
+- **`vars.*` for non-secret IDs, `secrets.*` for the client secret** — tenant ID, app ID, and environment URL are identifiers, not secrets. Storing them as GitHub Actions *variables* (not secrets) keeps the workflow YAML reusable across orgs without editing inline.
+- **`upload-paportal` with `model-version: 2`** — the official Microsoft action for uploading portal/SPA content. `model-version: 2` is the [enhanced data model](https://learn.microsoft.com/power-pages/admin/enhanced-data-model) that SPA sites use. Prefer this over a raw `pac` invocation in CI.
+- **Env-specific site setting values flow with the solution** — the environment variables you wired in Lab 10 carry the variable definitions; each target env supplies its own value at import time. No extra workflow plumbing needed.
+- **`runs-on: windows-latest`** — the Power Platform actions are tested most heavily on Windows. Linux runners often work but Windows is the safer default for this stack.
 
 Further reading: [GitHub Actions for Power Platform](https://learn.microsoft.com/power-platform/alm/devops-github-actions), [Available actions reference](https://learn.microsoft.com/power-platform/alm/devops-github-available-actions), [`pac pages` reference](https://learn.microsoft.com/power-platform/developer/cli/reference/pages)
 
 > **Verifying action inputs:** the Learn reference covers `upload-paportal`, `import-solution`, `unpack-solution`, and a few others in detail. For inputs not explicitly listed there (for example, `pack-solution`'s `solution-folder`/`solution-file`/`solution-type`, or `import-solution`'s `force-overwrite`/`publish-changes`), the source of truth is the action's own `action.yml` in [microsoft/powerplatform-actions](https://github.com/microsoft/powerplatform-actions). Inputs there mirror the corresponding `pac` switches.
 
-### 4c. Commit, Push, Watch It Run
+### 4c. commit, push, watch it run
 
-The workflow reads everything from GitHub Actions secrets and variables you set in Step 3 -- no inline edits needed.
+The workflow reads everything from GitHub Actions secrets and variables you set in Step 3 — no inline edits needed.
 
 ```bash
 git add .github/workflows/deploy-integration.yml
@@ -257,17 +257,17 @@ Open the GitHub Actions tab (`gh workflow view` or browser). Watch the run. When
 
 1. Confirm the integration env shows the latest solution version (maker portal → Solutions → Supplier Portal → Version)
 2. Confirm the live portal URL serves the latest bundle (cache-bust the page)
-3. Confirm the `Search/Enabled` site setting resolves to the value you set for the integration env's `cr_searchenabled` environment variable -- this is the env-variable wiring from Lab 10 working
+3. Confirm the `Search/Enabled` site setting resolves to the value you set for the integration env's `cr_searchenabled` environment variable — this is the env-variable wiring from Lab 10 working
 
-### 4d. Test the End-to-End Loop
+### 4d. test the End-to-End loop
 
 Make a tiny change to the dashboard heading in a feature branch, open a PR, merge it. Watch the workflow deploy both artifacts. The change should be live in the integration env within 3-5 minutes of the merge.
 
-Then trigger a manual run from the GitHub Actions UI (Actions tab → "Deploy to Integration" → "Run workflow"). Confirm `workflow_dispatch` works -- you'll need this when promoting a hotfix outside normal CI flow.
+Then trigger a manual run from the GitHub Actions UI (Actions tab → "Deploy to Integration" → "Run workflow"). Confirm `workflow_dispatch` works — you'll need this when promoting a hotfix outside normal CI flow.
 
 ---
 
-## Step 5: Path B -- Azure DevOps (reference)
+## Step 5: path B — Azure DevOps (reference)
 
 If your team is on Azure DevOps instead of GitHub, the same flow uses the **PowerPlatform Build Tools** extension (`microsoft-IsvExpTools.PowerPlatform-BuildTools`).
 
@@ -339,7 +339,7 @@ Key differences from GitHub Actions:
 
 - A **service connection** (`PP_SP_CONNECTION`) wraps the SPN credentials, defined once under Project Settings → Service connections → Power Platform
 - `PowerPlatformToolInstaller` plays the same role as `actions-install`
-- `PowerPlatformUploadPaportal@2` is the equivalent of the `upload-paportal` action -- same `ModelVersion: 2` for SPA sites
+- `PowerPlatformUploadPaportal@2` is the equivalent of the `upload-paportal` action — same `ModelVersion: 2` for SPA sites
 
 Further reading: [Azure DevOps build tools](https://learn.microsoft.com/power-platform/alm/devops-build-tools), [Build tool tasks reference](https://learn.microsoft.com/power-platform/alm/devops-build-tool-tasks#power-pages-management-tasks)
 
@@ -354,7 +354,7 @@ You have completed this lab when:
 - [ ] GitHub Actions secrets/variables are configured: secret `CLIENT_SECRET`; variables `INSTANCE_URL`, `APPLICATION_CLIENT_ID`, `TENANT_ID`, `SITE_NAME`
 - [ ] A `.github/workflows/deploy-integration.yml` workflow file is committed in `main`
 - [ ] A push to `main` (or a `workflow_dispatch` run) completes with green steps for `who-am-i`, `import-solution`, and `upload-paportal`
-- [ ] The integration environment now reflects the latest committed solution and SPA content -- verified by browsing the site or running `pac pages list` against the env
+- [ ] The integration environment now reflects the latest committed solution and SPA content — verified by browsing the site or running `pac pages list` against the env
 
 ---
 
@@ -367,21 +367,29 @@ You have completed this lab when:
 | `import-solution` fails with "missing dependency" | The committed `src/solution/` is missing a Dataverse component you added in dev. Re-export, re-unpack, commit. |
 | `upload-paportal` fails with "site not found" | The site name from your source doesn't match what the site is actually called in the env. Run `pac pages list` against the env to see the exact name. |
 | Site setting value not surfacing after env variable change | Clear the site cache: in design studio select **Sync**; or sign in to the portal, browse to `/_services/about`, select **Clear cache**; or restart the portal from the admin center. |
-| Workflow runs on every push including feature branches | Trigger spec is wrong. Confirm `branches: [main, 'hotfix/**']` only -- no `*` wildcard at top. |
-| Secret value is empty in the run logs | Looks empty by design -- GitHub masks secrets. The actual value is being passed; "empty" output is normal. |
+| Workflow runs on every push including feature branches | Trigger spec is wrong. Confirm `branches: [main, 'hotfix/**']` only — no `*` wildcard at top. |
+| Secret value is empty in the run logs | Looks empty by design — GitHub masks secrets. The actual value is being passed; "empty" output is normal. |
 | `model-version` mismatch error | Your site uses the standard data model but you set `model-version: 2` (or vice versa). Run `pac pages list -v` to see which model your site uses. SPA sites should be on `model-version: 2` (enhanced data model). |
 
----
+## Fallback
 
-## Key Takeaways
+If the workflow fails on its first runs and you cannot get a green build:
+
+1. **Re-verify the application user.** The most common first-run failure is the service principal not being added as an application user in the target environment. Open the Power Platform admin center → your environment → **Settings → Users + permissions → Application users** and confirm the app registration is listed with the right security roles.
+2. **Check GitHub Actions secrets and variables.** A typo in `PCA_CLIENT_SECRET`, `vars.PCA_TENANT_ID`, `vars.PCA_APP_ID`, or `vars.PCA_ENV_URL` will not be caught by syntax checks. Open the repo's **Settings → Secrets and variables → Actions** and re-paste each value.
+3. **Run the steps locally to isolate.** If CI is blocked, run the same `pac` commands locally with `pac auth create --tenant <tenant> --applicationId <appId> --clientSecret <secret>` to reproduce. A local failure points at credentials or environment access; a CI-only failure points at the workflow YAML or the runner.
+4. **Manual deploy as a stop-gap.** While CI is being fixed, you can promote to integration manually: `pac solution import --path build/SupplierPortal.zip --force-overwrite --publish-changes` followed by `pac pages upload-code-site` (or the GUI equivalent). Document the manual deploy in the team channel so a teammate doesn't run CI in parallel.
+5. **Federated credentials as a security upgrade.** If you reach a stable state but want to remove the long-lived client secret, switch to GitHub OIDC federated credentials per Microsoft's guidance. This is recommended for production; it is intentionally out of scope for the first run-through to keep the lab focused.
+
+## Key takeaways
 
 - A service principal is the identity CI uses; create the app registration, the client secret, and the application user in Power Platform once
-- Env-specific site setting values flow with the solution via **environment variables** (set up in Lab 10) -- no extra workflow plumbing needed
+- Env-specific site setting values flow with the solution via **environment variables** (set up in Lab 10) — no extra workflow plumbing needed
 - The CI pipeline deploys two artifacts in order: solution first, SPA second
 - `microsoft/powerplatform-actions/upload-paportal@v1` with `model-version: 2` is the official action for uploading SPA content; you don't need a script step
-- Non-secret values (tenant ID, app ID, env URL) belong in GitHub Actions *variables* (`vars.*`), not secrets -- treating identifiers as secrets is unnecessary friction and the workflow YAML stays reusable
+- Non-secret values (tenant ID, app ID, env URL) belong in GitHub Actions *variables* (`vars.*`), not secrets — treating identifiers as secrets is unnecessary friction and the workflow YAML stays reusable
 - Azure DevOps Build Tools provides equivalent tasks (`PowerPlatformUploadPaportal@2` with `ModelVersion: 2`) if your repo lives there instead
 
-## What's Next
+## What's next
 
 → [Lab 13: Multi-Environment Promotion](./13-multi-env-promotion.md)

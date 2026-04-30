@@ -6,7 +6,7 @@ title: "Lab 07: Add Generative AI APIs"
 
 # Lab 07: Add Generative AI APIs
 
-## What You Will Build
+## What you will build
 
 Two AI features for the portal, both built with the same plugin:
 
@@ -21,7 +21,7 @@ Two AI features for the portal, both built with the same plugin:
 - `/add-ai-webapi` available in your AI coding CLI session
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`) — `/add-ai-webapi` queries environment and site AI configuration via Dataverse, which requires a live `az` token. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the AAD-scoped Dataverse token works without one.
 
-## Learning Objectives
+## Learning objectives
 
 By the end of this lab you will be able to:
 
@@ -37,9 +37,9 @@ Both APIs are preview features gated by admin governance. The most common failur
 
 ---
 
-## Part 1: AI API Landscape and Admin Hierarchy
+## Part 1: AI API landscape and admin hierarchy
 
-### The Three APIs
+### The three APIs
 
 | API | Endpoint | What It Returns | Body |
 |-----|----------|----------------|------|
@@ -49,7 +49,7 @@ Both APIs are preview features gated by admin governance. The most common failur
 
 We will use the first two today. The Case preset needs an `incident` table and doesn't fit the supplier portal.
 
-### The Three-Level Admin Hierarchy
+### The Three-Level admin hierarchy
 
 Every AI call passes through three gates. **Each level overrides the one below it.**
 
@@ -67,34 +67,34 @@ Site        → Set up workspace → Copilot → Site search (preview) toggle
 | Environment | Copilot Hub → Power Pages governance switches | Power Platform admin |
 | Site | Power Pages maker studio → Set up workspace → Copilot → Site search (preview) | Site maker (you) |
 
-If any level is off, the API fails. The site toggle shows as "greyed out" when an upstream level blocks it -- the UI tells you exactly where the problem sits.
+If any level is off, the API fails. The site toggle shows as "greyed out" when an upstream level blocks it — the UI tells you exactly where the problem sits.
 
-### How Disablement Surfaces in HTTP
+### How disablement surfaces in HTTP
 
-The two endpoints report disablement differently -- this is the single most important thing to remember today:
+The two endpoints report disablement differently — this is the single most important thing to remember today:
 
 | API | HTTP status | What the body says | Retry help? |
 |-----|-------------|-------------------|-------------|
-| Search Summary | **200 OK** (yes, 200) | `{ Code: 400, Message: "Gen AI Search is disabled." }` -- embedded envelope | No -- admin or maker must flip a toggle |
-| Data Summarization | **400 Bad Request** | `{ error: { code: "90041001", message: "..." } }` | No -- same fix |
+| Search Summary | **200 OK** (yes, 200) | `{ Code: 400, Message: "Gen AI Search is disabled." }` — embedded envelope | No — admin or maker must flip a toggle |
+| Data Summarization | **400 Bad Request** | `{ error: { code: "90041001", message: "..." } }` | No — same fix |
 
 Both mean the same thing: "somewhere in the tenant → environment → site chain, AI is disabled." Walk the chain top to bottom to find the culprit.
 
-### Error Codes Worth Knowing
+### Error codes worth knowing
 
 | Code | Message (per Microsoft Learn) |
 |------|-------------------------------|
-| 90041001 | Generative AI features are disabled -- walk the tenant / environment / site hierarchy |
-| 90041003 | Data summarization disabled for this site -- enable `Summarization/Data/Enable` site setting |
-| 90041004 | Content length exceeds the limit -- bump `Summarization/Data/ContentSizeLimit` (default 100000 chars) |
-| 90041005 | No records found to summarize -- target collection is empty or row-level security hid everything |
-| 90041006 | Error occurred while summarizing the content -- generic summarization failure; check prompt YAML and retry |
+| 90041001 | Generative AI features are disabled — walk the tenant / environment / site hierarchy |
+| 90041003 | Data summarization disabled for this site — enable `Summarization/Data/Enable` site setting |
+| 90041004 | Content length exceeds the limit — bump `Summarization/Data/ContentSizeLimit` (default 100000 chars) |
+| 90041005 | No records found to summarize — target collection is empty or row-level security hid everything |
+| 90041006 | Error occurred while summarizing the content — generic summarization failure; check prompt YAML and retry |
 
 ---
 
-## Part 2: Data Summarization on Invoice Detail
+## Part 2: data summarization on invoice detail
 
-### Step 2.1: Describe the Intent
+### Step 2.1: describe the intent
 
 In your AI coding CLI:
 
@@ -107,9 +107,9 @@ one paragraph, without reading every field. The summary should cover
 the PO number, amount, status, supplier, description, and due date.
 ```
 
-### Step 2.2: What the Plugin Discovers (Phase 2 Explore)
+### Step 2.2: what the plugin discovers (phase 2 explore)
 
-`/add-ai-webapi` spawns an Explore agent that scans your codebase. Review the integration manifest it produces -- it should show one row:
+`/add-ai-webapi` spawns an Explore agent that scans your codebase. Review the integration manifest it produces — it should show one row:
 
 | API | Target file | Target kind | Entity set | `$select` | Layer 1/2 status | Layer 3 status |
 |-----|-------------|------------|-----------|----------|------------------|----------------|
@@ -117,32 +117,32 @@ the PO number, amount, status, supplier, description, and due date.
 
 The `missing` values tell the plugin it needs to run `/integrate-webapi` (AI read-only mode) and create new `Summarization/*` site settings. You will see both happen.
 
-### Step 2.3: Confirm the Plan (Phase 3)
+### Step 2.3: confirm the plan (phase 3)
 
 You will be asked:
 
-1. **Integration scope** -- select "Wire Data Summarization into Invoice Detail"
-2. **Trigger** -- single-record targets always load on user action, so this is skipped
-3. **Scope** -- pick "Use the existing record fetch's columns" (the existing InvoiceDetail fetch already selects the columns we need)
+1. **Integration scope** — select "Wire Data Summarization into Invoice Detail"
+2. **Trigger** — single-record targets always load on user action, so this is skipped
+3. **Scope** — pick "Use the existing record fetch's columns" (the existing InvoiceDetail fetch already selects the columns we need)
 
-### Step 2.4: Phase 4 -- Delegated Layer 1/2
+### Step 2.4: phase 4 — delegated layer 1/2
 
 `/add-ai-webapi` calls `/integrate-webapi` in AI-only read mode. `/integrate-webapi` will:
 
 - Create or verify `Webapi/cr_invoice/enabled` is present (may already be from Lab 02)
-- Create `Webapi/cr_invoice/fields` -- or confirm Lab 02's version includes every column we need
+- Create `Webapi/cr_invoice/fields` — or confirm Lab 02's version includes every column we need
 - Ensure a Read-scoped table permission on cr_invoice for Authenticated Users (Lab 02 already set this)
-- Present its own architect plan -- **you will approve this sub-plan separately**
+- Present its own architect plan — **you will approve this sub-plan separately**
 
 Approve the sub-plan. When `/integrate-webapi` completes, control returns to `/add-ai-webapi`.
 
-### Step 2.5: Phase 5 -- Service and UI Code
+### Step 2.5: phase 5 — service and UI Code
 
 > **Reference only — your output may differ.** The code shown below illustrates what the plugin *typically* generates. The plugin adapts its output to your exact project (variable names, helper structure, imports, component shape), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece — do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
 
 The plugin generates:
 
-**`src/services/aiSummaryService.ts`** -- shared service file with the CSRF helper and `fetchDataSummary`:
+**`src/services/aiSummaryService.ts`** — shared service file with the CSRF helper and `fetchDataSummary`:
 
 ```typescript
 async function getCsrfToken(): Promise<string> {
@@ -180,18 +180,18 @@ export async function fetchDataSummary(
 }
 ```
 
-**`src/hooks/useInvoiceSummary.ts`** -- a React hook wrapper with loading/error states.
+**`src/hooks/useInvoiceSummary.ts`** — a React hook wrapper with loading/error states.
 
-**`src/pages/InvoiceDetail.tsx`** -- adds a Copilot card component that calls the hook when the page mounts.
+**`src/pages/InvoiceDetail.tsx`** — adds a Copilot card component that calls the hook when the page mounts.
 
-### Step 2.6: Phase 6 -- Layer 3 Site Settings
+### Step 2.6: phase 6 — layer 3 site settings
 
 The plugin spawns `ai-webapi-settings-architect` which creates two settings:
 
 | Setting name | Purpose |
 |--------------|---------|
 | `Summarization/Data/Enable` | Master toggle (value `true`) |
-| `Summarization/prompt/invoice_summary` | The actual prompt template -- a YAML block literal with the instructions sent to the model |
+| `Summarization/prompt/invoice_summary` | The actual prompt template — a YAML block literal with the instructions sent to the model |
 
 Review the prompt YAML when the architect proposes it. The prompt should read something like:
 
@@ -211,7 +211,7 @@ value: |
 
 Approve.
 
-### Step 2.6b: Tune the Prompt If the Summary Is Weak
+### Step 2.6b: tune the prompt if the summary is weak
 
 If the generated summary feels generic, misses fields, or invents information, ask your AI coding CLI to improve the AI prompt:
 
@@ -223,16 +223,16 @@ any invoice that is overdue. It must not include information that
 isn't on the record. Improve the way the summary is written.
 ```
 
-### Step 2.7: Deploy and Test
+### Step 2.7: deploy and test
 
 Accept the deploy offer. After deployment:
 
 1. Open the deployed site in an incognito window
 2. Navigate to any invoice's detail page
 3. Expected: a Copilot-styled summary card renders below the invoice header within 3-5 seconds
-4. The summary should mention the PO number, amount, status, and supplier -- read the actual record and verify the summary is grounded in the data (no hallucinated values)
+4. The summary should mention the PO number, amount, status, and supplier — read the actual record and verify the summary is grounded in the data (no hallucinated values)
 
-### Step 2.8: Inspect the Network Call
+### Step 2.8: inspect the network call
 
 Open DevTools Network tab and refresh. Find the summarization POST:
 
@@ -242,7 +242,7 @@ Open DevTools Network tab and refresh. Find the summarization POST:
 - Request body: `{ "InstructionIdentifier": "Summarization/prompt/invoice_summary" }`
 - Response: 200 with `{ Summary: "...", Recommendations: [] }`
 
-### Progress Checkpoint
+### Progress checkpoint
 
 By now you should have:
 
@@ -253,7 +253,7 @@ By now you should have:
 
 ---
 
-## Part 3: Mid-Lab Checkpoint
+## Part 3: Mid-Lab checkpoint
 
 Confirm the Invoice summary works for everyone before moving to Search. Raise your hand if any of these are not true:
 
@@ -265,22 +265,22 @@ Common blockers at this point and quick fixes:
 
 | Symptom | Fix |
 |---------|-----|
-| 400 with code `90041001` | Walk the admin hierarchy -- tenant, environment, site. Ask your Power Platform admin to verify the env-level setting. |
-| 403 on the POST | Layer 1/2 issue -- re-run `/integrate-webapi` or check `Webapi/cr_invoice/fields` lists every column in the `$select` |
+| 400 with code `90041001` | Walk the admin hierarchy — tenant, environment, site. Ask your Power Platform admin to verify the env-level setting. |
+| 403 on the POST | Layer 1/2 issue — re-run `/integrate-webapi` or check `Webapi/cr_invoice/fields` lists every column in the `$select` |
 | 400 with code `90041003` | `Summarization/Data/Enable` site setting not present or set to `false`. Verify the setting exists, redeploy. |
-| Summary renders but says "I couldn't find enough data" | The `$select` is too narrow -- add more columns to the list in the generated fetch |
+| Summary renders but says "I couldn't find enough data" | The `$select` is too narrow — add more columns to the list in the generated fetch |
 
 Once you have a green response, continue.
 
 ---
 
-## Part 4: Search Summary on a New Search Page
+## Part 4: search summary on a new search page
 
-### Step 4.1: The Goal
+### Step 4.1: the goal
 
 Add a page at `/search` with a text input. User types a question like "Which invoices are overdue?" → portal calls `/_api/search/v1.0/summary` → an AI-generated answer renders above the underlying keyword results, with citation links pointing back to the invoice detail pages.
 
-### Step 4.2: Pre-Flight -- Enable Site Search (Preview)
+### Step 4.2: Pre-Flight — enable site search (preview)
 
 Search Summary needs a site-level toggle that `/add-ai-webapi` cannot flip for you.
 
@@ -289,11 +289,11 @@ Search Summary needs a site-level toggle that `/add-ai-webapi` cannot flip for y
 3. Find **Site search (preview)**
 4. Toggle on **Enable Site search with generative AI (preview)**
 
-If the toggle is greyed out, the environment or tenant has AI disabled -- see Part 5 troubleshooting.
+If the toggle is greyed out, the environment or tenant has AI disabled — see Part 5 troubleshooting.
 
 Confirm before continuing. Search Summary silently returns the 200-envelope disabled state if this toggle is off.
 
-### Step 4.3: Describe the Intent to Your AI Coding CLI
+### Step 4.3: describe the intent to your AI coding CLI
 
 ```
 /add-ai-webapi
@@ -304,7 +304,7 @@ short AI-written answer at the top, not just a list of keyword
 matches. Match the look and feel of the existing Dashboard page.
 ```
 
-### Step 4.4: Iteration Mode Confirmation
+### Step 4.4: iteration mode confirmation
 
 Because you already ran `/add-ai-webapi` in Part 2, the plugin detects iteration mode. It will ask:
 
@@ -312,7 +312,7 @@ Because you already ran `/add-ai-webapi` in Part 2, the plugin detects iteration
 
 Select **Add a new surface**. The plugin will extend the existing `aiSummaryService.ts` rather than rewrite it, and will skip the `/integrate-webapi` delegation (Search has no per-table prerequisites).
 
-### Step 4.5: Review the Plan
+### Step 4.5: review the plan
 
 The manifest should show:
 
@@ -322,11 +322,11 @@ The manifest should show:
 
 Approve. The plugin creates a new page component, extends the service with `fetchSearchSummary`, and adds a route.
 
-### Step 4.6: Review the Generated Code
+### Step 4.6: review the generated Code
 
 > **Reference only — your output may differ.** Same caveat as Step 2.5 — the snippets below are illustrative. Your plugin's actual output may differ in variable names, response-shape assumptions, or component structure. Use these to understand the Search Summary pattern, not as line-for-line targets.
 
-**`src/services/aiSummaryService.ts`** -- now has a second export:
+**`src/services/aiSummaryService.ts`** — now has a second export:
 
 ```typescript
 export async function fetchSearchSummary(
@@ -351,9 +351,9 @@ export async function fetchSearchSummary(
 }
 ```
 
-Note the envelope check -- Search Summary does not use HTTP status codes to signal disablement.
+Note the envelope check — Search Summary does not use HTTP status codes to signal disablement.
 
-**`src/pages/Search.tsx`** -- new page with search input, results area, and a graceful fallback card when `SearchSummaryDisabledError` is thrown:
+**`src/pages/Search.tsx`** — new page with search input, results area, and a graceful fallback card when `SearchSummaryDisabledError` is thrown:
 
 ```typescript
 if (error instanceof SearchSummaryDisabledError) {
@@ -367,7 +367,7 @@ if (error instanceof SearchSummaryDisabledError) {
 }
 ```
 
-### Step 4.7: Citation URL Rewriting
+### Step 4.7: citation URL rewriting
 
 The Search Summary API returns citation URLs pointing at `/page-not-found/?id=<guid>` (the default knowledge article landing page). Our SPA site doesn't have that route. Verify the generated code rewrites the URLs to the SPA routes:
 
@@ -381,7 +381,7 @@ function rewriteCitationUrl(rawUrl: string): string {
 
 Without this, clicking a citation drops the user on a 404.
 
-### Step 4.8: Deploy and Test
+### Step 4.8: deploy and test
 
 ```
 /deploy-site
@@ -394,33 +394,33 @@ After deployment:
 3. Expected: a summary paragraph like "Three invoices are currently overdue: PO-2026-005, PO-2026-008..."
 4. Each citation `[1]`, `[2]` should be clickable and route to the invoice detail page
 
-### Step 4.9: Test the Disabled State
+### Step 4.9: test the disabled state
 
 1. Go to the maker studio and toggle **Site search (preview)** off
 2. Redeploy (or wait ~30 seconds for the runtime to pick up the change)
 3. Go back to the search page and submit any query
-4. Expected: the disabled-state card renders -- "AI search summary is turned off for this site"
+4. Expected: the disabled-state card renders — "AI search summary is turned off for this site"
 5. Toggle it back on before the session ends
 
 ---
 
-## Part 5: Troubleshooting Deep-Dive
+## Troubleshooting
 
-### The Admin Hierarchy Walkthrough
+### The admin hierarchy walkthrough
 
 When any AI call fails with `90041001` (Data Summarization) or the 200-envelope disabled error (Search Summary), walk the hierarchy:
 
-1. **Tenant** -- has `enableGenerativeAIFeaturesForSiteUsers` been set? Check with:
+1. **Tenant** — has `enableGenerativeAIFeaturesForSiteUsers` been set? Check with:
    ```powershell
    Connect-MgGraph
    Get-TenantSettings   # look for enableGenerativeAIFeaturesForSiteUsers
    ```
-2. **Environment** -- open admin.powerplatform.microsoft.com → Environments → your env → Copilot Hub → Power Pages governance. Is it on?
-3. **Site** -- in the maker studio, Set up workspace → Copilot → Site search (preview). Is the toggle on? Is it greyed out (upstream blocked it)?
+2. **Environment** — open admin.powerplatform.microsoft.com → Environments → your env → Copilot Hub → Power Pages governance. Is it on?
+3. **Site** — in the maker studio, Set up workspace → Copilot → Site search (preview). Is the toggle on? Is it greyed out (upstream blocked it)?
 
 If any level is off, the call will never succeed regardless of code changes.
 
-### 403 on a Summarization Call -- Always Layer 1/2
+### 403 on a summarization call — always layer 1/2
 
 If you see a 403 (not a 400) on the summarization endpoint, the problem is never the AI layer. It is always one of:
 
@@ -433,7 +433,7 @@ If you see a 403 (not a 400) on the summarization endpoint, the problem is never
 
 Re-run `/integrate-webapi` in AI-read-only mode to rebuild Layer 1/2 cleanly rather than hand-editing YAMLs.
 
-### Common Error Table
+### Common error table
 
 | Error | What You See | Cause | Fix |
 |-------|-------------|-------|-----|
@@ -444,9 +444,9 @@ Re-run `/integrate-webapi` in AI-read-only mode to rebuild Layer 1/2 cleanly rat
 | 400 code `90041005` | No records found to summarize | Target record/collection empty, or row-level security filtered everything out | Verify data exists and table permissions grant read access to the caller |
 | 400 code `90041006` | Error occurred while summarizing the content | Generic summarization failure (bad prompt, content edge case, transient model error) | Inspect the prompt YAML, verify content length, retry once; if persistent, simplify the prompt |
 | 403 | Forbidden | Layer 1/2 (column casing, table permission, expand target) | Re-run `/integrate-webapi` AI-read-only |
-| Summary is empty or truncated | Content fits but summary is bad | Prompt is too vague or the model got too little context | Improve the prompt in the `Summarization/prompt/<id>` YAML -- use block literal `value: \|` for multi-line prompts |
+| Summary is empty or truncated | Content fits but summary is bad | Prompt is too vague or the model got too little context | Improve the prompt in the `Summarization/prompt/<id>` YAML — use block literal `value: \|` for multi-line prompts |
 | Citations drop the user on `/page-not-found` | Citation URL rewriting not wired | The `extractKnowledgeArticleId` rewrite step is missing | Add the rewrite helper to the search page, redeploy |
-| Summary returns placeholders like `[\"...\"]` | JSON-encoded string array rendered raw | List-summary prompts return JSON-encoded summaries | Use `normalizeSummaryString` helper in the service layer -- the plugin adds this automatically |
+| Summary returns placeholders like `[\"...\"]` | JSON-encoded string array rendered raw | List-summary prompts return JSON-encoded summaries | Use `normalizeSummaryString` helper in the service layer — the plugin adds this automatically |
 
 ---
 
@@ -463,7 +463,7 @@ You have completed this lab when:
 - [ ] Site Search (preview) toggle in maker studio is on
 - [ ] Disabled-state card renders correctly when the toggle is temporarily off
 
-### Debug Prompt: AI Call Failing
+### Debug prompt: AI call failing
 
 When an AI feature isn't working on the deployed site, paste this into your AI coding CLI:
 
@@ -479,20 +479,20 @@ setting, or in an admin configuration.
 
 If AI calls consistently return `90041001` and the admin hierarchy is known to be on:
 
-1. Verify your Power Pages runtime version (maker studio → Site details). AI APIs need a recent runtime -- older sites may need to update the Bootstrap v5 runtime before the endpoints activate.
-2. Confirm you are testing on the **deployed** site, not localhost -- AI APIs don't work locally.
-3. Compare your network traces against the curl examples in this lab -- a missing `OData-Version`, `OData-MaxVersion`, or `Accept` header is the most common cause of `90041001` after admin settings are confirmed correct.
+1. Verify your Power Pages runtime version (maker studio → Site details). AI APIs need a recent runtime — older sites may need to update the Bootstrap v5 runtime before the endpoints activate.
+2. Confirm you are testing on the **deployed** site, not localhost — AI APIs don't work locally.
+3. Compare your network traces against the curl examples in this lab — a missing `OData-Version`, `OData-MaxVersion`, or `Accept` header is the most common cause of `90041001` after admin settings are confirmed correct.
 
-## Key Takeaways
+## Key takeaways
 
 - Three APIs cover most Power Pages AI needs: Search Summary, Data Summarization, and the Case preset
-- The three-level admin hierarchy (tenant → environment → site) overrides all code changes -- walk it top to bottom when AI fails
+- The three-level admin hierarchy (tenant → environment → site) overrides all code changes — walk it top to bottom when AI fails
 - Disablement surfaces differently: HTTP 200 envelope for Search Summary; HTTP 400 with `90041001` for Data Summarization
 - A 403 on a summarization call is always a Layer 1/2 (Web API) issue, never the AI layer
 - The prompt lives in a site setting (`Summarization/prompt/<id>`); use YAML block literals (`value: \|`) for multi-line prompts
-- `/add-ai-webapi` uses sequential agent spawning -- subsequent runs extend the existing service file rather than duplicating it
-- Always rewrite Search Summary citation URLs -- the raw URLs point at a page that doesn't exist in SPA sites
+- `/add-ai-webapi` uses sequential agent spawning — subsequent runs extend the existing service file rather than duplicating it
+- Always rewrite Search Summary citation URLs — the raw URLs point at a page that doesn't exist in SPA sites
 
-## What's Next
+## What's next
 
 → [Lab 08: Performance, Testing, and Deploy](./08-performance-test-deploy.md)

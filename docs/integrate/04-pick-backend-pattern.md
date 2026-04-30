@@ -6,7 +6,7 @@ title: "Lab 04: Plan the Service Layer with /integrate-backend"
 
 # Lab 04: Plan the Service Layer with `/integrate-backend`
 
-## What You Will Build
+## What you will build
 
 A reviewed, sequenced integration plan for your prototype — every feature in the Supplier Invoice portal classified into Web API, Server Logic, Cloud Flow, or AI API — and the foundation artifacts kicked off by the orchestrator before you dive into the deep-dive labs (05, 06, 07, 08).
 
@@ -17,7 +17,7 @@ A reviewed, sequenced integration plan for your prototype — every feature in t
 - `/integrate-backend` available in your AI coding CLI session
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions` — the orchestrator uses AAD-scoped tokens that work without one.
 
-## Learning Objectives
+## Learning objectives
 
 By the end of this lab you will be able to:
 
@@ -38,9 +38,9 @@ The Web API pattern from Lab 03 covered straightforward CRUD. The Supplier Invoi
 
 ---
 
-## Part 1: Run `/integrate-backend`
+## Part 1: run `/integrate-backend`
 
-### Step 1.1: Launch the orchestrator
+### Step 1.1: launch the orchestrator
 
 In your AI coding CLI session:
 
@@ -56,7 +56,7 @@ The skill will:
 4. Open the plan in your browser for review
 5. After you approve, orchestrate the underlying skills (`/integrate-webapi`, `/add-server-logic`, `/add-cloud-flow`, `/add-ai-api`) in the correct order, pausing between major steps so you can review generated code and test the site
 
-### Step 1.2: Review the plan
+### Step 1.2: review the plan
 
 The plan that opens in your browser should show:
 
@@ -72,19 +72,19 @@ If something is misclassified — for example, the duplicate-PO check showing un
 
 ---
 
-## Part 2: Watch the orchestrator run
+## Part 2: watch the orchestrator run
 
 After you approve the plan, the orchestrator runs each step in sequence and pauses between them. You can stop anywhere, and resume by running `/integrate-backend` again.
 
-### Step 2.1: Web API foundation
+### Step 2.1: web API foundation
 
 The orchestrator runs `/integrate-webapi` first if your project does not already have a typed service layer. If you completed Lab 03 it detects the existing `src/services/webApi.ts`, `src/types/entities.ts`, and `src/services/invoiceService.ts` and skips ahead.
 
-### Step 2.2: Server Logic items
+### Step 2.2: server logic items
 
 For each feature classified as Server Logic, the orchestrator invokes `/add-server-logic`. It generates the sandbox JavaScript, the `.serverlogic.yml` metadata, the table-permission updates, and the React wiring — then pauses for review before deploying. Lab 05 walks through this in detail.
 
-### Step 2.3: Cloud Flow items
+### Step 2.3: cloud flow items
 
 For each notification or approval feature, the orchestrator invokes `/add-cloud-flow`, generates the `.cloudflowconsumer.yml` and the React trigger code, and pauses. Lab 06 covers this end-to-end.
 
@@ -96,7 +96,7 @@ For each summarization or grounded-search feature, the orchestrator invokes `/ad
 
 ---
 
-## Part 3: Verify the plan output
+## Part 3: verify the plan output
 
 After the orchestrator completes — or after you pause partway through — confirm the artifacts landed:
 
@@ -111,13 +111,13 @@ If any item is missing, run `/integrate-backend` again — the orchestrator dete
 
 ---
 
-## Part 4: Reference — The Four Patterns and the Decision Matrix
+## Part 4: reference — the four patterns and the decision matrix
 
 Use this section when you want to override the orchestrator's classification, run a single skill manually, or understand *why* a feature landed in one pattern rather than another.
 
-### The Four Patterns
+### The four patterns
 
-#### 1. Web API (Lab 03)
+#### 1. web API (Lab 03)
 
 You met this in Lab 03. The browser talks to Dataverse directly over OData.
 
@@ -134,7 +134,7 @@ flowchart LR
 | Good for | CRUD on Dataverse tables, filtered reads |
 | Bad for | Logic that must not be inspectable, external APIs, async work |
 
-#### 2. Server Logic (Lab 05)
+#### 2. server logic (Lab 05)
 
 Server-side JavaScript running in the Power Pages sandboxed runtime. The code lives in your repo under `.powerpages-site/server-logic/` and is reachable at `/_api/serverlogics/<name>`.
 
@@ -154,7 +154,7 @@ flowchart LR
 
 **Why it exists:** Some business rules must not run in the browser. A duplicate-invoice check that runs client-side can be skipped with DevTools. Server logic moves that check inside a runtime the user cannot inspect or bypass.
 
-#### 3. Cloud Flow (Lab 06)
+#### 3. cloud flow (Lab 06)
 
 Power Automate flow with the "When Power Pages calls a flow" trigger. The portal posts to `/_api/cloudflow/v1.0/trigger/<flowId>` with a payload wrapped in `eventData`.
 
@@ -174,7 +174,7 @@ flowchart LR
 
 **Why it exists:** When you need Teams notifications, Outlook emails, approval chains, or cross-system orchestration, you reach for Power Automate. Cloud flows give you that reach without writing integration code.
 
-#### 4. Generative AI API (Lab 07)
+#### 4. generative AI API (Lab 07)
 
 Preview APIs built into Power Pages: Search Summary (`/_api/search/v1.0/summary`) and Data Summarization (`/_api/summarization/data/v1.0/`).
 
@@ -193,7 +193,7 @@ flowchart LR
 
 **Why it exists:** Dropping raw Azure OpenAI credentials in a browser is unsafe. These APIs expose vetted prompt templates through a managed gateway, with governance controls at tenant, environment, and site level.
 
-### Decision Matrix
+### Decision matrix
 
 Use this when you are not sure which pattern fits, or when reviewing a misclassification in the orchestrator's plan.
 
@@ -218,7 +218,7 @@ Use this when you are not sure which pattern fits, or when reviewing a misclassi
 | Dropping an Azure OpenAI SDK call in the browser | Key leakage, prompt injection from URL params, no governance | Use Data Summarization / Search Summary APIs — Microsoft-managed gateway, prompts live as site settings. |
 | Server logic that only returns `{ valid: true/false }` | The client can skip the POST and write directly via Web API, bypassing the rule. | Make the server logic do both: validate **and** perform the Dataverse write in one call. |
 
-### Common Confusion
+### Common confusion
 
 **"Cloud flow vs. server logic — they both run on the server?"**
 
@@ -255,7 +255,7 @@ You have completed this lab when:
 - [ ] The site has been deployed since the orchestrator's last step, and the new endpoints respond on the live URL
 - [ ] No prototype feature in the plan still uses mock data
 
-### Generic Debug Prompt
+### Generic debug prompt
 
 If `/integrate-backend` produces a plan that does not match your intent, paste this into your AI coding CLI:
 
@@ -284,7 +284,7 @@ If `/integrate-backend` will not start, or the plan never opens:
 3. Run a single underlying skill manually to isolate where the problem is — `/integrate-webapi`, `/add-server-logic`, `/add-cloud-flow`, or `/add-ai-api`. If a single skill works, the issue is in the orchestrator integration, not the skill itself.
 4. If the plan classification looks completely off, the orchestrator may not be reading your prototype correctly. Add explicit intent comments in the React components (e.g., `// Server-side rule: PO numbers must be unique across all suppliers`) and re-run.
 
-## Key Takeaways
+## Key takeaways
 
 - `/integrate-backend` is the meta-skill for the entire integration phase — it plans, classifies, and orchestrates Labs 05-08 from a single prompt
 - Four patterns cover almost every Power Pages integration: Web API (browser CRUD), Server Logic (tamper-proof rules and external APIs), Cloud Flow (notifications and approvals), AI API (summarization and grounded search)
@@ -293,6 +293,6 @@ If `/integrate-backend` will not start, or the plan never opens:
 - Validate-and-execute beats validate-only for any browser-bypassable rule
 - The site must be deployed for Server Logic and Cloud Flow endpoints to respond — local development cannot exercise these patterns end-to-end
 
-## What's Next
+## What's next
 
 → [Lab 05: Add Server Logic](./05-add-server-logic.md) — dive deep into the Server Logic pattern, especially when you want to understand or customize what the orchestrator generated.

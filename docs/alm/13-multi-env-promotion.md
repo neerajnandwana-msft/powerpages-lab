@@ -6,7 +6,7 @@ title: "Lab 13: Multi-Environment Promotion"
 
 # Lab 13: Multi-Environment Promotion
 
-## What You Will Learn
+## What you will learn
 
 How Power Platform Pipelines moves your managed solution from integration → pre-prod → prod, prompting for environment variable values per stage, with manual approval gating the final prod deploy. This lab is observational (a demo against a presenter-managed environment set) — the takeaway is the conceptual map and the URLs to come back to when you set this up for your own org.
 
@@ -15,7 +15,7 @@ How Power Platform Pipelines moves your managed solution from integration → pr
 - Completed [Lab 12: CI/CD with GitHub Actions](./12-cicd-github-actions.md) (CI deploys to your integration env)
 - Watching only — this lab walks through demo flows against a presenter-managed environment set, not hands-on configuration
 
-## Learning Objectives
+## Learning objectives
 
 By the end of this lab you will be able to:
 
@@ -26,7 +26,7 @@ By the end of this lab you will be able to:
 
 ---
 
-## Why Pipelines, Why Now
+## Why pipelines, why now
 
 Your Lab 12 GitHub Actions workflow deploys to **one** environment (your integration env). It can't promote between environments because it has no concept of "the same change moving through stages with approvals."
 
@@ -41,11 +41,11 @@ Further reading: [Power Platform pipelines](https://learn.microsoft.com/power-pl
 
 ---
 
-## The Admin Setup You Don't See
+## The admin setup you Don't see
 
-Before you can run a promotion, your **Power Platform admin** sets up the host environment, pipeline definition, and stages *off-stage*. You don't author this from scratch every time -- it's a one-time admin activity per pipeline. Knowing what exists matters for two reasons: (a) you'll know what to ask your admin for in your own org, and (b) if you're the admin, you'll know where to start.
+Before you can run a promotion, your **Power Platform admin** sets up the host environment, pipeline definition, and stages *off-stage*. You don't author this from scratch every time — it's a one-time admin activity per pipeline. Knowing what exists matters for two reasons: (a) you'll know what to ask your admin for in your own org, and (b) if you're the admin, you'll know where to start.
 
-### The Pieces
+### The pieces
 
 | Piece | What it is | Who owns it |
 |---|---|---|
@@ -56,25 +56,25 @@ Before you can run a promotion, your **Power Platform admin** sets up the host e
 | **Approval flows (optional)** | Power Automate flows attached to a stage that gate promotion behind a manual approval. We'll see this in the prod-deploy section below. | Power Platform admin (often co-built with maker / dev lead) |
 | **Security roles** | `Deployment Pipeline User` on the host env for makers; `Deployment Pipeline Administrator` for admins. | Power Platform admin |
 
-### What This Means for You
+### What this means for you
 
 When you go back to your org and want to set up pipelines:
 
 - **You're a developer:** ask your Power Platform admin to set up a pipeline definition pointing at your dev → integration → pre-prod → prod environments, and grant you `Deployment Pipeline User` on the host env. Then you can trigger promotions from the maker portal.
-- **You're the admin:** start at [Power Platform pipelines -- Set up pipelines](https://learn.microsoft.com/power-platform/alm/pipelines#set-up-pipelines). It's a one-time setup, not per-developer.
+- **You're the admin:** start at [Power Platform pipelines — Set up pipelines](https://learn.microsoft.com/power-platform/alm/pipelines#set-up-pipelines). It's a one-time setup, not per-developer.
 - **Your org doesn't have a host environment yet:** the admin creates one (it can be the existing default environment). Pipelines requires it before stages can be defined.
 
-This is a typical separation of concerns -- pipelines admin is one-time platform work, individual deploys are the everyday developer activity.
+This is a typical separation of concerns — pipelines admin is one-time platform work, individual deploys are the everyday developer activity.
 
-Further reading: [Power Platform pipelines -- Set up pipelines](https://learn.microsoft.com/power-platform/alm/pipelines#set-up-pipelines), [Power Pages pipelines](https://learn.microsoft.com/power-pages/configure/power-pages-pipelines)
+Further reading: [Power Platform pipelines — Set up pipelines](https://learn.microsoft.com/power-platform/alm/pipelines#set-up-pipelines), [Power Pages pipelines](https://learn.microsoft.com/power-pages/configure/power-pages-pipelines)
 
 ---
 
-## The Demo: Integration → Pre-prod
+## The demo: integration → Pre-prod
 
 The presenter's environment set is configured as: **Dev → Integration → Pre-prod → Prod**. We'll watch a promotion from integration to pre-prod.
 
-### Step 1: Confirm the Integration State
+### Step 1: confirm the integration state
 
 In the integration env (the same one your Lab 12 CI deployed to):
 
@@ -82,7 +82,7 @@ In the integration env (the same one your Lab 12 CI deployed to):
 2. Confirm the version matches what Lab 12's CI just deployed
 3. Confirm the site is active and the latest dashboard heading is live
 
-### Step 2: Trigger the Pipeline and Supply Environment Variable Values
+### Step 2: trigger the pipeline and supply environment variable values
 
 In the host environment, open the **Pipelines** app:
 
@@ -91,7 +91,7 @@ In the host environment, open the **Pipelines** app:
 3. Select **Deploy here**
 4. **Pipelines prompts for environment variable values.** This is the wiring from Lab 10 paying off: the solution carries the `cr_searchenabled` environment variable definition, and Pipelines now asks what value pre-prod should use. Set it to `No` (or whatever pre-prod-specific value you need), then confirm.
 
-For more on how environment variable values are supplied during pipeline deployments, see [Use environment variables with site settings -- Pipelines](https://learn.microsoft.com/power-pages/configure/environment-variables-for-site-settings#manage-environment-variables).
+For more on how environment variable values are supplied during pipeline deployments, see [Use environment variables with site settings — Pipelines](https://learn.microsoft.com/power-pages/configure/environment-variables-for-site-settings#manage-environment-variables).
 
 The pipeline:
 
@@ -101,7 +101,7 @@ The pipeline:
 
 Run time: typically 1-3 minutes for a small solution.
 
-### Step 3: Reactivate the Site in Pre-prod
+### Step 3: reactivate the site in Pre-prod
 
 The site object lives inside the solution, but the actual *runtime* (the public URL serving the SPA) is environment-specific and **does not auto-activate** after the import. Our pre-prod environment now has the solution with the site definition in it, but the site is inactive.
 
@@ -113,9 +113,9 @@ To activate:
 4. Wait 1-2 minutes for provisioning
 5. Confirm the pre-prod portal URL serves the latest content
 
-> **Why this is a separate step:** the Dataverse solution carries the site definition, table permissions, web roles, and site settings. The runtime activation -- spinning up the actual public URL with the SPA bundle -- is a per-environment provisioning step that the pipeline doesn't (and arguably shouldn't) automate. It's the same reason `/activate-site` was its own step earlier in the track.
+> **Why this is a separate step:** the Dataverse solution carries the site definition, table permissions, web roles, and site settings. The runtime activation — spinning up the actual public URL with the SPA bundle — is a per-environment provisioning step that the pipeline doesn't (and arguably shouldn't) automate. It's the same reason `/activate-site` was its own step earlier in the track.
 
-### Step 4: Clear the Site Cache
+### Step 4: clear the site cache
 
 After Pipelines applies the env variable values you supplied in Step 2, the site needs a cache flush before the new values surface in the UI.
 
@@ -125,13 +125,13 @@ Pick one of:
 - Sign in to the pre-prod portal as an admin, browse to `/_services/about`, select **Clear cache**
 - Restart the portal from the Power Platform admin center
 
-### Step 5: Hand the Site to QA
+### Step 5: hand the site to QA
 
 The pre-prod env now serves the site with everything Lab 12's CI deployed to integration. QA / test engineers run their certification suite here. If the suite passes, this same managed solution is what promotes to prod next.
 
 ---
 
-## Promote to Production with Manual Approval
+## Promote to production with manual approval
 
 The same `supplier-portal-promotion` pipeline has one more stage: **pre-prod → prod**. This stage has an **approval flow** attached — a Power Automate flow that intercepts the deploy request and routes it for human sign-off before the pipeline imports anything into prod.
 
@@ -141,7 +141,7 @@ The approver can be:
 - A group (anyone in the Release Approvers Microsoft 365 group)
 - A multi-stage chain (engineering manager AND security review AND product owner)
 
-### The Flow
+### The flow
 
 ```mermaid
 flowchart TD
@@ -159,7 +159,7 @@ flowchart TD
     C --> D --> E --> F --> G --> H
 ```
 
-### What the Demo Shows
+### What the demo shows
 
 When the presenter triggers the pre-prod → prod stage, watch:
 
@@ -172,11 +172,11 @@ When the presenter triggers the pre-prod → prod stage, watch:
 
 End-to-end (committed change → prod): hours to days, with humans in the loop at every promotion gate.
 
-Further reading: [Power Platform pipelines -- approvals](https://learn.microsoft.com/power-platform/alm/pipelines), [Power Pages pipelines](https://learn.microsoft.com/power-pages/configure/power-pages-pipelines)
+Further reading: [Power Platform pipelines — approvals](https://learn.microsoft.com/power-platform/alm/pipelines), [Power Pages pipelines](https://learn.microsoft.com/power-pages/configure/power-pages-pipelines)
 
 ---
 
-## The Weekly Cadence
+## The weekly cadence
 
 In our recommended setup, the integration → pre-prod promotion runs **once a week** (typically Friday afternoon) so QA has the weekend to certify a stable build for Monday's prod release window.
 
@@ -195,9 +195,9 @@ The flow definition is straightforward: a **Recurrence** trigger (UTC schedule),
 
 ---
 
-## Three Tools, Three Layers
+## Three tools, three layers
 
-You now have three pieces in play. They're complementary, not competing -- each owns a layer of the delivery story.
+You now have three pieces in play. They're complementary, not competing — each owns a layer of the delivery story.
 
 | Tool | Owns | Don't use it for |
 |---|---|---|
@@ -207,13 +207,13 @@ You now have three pieces in play. They're complementary, not competing -- each 
 
 A typical delivery for a single change goes:
 
-1. Developer opens a PR -- GitHub Actions runs build + tests, doesn't deploy
-2. PR merges to `main` -- GitHub Actions deploys solution + SPA to integration env; site settings resolve via the integration env's environment variable values
-3. Friday afternoon -- Power Automate triggers Power Platform Pipelines to promote the managed solution from integration to pre-prod; the operator (or scheduled flow with stored values) supplies pre-prod values for each environment variable
+1. Developer opens a PR — GitHub Actions runs build + tests, doesn't deploy
+2. PR merges to `main` — GitHub Actions deploys solution + SPA to integration env; site settings resolve via the integration env's environment variable values
+3. Friday afternoon — Power Automate triggers Power Platform Pipelines to promote the managed solution from integration to pre-prod; the operator (or scheduled flow with stored values) supplies pre-prod values for each environment variable
 4. Pre-prod sits over the weekend for QA certification
-5. Monday -- approver clicks "Approve" on the Pipelines pre-prod → prod stage; managed solution lands in prod with prod-specific env variable values
+5. Monday — approver clicks "Approve" on the Pipelines pre-prod → prod stage; managed solution lands in prod with prod-specific env variable values
 
-Each tool does the part it's best at. Environment variables for site settings is what makes multi-env config tractable on SPA sites -- no per-env workflow plumbing required.
+Each tool does the part it's best at. Environment variables for site settings is what makes multi-env config tractable on SPA sites — no per-env workflow plumbing required.
 
 ---
 
@@ -230,15 +230,25 @@ You have completed this lab when:
 
 ---
 
-## Key Takeaways
+## Fallback
+
+If Power Platform Pipelines is not available in your tenant, your admin has not set up host/stage envs, or pipeline runs keep failing:
+
+1. **Confirm the host environment.** Pipelines requires a dedicated **host environment** with the Pipelines app installed. Without it nothing in this lab works. Ask your Power Platform admin whether one exists and whether your user has the **Deployment Pipeline User** role.
+2. **Multi-env without Pipelines (interim).** You can promote between environments using the same `pac solution import` flow from Lab 10, applied per target environment, supplying environment variable values on each import (manually in the maker portal or via a parameterised script). It loses the audit trail and approval gates Pipelines provides, but the deploy itself works.
+3. **Fewer environments (smaller setup).** If your tenant only has dev + prod (no integration or pre-prod), collapse the pipeline to a two-stage flow with a manual approval before prod. The mechanics from this lab still apply — you have fewer stages.
+4. **Reactivation step is still manual.** Whether you use Pipelines or a fallback, reactivating the SPA site after import is a Power Pages admin centre action. There is no first-class CLI for it today.
+5. **Cache clear after env variable changes.** Independent of how the solution arrived in the target env, environment variable value changes need a site-cache clear (Sync, `/_services/about` → Clear cache, or portal restart) before the new value surfaces.
+
+## Key takeaways
 
 - Power Platform Pipelines moves **managed solutions** between environments; the integration env exports as managed for downstream stages
-- Pipelines **prompts for environment variable values per stage** -- this is the payoff from Lab 10's site-setting wiring
-- Pipelines admin setup (host env, pipeline definitions, stages, security roles) is one-time platform work owned by your Power Platform admin -- not a per-developer task
+- Pipelines **prompts for environment variable values per stage** — this is the payoff from Lab 10's site-setting wiring
+- Pipelines admin setup (host env, pipeline definitions, stages, security roles) is one-time platform work owned by your Power Platform admin — not a per-developer task
 - After every pipeline import, **the site needs a manual reactivation** in the target env
 - After environment variable values change, **clear the site cache** (Sync, `/_services/about` → Clear cache, or restart the portal)
 - Three tools, three layers: GH Actions (code build + upload), Pipelines (solution + env variable promotion), env variables (site setting values per env)
 
-## What's Next
+## What's next
 
 You've reached the end of the lab track. To keep learning, see the resources list and optional next steps in the [track overview](../intro.md).

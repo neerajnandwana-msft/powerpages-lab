@@ -6,7 +6,7 @@ title: "Lab 08: Performance, Testing, and Deploy"
 
 # Lab 08: Performance, Testing, and Deploy
 
-## What You Will Build
+## What you will build
 
 A polished, deployed portal: bundle analyzed and split for fast first paint, automated end-to-end tests passing via `/test-site`, and the latest build live in your integration environment. The ALM labs that follow promote this build through pre-prod and prod.
 
@@ -16,7 +16,7 @@ A polished, deployed portal: bundle analyzed and split for fast first paint, aut
 - `npm run build` completes without errors in your project directory
 - Deployed site is reachable and responsive
 
-## Learning Objectives
+## Learning objectives
 
 By the end of this lab you will be able to:
 
@@ -29,11 +29,11 @@ By the end of this lab you will be able to:
 
 ---
 
-## Part 1: Performance
+## Part 1: performance
 
 Power Pages SPAs are bundled with Vite and served from the Power Pages CDN. The main wins come from three things: shipping less JavaScript, splitting what you do ship into route-sized chunks, and preloading the chunks that matter first.
 
-### Step 1.1: Analyze the Current Bundle
+### Step 1.1: analyze the current bundle
 
 Install the visualizer and run it against a production build:
 
@@ -48,7 +48,7 @@ A browser tab opens showing a treemap of every chunk in your `dist/` folder. Loo
 |--------|-------------------|
 | A single 800 KB+ chunk containing every route | Missing route-level code splitting |
 | Large vendor dependencies you don't use directly | Transitive deps that came in via a package you can replace |
-| Duplicate copies of the same library | Multiple versions in `node_modules` -- check `npm ls <package>` |
+| Duplicate copies of the same library | Multiple versions in `node_modules` — check `npm ls <package>` |
 
 For the supplier portal, a healthy main chunk is ~200 KB gzipped with separate chunks for each page route.
 
@@ -60,7 +60,7 @@ connection. Check how large the app is when it ships to users, and
 tell me the single most impactful change I can make to speed it up.
 ```
 
-### Step 1.2: Route-Level Code Splitting with React.lazy
+### Step 1.2: Route-Level Code splitting with React.lazy
 
 Ask your AI coding CLI to apply the change. Either of these prompts works — use whichever matches your style:
 
@@ -82,7 +82,7 @@ shell, router, and shared services should stay in it. Add a
 Suspense fallback with a simple "Loading..." message.
 ```
 
-Expected outcome: Vite automatically creates one chunk per dynamic `import()`. Rerun `npx vite-bundle-visualizer` -- you should see one chunk per page, and the main bundle shrinks to the shell, shared services, and the first route.
+Expected outcome: Vite automatically creates one chunk per dynamic `import()`. Rerun `npx vite-bundle-visualizer` — you should see one chunk per page, and the main bundle shrinks to the shell, shared services, and the first route.
 
 For reference, the hand-written version looks like:
 
@@ -103,7 +103,7 @@ const Search = lazy(() => import('./pages/Search'));
 </Suspense>
 ```
 
-### Step 1.3: Keep `bundleFilePatterns` in Sync After Splitting
+### Step 1.3: keep `bundleFilePatterns` in sync after splitting
 
 Code splitting creates a side-effect you have to handle: Vite now emits a new hashed chunk per route (e.g. `Dashboard-A1b2C3.js`, `InvoiceList-X9Y8Z7.js`) and those filenames change on every build. Power Pages won't clean up old chunks on its own — you have to tell PAC CLI about them.
 
@@ -226,7 +226,7 @@ Alternatively, npm will auto-run a script named `postbuild` after `build` — if
 3. Run `/deploy-site`. In the PAC CLI deploy output, you should see old bundles being removed before new ones are uploaded.
 4. Commit both `scripts/postbuild.js` and the updated `powerpages.config.json`. From now on, any teammate who adds or renames a route gets the config update for free on their next `npm run build`.
 
-### Step 1.4: Memoize the Invoice List Rows
+### Step 1.4: memoize the invoice list rows
 
 Ask your AI coding CLI to handle it:
 
@@ -239,9 +239,9 @@ unnecessarily. Make the list feel responsive.
 Two gotchas to verify after Claude is done:
 
 - `onClick` must be stable across renders. Wrap it with `useCallback` in the parent or it defeats the memo.
-- Don't memoize tiny components -- the comparison can cost more than the re-render you saved. Rows with computed cells, status badges, and money formatting are worth it.
+- Don't memoize tiny components — the comparison can cost more than the re-render you saved. Rows with computed cells, status badges, and money formatting are worth it.
 
-### Step 1.5: Preload the Critical Route Chunk (Optional)
+### Step 1.5: preload the critical route chunk (optional)
 
 With `React.lazy`, the first navigation pays a round-trip to fetch the chunk. Preloading the Dashboard chunk (most common landing page) shaves that cost.
 
@@ -254,7 +254,7 @@ fast as possible, even if other pages take slightly longer.
 
 Skip this step if you're short on time. The bigger wins are in Steps 1.2 and 1.4.
 
-### Step 1.6: Rebuild and Remeasure
+### Step 1.6: rebuild and remeasure
 
 ```bash
 npm run build
@@ -273,15 +273,15 @@ Open DevTools → Network tab → throttle to "Slow 3G" → reload the deployed 
 
 ---
 
-## Part 2: End-to-End Testing with /test-site
+## Part 2: End-to-End testing with /test-site
 
-### Step 2.1: What /test-site Does
+### Step 2.1: what /test-site does
 
-The `/test-site` plugin command launches Playwright against your deployed site and runs an AI-driven test pass -- it navigates pages, submits the Submit Invoice form, verifies API responses, and reports failures with screenshots.
+The `/test-site` plugin command launches Playwright against your deployed site and runs an AI-driven test pass — it navigates pages, submits the Submit Invoice form, verifies API responses, and reports failures with screenshots.
 
 Unlike a static test suite, the test prompts are described in natural language. You tell your AI coding CLI what behaviors to verify; the plugin translates them into Playwright steps.
 
-### Step 2.2: Run a Smoke Test
+### Step 2.2: run a smoke test
 
 In your AI coding CLI:
 
@@ -305,7 +305,7 @@ Your AI coding CLI will:
 4. Execute each step, capturing screenshots and network logs
 5. Report pass/fail with context
 
-### Step 2.3: Review the Output
+### Step 2.3: review the output
 
 `/test-site` writes results to `test-results/` in your project. For each step, you get:
 
@@ -330,7 +330,7 @@ A clean smoke test looks like:
 9 passed, 0 failed in 16.4s
 ```
 
-### Step 2.4: Debugging a Failing Step
+### Step 2.4: debugging a failing Step
 
 If any step fails, ask your AI coding CLI to investigate:
 
@@ -342,7 +342,7 @@ what went wrong.
 
 The agent will inspect the screenshot, read the Power Pages diagnostics logs, and propose a fix. Common causes: server logic deploy didn't land, CSRF token expired, table permission missing.
 
-### Step 2.5: Scenario Test (Optional)
+### Step 2.5: scenario test (optional)
 
 If time permits, run a longer scenario test:
 
@@ -360,20 +360,20 @@ This exercises every integration layer built over two days.
 
 ---
 
-## Part 3: Deploy to the Integration Environment
+## Part 3: deploy to the integration environment
 
-### Step 3.1: Pre-Deploy Checklist
+### Step 3.1: Pre-Deploy checklist
 
 Before deploying the latest build, confirm:
 
 - [ ] `npm run build` completes without errors or warnings
 - [ ] The production bundle is under 400 KB main chunk (check with visualizer)
 - [ ] `/test-site` smoke test passed end-to-end
-- [ ] `CLAUDE.md` is up to date -- future sessions will pick it up as context
+- [ ] `CLAUDE.md` is up to date — future sessions will pick it up as context
 
 > **Note:** The ALM labs (starting with Lab 09) introduce source control (`git init`, `gh repo create`) and automated CI/CD via GitHub Actions. For now, your local project directory is the source of truth — deploy directly with `/deploy-site` as you have been.
 
-### Step 3.2: Run /deploy-site
+### Step 3.2: run /deploy-site
 
 ```
 /deploy-site
@@ -381,15 +381,15 @@ Before deploying the latest build, confirm:
 
 The plugin walks through:
 
-1. **Environment check** -- confirms `pac org who` matches your integration environment
-2. **Build** -- runs `npm run build` fresh
-3. **Site check** -- confirms the site is activated and reachable
-4. **Upload** -- runs `pac pages upload-code-site --rootPath "."`
-5. **Verification** -- opens the live URL and confirms a 200 response
+1. **Environment check** — confirms `pac org who` matches your integration environment
+2. **Build** — runs `npm run build` fresh
+3. **Site check** — confirms the site is activated and reachable
+4. **Upload** — runs `pac pages upload-code-site --rootPath "."`
+5. **Verification** — opens the live URL and confirms a 200 response
 
 Expected duration: 1-3 minutes depending on bundle size and network.
 
-### Step 3.3: Live Verification
+### Step 3.3: live verification
 
 After the deploy completes, open the site in a fresh incognito window and run through the critical paths:
 
@@ -402,7 +402,7 @@ After the deploy completes, open the site in a fresh incognito window and run th
 | Invoice Detail | Copilot summary card renders within 5s |
 | Search → "overdue invoices" | AI summary with clickable citations |
 
-### Step 3.4: Confirm Observability
+### Step 3.4: confirm observability
 
 Open the Power Pages design studio → **Diagnostics** for your site. The last 5 minutes of logs should show:
 
@@ -411,9 +411,9 @@ Open the Power Pages design studio → **Diagnostics** for your site. The last 5
 - Cloud flow triggers logged as `/cloudflow/trigger/...`
 - Summarization calls under `/summarization/data/v1.0/`
 
-If a layer is silent, something is wired wrong -- re-run `/test-site` with the affected step to isolate.
+If a layer is silent, something is wired wrong — re-run `/test-site` with the affected step to isolate.
 
-### Step 3.5: Note the Deploy State
+### Step 3.5: note the deploy state
 
 Take a quick mental snapshot before moving into the ALM labs:
 
@@ -428,13 +428,13 @@ Take a quick mental snapshot before moving into the ALM labs:
 
 | Problem | Fix |
 |---------|-----|
-| `vite-bundle-visualizer` shows a huge `index` chunk | Route-level splitting not applied -- ensure `React.lazy` imports are dynamic (`() => import(...)`), not static |
+| `vite-bundle-visualizer` shows a huge `index` chunk | Route-level splitting not applied — ensure `React.lazy` imports are dynamic (`() => import(...)`), not static |
 | Lazy routes cause a white flash between pages | Add a global `<Suspense fallback>` in `App.tsx`; consider a skeleton screen for the first route |
 | `React.memo` doesn't stop re-renders | `onClick` or other prop is a new reference every render; wrap parent handlers in `useCallback` |
 | `/test-site` can't sign in | Make sure the test account has a pre-existing Contact in Dataverse; first sign-in triggers Contact creation which breaks scripted flows |
-| `/deploy-site` fails with "unauthorized" | `pac auth list` -- Active auth may have expired mid-session; run `pac auth create --environment <url>` |
+| `/deploy-site` fails with "unauthorized" | `pac auth list` — Active auth may have expired mid-session; run `pac auth create --environment <url>` |
 | Deploy succeeds but site shows stale content | Hard refresh (Ctrl+Shift+R) or use an incognito window to bypass browser cache |
-| Bundle size grew after adding the AI features | Normal -- the AI hooks and error types add ~15 KB. If growth is larger, check the visualizer for duplicate dependencies |
+| Bundle size grew after adding the AI features | Normal — the AI hooks and error types add ~15 KB. If growth is larger, check the visualizer for duplicate dependencies |
 
 ## Verification
 
@@ -455,14 +455,14 @@ If the deploy fails:
 1. If `pac pages upload-code-site` fails mid-upload, the site may be in an inconsistent state. Run `/activate-site` to reset, then redeploy.
 2. If a previous deploy left the env in a bad state, the site can be redeployed cleanly from the current directory without losing work.
 
-## Key Takeaways
+## Key takeaways
 
 - Bundle analysis with `vite-bundle-visualizer` exposes the problems you can't see in code
 - Route-level code splitting with `React.lazy` is the single highest-leverage perf change for any Power Pages SPA
-- `React.memo` wins on list rows but only when prop references are stable -- pair with `useCallback`
+- `React.memo` wins on list rows but only when prop references are stable — pair with `useCallback`
 - `/test-site` runs Playwright with natural-language prompts, giving you smoke coverage without writing a test file
 - `/deploy-site` to the integration env is the handoff between the integration phase and the ALM phase; the ALM labs take this same build through real production via source control + Pipelines
 
-## What's Next
+## What's next
 
 → [Lab 09: Source Control](../alm/09-source-control.md)
