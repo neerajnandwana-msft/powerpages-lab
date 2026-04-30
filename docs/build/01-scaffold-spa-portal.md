@@ -49,12 +49,6 @@ flowchart TD
 - Authentication uses server-side session cookies managed by Power Pages
 - The site is deployed as compiled static files -- no server-side rendering
 
-> **Why server logic matters.** Of the four runtime surfaces above, server logic is the one that lets you do work the browser cannot do safely or efficiently:
->
-> - **Consolidate multiple operations into one round-trip.** A single `/_api/serverlogics/<name>` call can read several Dataverse rows, run validation, then create or update records atomically -- the browser only sees one request and one response. The validate-and-execute pattern in Lab 05 is the canonical example.
-> - **Invoke Dataverse custom actions and bound functions.** `Server.Connector.Dataverse` can call custom actions (`ExecuteAction`) and bound/unbound functions, not just raw CRUD -- so business logic that already exists in your Dataverse environment is reachable from the SPA without re-implementing it.
-> - **Call external services securely.** `Server.Connector.HttpClient` makes outbound REST calls (Azure Functions, partner APIs, ERP systems) using credentials stored in site settings -- the browser never sees the secret, and the call originates from a trusted server, not a user's tab.
-
 ### SPA vs Traditional Liquid
 
 | Aspect | Traditional (Liquid) | SPA site |
@@ -65,16 +59,12 @@ flowchart TD
 | **Deployment** | Sync via portal management | `pac pages upload-code-site` |
 | **Data access** | Liquid entities + Web API | Web API only (`/_api/`) |
 | **Customization** | Constrained by Liquid capabilities | Full framework flexibility |
+| **Power BI embedded** | Supported via `{% powerbi %}` Liquid tag | Not supported |
 | **Developer experience** | Portal-specific skills needed | Standard frontend skills transfer |
 
 ### Supported Frameworks
 
-| Framework | Build Tool | Output Path |
-|-----------|-----------|-------------|
-| React | Vite | `dist` |
-| Angular | Angular CLI | `dist/{project-name}/browser` |
-| Vue | Vite | `dist` |
-| Astro | Astro (static mode) | `dist` |
+Power Pages SPA sites support four frameworks: **React** (built with Vite), **Angular** (Angular CLI), **Vue** (Vite), and **Astro** in static mode.
 
 **Constraints:**
 - No server-side rendering (SSR) -- Next.js, Nuxt, Remix, and SvelteKit are not supported

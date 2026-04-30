@@ -120,20 +120,22 @@ Instead, we **unpack** the zip into XML and JSON files (one file per component) 
 ```mermaid
 flowchart LR
     Dev["Dev environment<br/>(your Power Platform org from Days 1-2)"]
-    ZipOut["build/solution.zip<br/>(exported)"]
+    ZipOut["build/SupplierPortal.zip<br/>(exported)"]
     Src["src/solution/<br/>committed to Git<br/>(XML/JSON, one file per component)"]
-    ZipIn["build/solution.zip<br/>(re-packed)"]
+    ZipIn["build/SupplierPortal.zip<br/>(re-packed)"]
 
     Dev -->|"1. pac solution export"| ZipOut
     ZipOut -->|"2. pac solution unpack"| Src
     Src -->|"3. git commit + push + PR review"| Src
-    Src -->|"4. pac solution pack"| ZipIn
+    Src -->|"4. bump version + pac solution pack"| ZipIn
     ZipIn -->|"5. pac solution import"| Dev
 ```
 
-### Step 1: Export and Unpack
+Each numbered arrow above maps one-to-one to a sub-step below.
 
-Authenticate against your dev env, export the solution as **unmanaged**, then unpack into source:
+### Step 1: Export
+
+Authenticate against your dev env and export the solution as **unmanaged**:
 
 ```bash
 pac auth list
@@ -141,12 +143,21 @@ pac org who
 
 mkdir -p build src/solution
 pac solution export --name SupplierPortal --path build --overwrite
+```
+
+The export lands as `build/SupplierPortal.zip` -- already blocked by `.gitignore`.
+
+### Step 2: Unpack
+
+Unpack the zip into source so reviewers can see structured, diffable XML/JSON:
+
+```bash
 pac solution unpack --zipfile build/SupplierPortal.zip --folder src/solution --packagetype Unmanaged
 ```
 
-The export lands as `build/SupplierPortal.zip` -- already blocked by `.gitignore`. The unpack populates `src/solution/` with directories like `Entities/`, `WebRoles/`, `SiteSettings/`, `TablePermissions/` -- one XML/JSON file per component. Spend a minute with `ls src/solution` to see the structure.
+This populates `src/solution/` with directories like `Entities/`, `WebRoles/`, `SiteSettings/`, `TablePermissions/` -- one XML/JSON file per component. Spend a minute with `ls src/solution` to see the structure.
 
-### Step 2: Commit and Push
+### Step 3: Commit, Push, and Review
 
 ```bash
 git add src/solution .gitignore
@@ -157,25 +168,27 @@ git push
 
 Open the GitHub web view (`gh repo view --web`), click into `src/solution/`. This is what your reviewers will see -- structured, diffable, auditable. A new column appears as a single XML attribute change. A new web role appears as a single new file.
 
-### Step 3: Reverse Direction -- Pull, Pack, Import
+### Step 4: Bump Version and Pack
 
-When you (or a teammate) pull a branch with solution changes, reassemble the zip and import locally:
+When you (or a teammate) pull an approved branch, first bump the version, then re-pack the source into a zip. The version stamp is what lets CI and humans tell deploys apart:
 
 ```bash
 git pull origin main
+pac solution online-version --solution-name SupplierPortal   # or bump in maker portal solution settings
 pac solution pack --folder src/solution --zipfile build/SupplierPortal.zip --packagetype Unmanaged
+```
+
+In Lab 12, the CI pipeline bumps the version automatically before each integration deploy.
+
+### Step 5: Import
+
+Import the re-packed zip into the target environment to apply the changes:
+
+```bash
 pac solution import --path build/SupplierPortal.zip --force-overwrite --publish-changes
 ```
 
 `--force-overwrite` lets the import overwrite components that already exist. `--publish-changes` publishes customizations after the import so they're live without a manual publish.
-
-### Step 4: Stamp the Version (Used by CI in Lab 12)
-
-```bash
-pac solution online-version --solution-name SupplierPortal
-```
-
-Bump the version in maker portal solution settings, or let Lab 12's CI pipeline bump it automatically before each integration deploy.
 
 ---
 
