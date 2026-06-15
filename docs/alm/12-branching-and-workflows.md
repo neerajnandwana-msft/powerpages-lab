@@ -1,10 +1,10 @@
 ---
 sidebar_position: 3
-sidebar_label: "Lab 11: Branching and Workflows"
-title: "Lab 11: Branching Strategy and Developer Workflows"
+sidebar_label: "Lab 12: Branching and Workflows"
+title: "Lab 12: Branching Strategy and Developer Workflows"
 ---
 
-# Lab 11: Branching Strategy and Developer Workflows
+# Lab 12: Branching Strategy and Developer Workflows
 
 ## What you will build
 
@@ -12,9 +12,9 @@ A working understanding of trunk-based development applied to an SPA-site repo, 
 
 ## Prerequisites
 
-- Completed [Lab 09: Source Control](./09-source-control.md) (Git repo on GitHub)
-- Completed [Lab 10: Solution Packaging and Dataverse Dependencies](./10-solution-and-dependencies.md) (`src/solution/` tree committed)
-- Branch protection on `main` enabled (Lab 09, Step 6) — if you skipped it, enable it now or expect direct pushes to `main` instead of PRs
+- Completed [Lab 10: Source Control](./10-source-control.md) (Git repo on GitHub)
+- Completed [Lab 11: Solution Packaging and Dataverse Dependencies](./11-solution-and-dependencies.md) (`src/solution/` tree committed)
+- Branch protection on `main` enabled (Lab 10, Step 6) — if you skipped it, enable it now or expect direct pushes to `main` instead of PRs
 
 ## Learning objectives
 
@@ -23,6 +23,8 @@ By the end of this lab you will be able to:
 1. Choose between trunk-based and GitFlow for an SPA-site repo, with a defensible reason
 2. Run the three core developer workflows (feature development, rollback, hotfix) end-to-end on the supplier portal repo
 3. Read a PR diff that mixes SPA code changes and Dataverse XML changes, and review both in one place
+
+> **Further reading:** [Adopt a Git branching strategy](https://learn.microsoft.com/azure/devops/repos/git/git-branching-guidance) · [Microsoft Power Platform ALM basics](https://learn.microsoft.com/power-platform/alm/basics-alm) · [How Microsoft uses Git internally (Release Flow)](https://learn.microsoft.com/devops/develop/how-microsoft-develops-devops)
 
 ---
 
@@ -43,8 +45,8 @@ A strategy that extends these three pillars without contradicting them is the st
 SPA-site repos suit the feature-branch workflow especially well:
 
 - Source files are text (TypeScript, TSX, XML) and merge cleanly with normal Git tooling
-- The unpack pattern from Lab 10 means no opaque-blob conflicts on Dataverse changes
-- The integration environment in Lab 12 acts as a "production-like" gate — breakage caught there in hours beats breakage caught in a release branch a week later
+- The unpack pattern from Lab 11 means no opaque-blob conflicts on Dataverse changes
+- The integration environment in Lab 13 acts as a "production-like" gate — breakage caught there in hours beats breakage caught in a release branch a week later
 
 ### What about GitFlow?
 
@@ -52,11 +54,11 @@ SPA-site repos suit the feature-branch workflow especially well:
 
 ### Releases: Power Platform pipelines, not release branches
 
-Microsoft's branching guidance documents **release branches** as the way to coordinate and stabilize a release. We deviate from that recommendation here for one reason: in a Power Pages SPA-site repo, the release artifact isn't just a code bundle — it's a Dataverse managed solution plus per-environment variable values plus a site reactivation step. **Power Platform Pipelines** (Lab 13) handles all three; a Git release branch alone cannot.
+Microsoft's branching guidance documents **release branches** as the way to coordinate and stabilize a release. We deviate from that recommendation here for one reason: in a Power Pages SPA-site repo, the release artifact isn't just a code bundle — it's a Dataverse managed solution plus per-environment variable values plus a site reactivation step. **Power Platform Pipelines** (Lab 14) handles all three; a Git release branch alone cannot.
 
 So in this track:
 
-- `main` is always deployable to integration via Lab 12's CI
+- `main` is always deployable to integration via Lab 13's CI
 - Promotion from integration → pre-prod → prod is owned by **Pipelines**, not by Git release branches
 - If your team adopts long-lived release branches later (for example, you're maintaining a v1 portal in prod while v2 develops on `main`), follow the MS pattern: branch off `main` as `release/<version>`, fix bugs in the release branch via PRs, and **cherry-pick** fixes back to `main` to keep the mainline current. Workflow C below shows the cherry-pick mechanic.
 
@@ -66,10 +68,10 @@ The MS guidance is opinionated about how PRs should run:
 
 - **Roughly two reviewers** is the [research-backed sweet spot](https://www.microsoft.com/research/publication/convergent-software-peer-review-practices/) — more is diminishing returns
 - **Automatic reviewer assignment** (via [CODEOWNERS](https://docs.github.com/en/repositories/managing-your-repositories-settings-and-features/customizing-your-repository/about-code-owners) on GitHub or branch policies on Azure Repos) so the right people see the PR without the author hunting for them
-- **Required successful build** before merge — the branch protection you set up in Lab 09 covers this once Lab 12's CI is live
+- **Required successful build** before merge — the branch protection you set up in Lab 10 covers this once Lab 13's CI is live
 - **Descriptive PR body** so the reviewer can pick up cold; for our portal, link to the integration-env URL (or a screenshot) once CI deploys the PR's branch — that's the "linked staged build" MS recommends
 
-Lab 09's branch protection requires 1 approval; bump to 2 for a real team and add a CODEOWNERS file so reviewers are assigned automatically.
+Lab 10's branch protection requires 1 approval; bump to 2 for a real team and add a CODEOWNERS file so reviewers are assigned automatically.
 
 ### Long-Running branches and feature flags
 
@@ -87,7 +89,7 @@ The MS guide suggests several patterns. Pick one and stick with it across your t
 
 Per-user prefixes also work and some teams prefer them for visibility — `users/<username>/<description>` (for example, `users/asmith/fix-login-redirect`) is a documented MS pattern. Pick one scheme; mixing schemes across a team is the actual problem.
 
-Lab 12's CI deploys all merges to the integration env regardless of prefix. The prefixes mostly help reviewers and on-call: a `hotfix/*` PR is a signal to expedite review and to manually promote through Pipelines once integration is green.
+Lab 13's CI deploys all merges to the integration env regardless of prefix. The prefixes mostly help reviewers and on-call: a `hotfix/*` PR is a signal to expedite review and to manually promote through Pipelines once integration is green.
 
 Further reading: [Microsoft Git branching guidance](https://learn.microsoft.com/azure/devops/repos/git/git-branching-guidance), [Power Platform ALM basics](https://learn.microsoft.com/power-platform/alm/basics-alm), [How Microsoft uses Git internally (Release Flow)](https://learn.microsoft.com/devops/develop/how-microsoft-develops-devops)
 
@@ -171,11 +173,11 @@ Open the PR in the GitHub web view. You'll see two kinds of changes in the same 
 - **SPA changes** — TypeScript and TSX files showing the new column wired up
 - **Dataverse changes** — XML in `src/solution/Entities/cr_invoice/` showing the schema change
 
-This is the payoff from Lab 10's unpack pattern. A reviewer sees the full picture of what's shipping in one diff.
+This is the payoff from Lab 11's unpack pattern. A reviewer sees the full picture of what's shipping in one diff.
 
 ### Step 7: merge
 
-Approve the PR (or have a teammate approve it). Merge into `main`. Lab 12's CI will deploy both artifacts — the new column to Dataverse, the new bundle to the site — on the merge.
+Approve the PR (or have a teammate approve it). Merge into `main`. Lab 13's CI will deploy both artifacts — the new column to Dataverse, the new bundle to the site — on the merge.
 
 ---
 
@@ -257,7 +259,7 @@ In the PR body, **link to the original PR** and write one or two sentences on *w
 
 ### Step 5: merge and watch CI
 
-Approve and merge the revert PR. Lab 12's CI runs the same workflow it ran for the original feature merge:
+Approve and merge the revert PR. Lab 13's CI runs the same workflow it ran for the original feature merge:
 
 1. **SPA bundle** is rebuilt without the memo column wiring and uploaded to the integration env.
 2. **Solution** is re-packed from the now-reverted `src/solution/` and re-imported. The `cr_memo` column is removed from the `cr_invoice` entity in Dataverse.
@@ -292,8 +294,8 @@ Hotfixes are for **production breakage that cannot wait** for the next weekly pr
 2. Use the `hotfix/` prefix as a clear signal in the PR title and CI logs
 3. Open a PR with a tight, focused diff — no refactoring, no scope creep
 4. Get expedited review (one approver, sometimes the reviewer is the on-call engineer)
-5. Merge — Lab 12's CI deploys the hotfix to integration just like a `feature/` merge would
-6. To get the hotfix into prod faster than the weekly cadence: **trigger the Pipelines pre-prod → prod stage manually** from the maker portal once the integration deploy is green and you've smoke-tested. The approval flow still runs (Lab 13); a hotfix doesn't skip approval, it skips the *waiting* part of the weekly schedule.
+5. Merge — Lab 13's CI deploys the hotfix to integration just like a `feature/` merge would
+6. To get the hotfix into prod faster than the weekly cadence: **trigger the Pipelines pre-prod → prod stage manually** from the maker portal once the integration deploy is green and you've smoke-tested. The approval flow still runs (Lab 14); a hotfix doesn't skip approval, it skips the *waiting* part of the weekly schedule.
 7. **Forward-port if needed.** In our setup the hotfix branches from `main` and merges back to `main`, so the fix is already on `main` — nothing to forward-port. The forward-port problem only appears once you adopt long-lived release branches (see Part 1, "Releases: Power Platform Pipelines, Not Release Branches"). At that point the fix is made on the release branch first, and you cherry-pick it to `main` so the next release doesn't regress. The MS-recommended mechanic looks like this:
 
    ```bash
@@ -325,7 +327,7 @@ git push -u origin hotfix/dashboard-typo
 gh pr create --fill --title "Hotfix: Dashboard heading typo"
 ```
 
-The PR is one-line. Reviewer approves in 30 seconds. Merge ships through Lab 12's CI to integration. To get to prod faster than next Friday, you'd then trigger the Pipelines integration → pre-prod → prod stages manually with expedited approvals. Total time from typo report to fix in prod: 30 minutes if approvals are responsive.
+The PR is one-line. Reviewer approves in 30 seconds. Merge ships through Lab 13's CI to integration. To get to prod faster than next Friday, you'd then trigger the Pipelines integration → pre-prod → prod stages manually with expedited approvals. Total time from typo report to fix in prod: 30 minutes if approvals are responsive.
 
 ---
 
@@ -352,23 +354,23 @@ gitGraph
     merge hotfix/dashboard-typo tag: "PR merged (expedited)"
 ```
 
-PR review and the required build check sit between each branch's last commit and the merge into `main` — they're enforced by branch protection (Lab 09) and don't show up as commits in Git history.
+PR review and the required build check sit between each branch's last commit and the merge into `main` — they're enforced by branch protection (Lab 10) and don't show up as commits in Git history.
 
 ### End-to-End deployment flow
 
-What happens after each merge, combining Lab 12 (CI to integration) and Lab 13 (Pipelines to pre-prod and prod):
+What happens after each merge, combining Lab 13 (CI to integration) and Lab 14 (Pipelines to pre-prod and prod):
 
 ```mermaid
 flowchart TD
     Branch["1. Branch from main<br/>(feature/, bugfix/, or hotfix/)"]
     PR["2. Open PR<br/>(review + required build check)"]
     Merge["3. Merge to main"]
-    GHA["4. Lab 12 CI<br/>builds + deploys to integration env"]
+    GHA["4. Lab 13 CI<br/>builds + deploys to integration env"]
     Trigger{Branch type?}
-    Weekly["5a. Lab 13 Pipelines<br/>weekly Friday:<br/>integration → pre-prod"]
+    Weekly["5a. Lab 14 Pipelines<br/>weekly Friday:<br/>integration → pre-prod"]
     QA["6a. QA certifies in pre-prod"]
-    ProdApproval["7a. Lab 13 Pipelines<br/>pre-prod → prod<br/>(approval flow gates the import)"]
-    HotfixManual["5b. Lab 13 Pipelines triggered manually:<br/>integration → pre-prod → prod<br/>(same approvals, no waiting for Friday)"]
+    ProdApproval["7a. Lab 14 Pipelines<br/>pre-prod → prod<br/>(approval flow gates the import)"]
+    HotfixManual["5b. Lab 14 Pipelines triggered manually:<br/>integration → pre-prod → prod<br/>(same approvals, no waiting for Friday)"]
     Live(["Live in prod"])
 
     Branch --> PR --> Merge --> GHA --> Trigger
@@ -405,8 +407,8 @@ If branch protection cannot be applied via `gh` or the GitHub UI:
 ## Key takeaways
 
 - The MS branching guidance reduces to three pillars: feature branches, PR-based merge, and a high-quality `main`. Don't pick GitFlow for a typical Power Pages portal — it adds friction without solving a problem you have
-- Power Platform Pipelines (Lab 13) takes the place of long-lived release branches in this stack because the release artifact is solution + env-variable values + reactivation, not just a code bundle
-- A clean PR shows SPA changes and Dataverse XML changes side-by-side, thanks to the unpack pattern from Lab 10
+- Power Platform Pipelines (Lab 14) takes the place of long-lived release branches in this stack because the release artifact is solution + env-variable values + reactivation, not just a code bundle
+- A clean PR shows SPA changes and Dataverse XML changes side-by-side, thanks to the unpack pattern from Lab 11
 - `git revert` is the safe way to undo on shared branches; `git reset --hard` is only safe on branches you haven't pushed
 - Reverting a Dataverse-coupled commit is destructive on data: a column-add revert removes the column **and** any values users wrote to it. Forward-fix when prod data is at stake; revert freely when the change was only in code
 - Hotfix branches use the same CI as feature branches; what changes is *promotion*: a hotfix triggers Pipelines manually instead of waiting for the weekly cadence
@@ -414,4 +416,4 @@ If branch protection cannot be applied via `gh` or the GitHub UI:
 
 ## What's next
 
-→ [Lab 12: CI/CD with GitHub Actions](./12-cicd-github-actions.md)
+→ [Lab 13: CI/CD with GitHub Actions](./13-cicd-github-actions.md)

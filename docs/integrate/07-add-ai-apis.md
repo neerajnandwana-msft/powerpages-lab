@@ -16,10 +16,11 @@ Two AI features for the portal, both built with the same plugin:
 ## Prerequisites
 
 - Completed [Lab 06: Add Power Automate Flows](./06-add-power-automate-flows.md) (portal has Web API, server logic, and cloud flow integrations working)
+- The typed service layer from [Lab 03](../build/03-web-api-integration.md) still exists (`src/services/webApi.ts`, entity-specific services, and `src/types/entities.ts`). `/add-ai-webapi` extends that pattern; do not delete or broadly refactor those files before running it.
 - Admin has enabled generative AI at the tenant and environment level (verify with your Power Platform admin before starting)
 - Site deployed via `/deploy-site` at least once (required for AI site settings phase)
 - `/add-ai-webapi` available in your AI coding CLI session
-- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`) — `/add-ai-webapi` queries environment and site AI configuration via Dataverse, which requires a live `az` token. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the AAD-scoped Dataverse token works without one.
+- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`) — `/add-ai-webapi` queries environment and site AI configuration via Dataverse, which requires a live `az` token. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the Microsoft Entra ID-scoped Dataverse token works without one.
 
 ## Learning objectives
 
@@ -463,9 +464,9 @@ You have completed this lab when:
 - [ ] Site Search (preview) toggle in maker studio is on
 - [ ] Disabled-state card renders correctly when the toggle is temporarily off
 
-### Debug prompt: AI call failing
+### Generic debug prompt
 
-When an AI feature isn't working on the deployed site, paste this into your AI coding CLI:
+When an AI feature isn't working on the deployed site, or `/add-ai-webapi` fails partway, paste this into your AI coding CLI:
 
 ```
 My AI summary isn't working on the deployed site. I'm seeing [paste 

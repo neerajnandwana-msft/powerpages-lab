@@ -1,35 +1,40 @@
 ---
 sidebar_position: 2
-sidebar_label: "Lab 10: Solution and Dependencies"
-title: "Lab 10: Solution Packaging and Dataverse Dependencies"
+sidebar_label: "Lab 11: Solution and Dependencies"
+title: "Lab 11: Solution Packaging and Dataverse Dependencies"
 ---
 
-# Lab 10: Solution Packaging and Dataverse Dependencies
+# Lab 11: Solution Packaging and Dataverse Dependencies
 
 ## What you will build
 
-A Dataverse solution that packages your SPA site with every dependency (tables, columns, web roles, table permissions, site settings), unpacked into XML and committed alongside the SPA source — so PR reviewers see Dataverse changes line-by-line, not as opaque binary blobs.
+A Dataverse solution that packages your SPA site with every dependency (tables, columns, web roles, table permissions, site settings, server logic, cloud flow registrations, identity provider settings), authored by `/setup-solution`, classified for env-specific values, and unpacked into XML so PR reviewers see Dataverse changes line-by-line — not as opaque binary blobs.
 
 ## Prerequisites
 
-- Completed [Lab 09: Source Control](./09-source-control.md) — portal directory is a Git repo on GitHub
-- SPA site uses the **enhanced data model** (required to add an SPA site to a solution; if you scaffolded with `/create-site` you already have this)
-- PAC CLI 2.6.3 or higher (`pac help` shows the version)
+- Completed [Lab 10: Source Control](./10-source-control.md) — portal directory is a Git repo on GitHub
+- Completed [Lab 09: Security Review](../integrate/09-security-review.md) — release-readiness security pass against the integration env
+- SPA site uses the **enhanced data model** (required to add an SPA site to a solution; `/create-site` produces this by default)
+- PAC CLI 2.6.3 or higher (`pac help` shows the version) — `/setup-solution` and the other ALM skills require it
+- Active PAC CLI session against your dev environment (`pac auth list`)
 
 ## Learning objectives
 
 By the end of this lab you will be able to:
 
-1. Assemble a Power Pages site solution with every Dataverse component the site depends on (tables, columns, relationships, web roles, table permissions, site settings)
-2. Apply the **unpack-to-source-control** pattern: export → unpack → commit → pack → import
-3. Explain why solution `.zip` files are not source-controlled, and what reviewers see in a PR diff instead
-4. Wire site settings to **environment variables** so each target environment supplies its own values at solution import time
+1. Use `/plan-alm` to detect project state and propose an ordered ALM execution plan, then approve the plan before any change applies
+2. Use `/setup-solution` to author the solution, classify site settings by sensitivity, propose environment variables, and (optionally) provision Azure Key Vault for secret-type values
+3. Apply the **unpack-to-source-control** pattern so Dataverse changes diff cleanly in a PR
+4. Explain why `/setup-solution` runs in **sync mode** on re-runs, and what the solution split recommendation means
+5. Recognise when to fall back to manual maker-portal solution assembly
+
+> **Further reading:** [Power Platform solutions overview](https://learn.microsoft.com/power-platform/alm/solution-concepts-alm) · [Environment variables for site settings](https://learn.microsoft.com/power-pages/configure/environment-variables-for-site-settings) · [Azure Key Vault overview](https://learn.microsoft.com/azure/key-vault/general/overview) · [`pac solution` reference](https://learn.microsoft.com/power-platform/developer/cli/reference/solution)
 
 ---
 
 ## Why solutions, why now
 
-Your portal isn't just React code. It's also a Dataverse data model: the `cr_invoice` table you created in Lab 02, the columns on it, the web roles you assigned, the table permissions that gate Web API access, and the site settings that enable the Web API in the first place.
+Your portal isn't just React code. It's also a Dataverse data model: the `cr_invoice` table you created in Lab 02, the columns on it, the web roles you assigned, the table permissions that gate Web API access, the site settings that enable the Web API in the first place, the server logic endpoints you added in Lab 05, the cloud flow registrations from Lab 06, and the identity provider configuration from Lab 02 Part 5.
 
 The `/deploy-site` flow you used earlier only moved the React bundle. Every Dataverse change is still in your dev environment, **in nobody's source control, with no audit trail**. The moment you need to recreate this portal in a second environment, you'll click those changes again from memory.
 
@@ -40,82 +45,154 @@ A **Dataverse solution** packages all of those components together as a unit. On
 - Roll back a Dataverse change with `git revert`
 - Hand the repo to a teammate who can recreate the portal end-to-end
 
-> **Two directories, two purposes.** Your repo will end up with both `.powerpages-site/` (created by Lab 01's `/create-site`) and `src/solution/` (created by this lab). They're not duplicates — they have different jobs:
+> **Two directories, two purposes.** Your repo will end up with both `.powerpages-site/` (created by Lab 01's `/create-site`) and `src/solution/` (created by this lab). They have different jobs:
 >
 > - **`.powerpages-site/`** is the SPA site's own configuration, consumed by `pac pages upload-code-site`. It's specific to the *site*: site settings, web roles, table permissions tied to this site's runtime.
 > - **`src/solution/`** is the unpacked Dataverse solution, consumed by `pac solution pack/import`. It's specific to the *data model*: tables, columns, relationships, plus the same site-related components for repackaging across environments.
 >
-> There's overlap on web roles, table permissions, and site settings — both directories list them. The solution is the source of truth for cross-environment portability; `.powerpages-site/` is the source of truth for the local site upload. Re-export the solution after any maker-portal change to keep them aligned.
-
-Further reading: [Create and deploy a single-page application in Power Pages](https://learn.microsoft.com/power-pages/configure/create-code-sites), [`pac solution` reference](https://learn.microsoft.com/power-platform/developer/cli/reference/solution)
-
----
-
-## Part A: assemble the solution in the Maker portal
-
-Solutions for SPA sites are assembled in the **maker portal**, not via PAC CLI. The CLI handles export / unpack / pack / import; the maker portal handles the membership of which components belong to the solution.
-
-> **UI may have moved.** The Power Platform maker portal evolves rapidly. If a button or panel name in the steps below doesn't match what you see, check the [Microsoft Learn solutions docs](https://learn.microsoft.com/power-apps/maker/data-platform/solutions-overview) for the current navigation.
-
-### Step 1: create the solution
-
-1. Go to https://make.powerapps.com/
-2. Confirm the environment selector (top-right) is your dev environment
-3. In the left nav, select **Solutions**
-4. Select **+ New solution**
-5. Fill in:
-   - **Display name:** `Supplier Portal`
-   - **Name:** `SupplierPortal` (no spaces, used in PAC CLI commands later)
-   - **Publisher:** select an existing publisher or create a new one (use a stable prefix, for example `cr` if your tables already use `cr_`)
-   - **Version:** `1.0.0.0`
-6. Select **Create**
-
-### Step 2: add the SPA site
-
-1. Inside the new solution, select **Add existing > Site > Site**
-2. Select your supplier portal site
-3. Confirm
-
-The site is now in the solution. Components that ship with the site (the site files themselves, default site components) are tracked automatically.
-
-### Step 3: add Dataverse dependencies
-
-**Important:** Dataverse components are **not auto-discovered**. You must add each one explicitly.
-
-For each item below, in your solution, select **Add existing > [Component type]** and pick the matching item:
-
-| Component type | What to add |
-|---|---|
-| **Table** | `cr_invoice` (and any other custom tables you added in Lab 02) |
-| **Web Role** | `Authenticated Users` (or whatever role you assigned in Lab 02) |
-| **Table Permission** | The permission records that grant the Authenticated Users role access to `cr_invoice` and related tables |
-| **Site Setting** | All `Webapi/cr_invoice/*` settings (Enabled, Fields), plus any other site settings your portal depends on |
-
-> **Tip:** when adding a table, the dialog asks "Include all components, or select components?" — pick **Select components** and check the columns, forms, and views your portal actually uses. Including everything is tempting but bloats the solution and slows pipeline runs.
-
-### Step 4: verify solution membership
-
-In your solution, you should now see:
-
-- 1 Site (the SPA site)
-- 1 or more Tables
-- 1 or more Web Roles
-- 1 or more Table Permissions
-- Several Site Settings
-
-If something is missing, your CI deploys will fail later when the missing component is referenced by something that *was* deployed. Better to find it now.
-
-> **Tip:** if a component doesn't appear in your unpacked solution after `pac solution unpack` later in this session, the most common cause is that it wasn't actually added to the solution here. Re-check membership in the maker portal before assuming the unpack misbehaved.
+> There's overlap on web roles, table permissions, and site settings — both directories list them. The solution is the source of truth for cross-environment portability; `.powerpages-site/` is the source of truth for the local site upload. Re-running `/setup-solution` after maker-portal changes keeps them aligned.
+>
+> **Carry-forward:** Labs 12-14 assume both directories stay in the repo. `src/solution/` is what PR reviewers and CI/Pipelines package; `.powerpages-site/` is what local plugin skills and direct site upload continue to read.
 
 ---
 
-## Part B: the Unpack-to-Source-Control pattern
+## Part 1: orient with `/plan-alm`
 
-This is the heart of the ALM phase. **Solution `.zip` files are not source-controlled.** They are opaque binary blobs — a PR reviewer cannot diff them, merge conflicts on them are unresolvable, and the file format makes "what changed in this PR" invisible.
+The ALM phase has eight skills (`/setup-solution`, `/ensure-pipelines-host`, `/setup-pipeline`, `/deploy-pipeline`, `/force-link-environment`, `/export-solution`, `/import-solution`, `/diagnose-deployment`). You don't run them by hand — `/plan-alm` is the **entry point** that orchestrates the lot.
 
-Instead, we **unpack** the zip into XML and JSON files (one file per component) and commit *those* to Git. PR reviewers then see a clean line-by-line diff of every Dataverse change, side-by-side with the SPA code changes.
+### Step 1.1: run `/plan-alm` once at the top
 
-### The Five-Step cycle
+In your AI coding CLI:
+
+```
+/plan-alm
+
+Promote the supplier portal from this dev env through integration,
+pre-prod, and prod. Use Power Platform Pipelines for promotion;
+Azure Key Vault is acceptable for any secret-type site settings.
+```
+
+The plugin will:
+
+1. **Detect project state** — does a solution already exist? Is the `src/solution/` tree present? Is Power Platform Pipelines configured for this tenant? Is the dev env authenticated?
+2. **Ask about your promotion strategy** — Pipelines vs. manual export/import, target stages, Key Vault yes/no, any constraints.
+3. **Render a visual plan** at `docs/alm-plan.html` listing every action it intends to take and in what order.
+4. **Wait for your approval** before running any downstream skill.
+
+> **Important:** `/plan-alm` is **idempotent and resumable**. If a downstream skill fails midway, run `/plan-alm` again — it reads the plan from disk and resumes from the last successful step. Don't try to run `/setup-solution` by hand after a partial failure; let the plan resume.
+
+### Step 1.2: read the plan
+
+Open `docs/alm-plan.html` and skim it. For the supplier portal scenario, the plan typically lays out:
+
+| Phase | Skill | What it does |
+|---|---|---|
+| **1. Author solution** | `/setup-solution` | Creates publisher + solution, adds Power Pages components, classifies site settings, proposes env variables (this lab) |
+| **2. Pipelines host** | `/ensure-pipelines-host` | Provisions or detects the Pipelines host environment ([Lab 14: Multi-Environment Promotion](./14-multi-env-promotion.md)) |
+| **3. Pipeline definition** | `/setup-pipeline` | Registers the pipeline in Dataverse, binds stages to target envs ([Lab 14: Multi-Environment Promotion](./14-multi-env-promotion.md)) |
+| **4. Stage deployments** | `/deploy-pipeline` | Triggers a deployment for a target stage ([Lab 14: Multi-Environment Promotion](./14-multi-env-promotion.md)) |
+| **5. Post-deploy** | `/test-site` + `/diagnose-deployment` | Verifies the deployment and matches any failure against the catalog ([Lab 14: Multi-Environment Promotion](./14-multi-env-promotion.md)) |
+
+For this lab, you're going to complete **Phase 1** end-to-end. Phases 2-5 land in Lab 14 (with Lab 13 wedging GitHub-Actions-driven integration deploys in between).
+
+---
+
+## Part 2: author the solution with `/setup-solution`
+
+`/setup-solution` does what you used to do by hand in the maker portal — create a publisher, create a solution, add every Power Pages component (site, web roles, server logic endpoints, cloud flow registrations, OAuth providers), and walk you through env-variable classification for site settings.
+
+### Step 2.1: run `/setup-solution`
+
+If `/plan-alm` approved Phase 1, it invokes `/setup-solution` automatically. Otherwise:
+
+```
+/setup-solution
+
+Author a solution called Supplier Portal that packages this site
+and everything it depends on. Use the cr publisher to match my
+existing custom tables. Classify site settings — anything that
+varies per env becomes an environment variable, anything sensitive
+goes into Azure Key Vault. Default version 1.0.0.0.
+```
+
+The plugin will:
+
+1. Detect the publisher prefix from your existing custom tables (or ask) and use it for the new solution.
+2. Create the publisher and the **Supplier Portal** solution (if neither exists yet).
+3. Walk the site's components and add each one to the solution:
+   - The Power Pages site itself
+   - Every web role under `.powerpages-site/web-roles/`
+   - Every server logic endpoint (from Lab 05)
+   - Every cloud flow registration (from Lab 06)
+   - Every OAuth provider configured by `/setup-auth` (from [Lab 02, Part 5](../build/02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth))
+   - Each table referenced by your site code (`/integrate-webapi`-generated services)
+4. **Classify every site setting by sensitivity** into one of three buckets:
+   - **Same-everywhere** — same value across environments; stays as a plain site setting
+   - **Env-specific** — varies across environments; becomes an [environment variable](https://learn.microsoft.com/power-pages/configure/environment-variables-for-site-settings)
+   - **Secret** — credential-like (connection strings, API keys); offered for Azure Key Vault storage
+5. **Propose** the full component list, env-variable wiring, and (optional) Azure Key Vault provisioning.
+
+> **Reference only — your output may differ.** The plugin tailors the component list, env-variable choices, and publisher prefix to your repo's actual state. Approve the proposal; don't hand-edit the generated solution.
+
+### Step 2.2: review the classification
+
+This is the highest-leverage step in the lab. The plugin shows a table like:
+
+| Setting | Classification | Why |
+|---|---|---|
+| `Webapi/cr_invoice/enabled` | Same-everywhere | Must be true in every env |
+| `Search/Enabled` | Env-specific | Off in dev, on in prod, etc. |
+| `Authentication/OpenIdConnect/EntraExternalId/ClientId` | Env-specific | Different app registration per env |
+| `Authentication/OpenIdConnect/EntraExternalId/ClientSecret` | Secret | Credential — proposed for Key Vault |
+| `Mpn/PartnerId` | Same-everywhere | Identical across envs |
+
+Verify each row. The plugin is conservative (it errs toward treating things as env-specific or secret) — you can downgrade items that are genuinely uniform. Be careful: **anything misclassified as same-everywhere will leak the dev value into prod at import time**.
+
+### Step 2.3: approve and let the plugin write the changes
+
+After you approve:
+
+1. The plugin creates the env variable definitions in the dev env's solution and **wires each affected site setting** to its variable.
+2. If you accepted Azure Key Vault, the plugin runs the Azure-side provisioning (`az keyvault create`, role assignment for the deployment service principal, secret upload).
+3. The site setting wiring now reads from the Key Vault secret URI — the secret value itself never sits in the solution.
+
+> **Note:** Azure Key Vault provisioning needs an authenticated Azure CLI session (`az account show`) and permission to create a vault in the target subscription. If you can't provision Key Vault now, decline the Key Vault offer — the plugin keeps secret-type settings as plain env variables and you can lift them into Key Vault later by re-running `/setup-solution`.
+
+### Step 2.4: `/setup-solution` sync mode on re-runs
+
+If a solution already exists for your site, re-running `/setup-solution` enters **sync mode**:
+
+- It reconciles component membership — anything new in `.powerpages-site/` or `src/` that isn't in the solution gets added.
+- It re-classifies any new site settings.
+- It does **not** create a new solution, change the version, or modify components you've already approved.
+
+Treat sync mode as a routine action after every meaningful change to the site (new server logic, new auth provider, new table). Lab 14's `/deploy-pipeline` runs sync mode automatically before each promotion.
+
+### Step 2.5: handle the split recommendation (if surfaced)
+
+For large or entangled portals, the plugin may surface a **split recommendation** during classification:
+
+```
+The solution would contain 47 components across 8 unrelated feature
+areas. Solutions this large risk dependency-cycle failures and slow
+imports. Recommended split:
+
+  Supplier Portal Core  — site, web roles, auth, core tables
+  Supplier Portal AI    — AI hooks + server logic for summarization
+  Supplier Portal Flows — cloud flow registrations
+
+Confirm the split before I write the components.
+```
+
+Accept the split if the plugin recommends it. Multi-solution promotion is supported by `/deploy-pipeline` and avoids the failure modes of a monolithic solution. Decline only if you have a specific reason (regulatory boundary, deploy-windowing).
+
+---
+
+## Part 3: unpack-to-source-control
+
+`/setup-solution` does the maker-portal authoring. The unpack-to-source-control loop is still your job — the solution `.zip` is an opaque binary, but the unpacked source diffs cleanly in PRs.
+
+### The five-step cycle
 
 ```mermaid
 flowchart LR
@@ -124,30 +201,32 @@ flowchart LR
     Src["src/solution/<br/>committed to Git<br/>(XML/JSON, one file per component)"]
     ZipIn["build/SupplierPortal.zip<br/>(re-packed)"]
 
-    Dev -->|"1. pac solution export"| ZipOut
+    Dev -->|"1. /export-solution"| ZipOut
     ZipOut -->|"2. pac solution unpack"| Src
     Src -->|"3. git commit + push + PR review"| Src
     Src -->|"4. bump version + pac solution pack"| ZipIn
-    ZipIn -->|"5. pac solution import"| Dev
+    ZipIn -->|"5. /import-solution"| Dev
 ```
 
 Each numbered arrow above maps one-to-one to a sub-step below.
 
-### Step 1: export
+> **Note:** Steps 1 and 5 use the new skills (`/export-solution`, `/import-solution`) because they add a completeness check, optional staging, and `deploymentSettings.json` handling on top of `pac solution export/import`. Steps 2 and 4 still use raw `pac solution unpack/pack` — those are deterministic mechanical operations the plugin does not wrap.
 
-Authenticate against your dev env and export the solution as **unmanaged**:
+### Step 3.1: `/export-solution`
 
-```bash
-pac auth list
-pac org who
+`/export-solution` wraps `pac solution export` with a **completeness check** — it verifies every component the plugin authored is present before exporting, so you don't export a partial solution.
 
-mkdir -p build src/solution
-pac solution export --name SupplierPortal --path build --overwrite
+```
+/export-solution
+
+Export Supplier Portal from dev as unmanaged, into build/.
 ```
 
-The export lands as `build/SupplierPortal.zip` — already blocked by `.gitignore`.
+The plugin runs the completeness check (warns if anything authored by `/setup-solution` is missing), then exports to `build/SupplierPortal.zip`. The `.zip` is already blocked by `.gitignore`.
 
-### Step 2: unpack
+> **Tip:** For ad-hoc exports outside the orchestrated plan, you can still drop down to `pac solution export --name SupplierPortal --path build --overwrite`. The skill is the recommended path because of the completeness check.
+
+### Step 3.2: unpack
 
 Unpack the zip into source so reviewers can see structured, diffable XML/JSON:
 
@@ -155,9 +234,9 @@ Unpack the zip into source so reviewers can see structured, diffable XML/JSON:
 pac solution unpack --zipfile build/SupplierPortal.zip --folder src/solution --packagetype Unmanaged
 ```
 
-This populates `src/solution/` with directories like `Entities/`, `WebRoles/`, `SiteSettings/`, `TablePermissions/` — one XML/JSON file per component. Spend a minute with `ls src/solution` to see the structure.
+This populates `src/solution/` with directories like `Entities/`, `WebRoles/`, `SiteSettings/`, `TablePermissions/`, `EnvironmentVariableDefinitions/` — one XML/JSON file per component. Spend a minute with `ls src/solution` to see the structure.
 
-### Step 3: commit, push, and review
+### Step 3.3: commit, push, and review
 
 ```bash
 git add src/solution .gitignore
@@ -166,35 +245,45 @@ git commit -m "Add Supplier Portal solution as unpacked source"
 git push
 ```
 
-Open the GitHub web view (`gh repo view --web`), open `src/solution/`. This is what your reviewers will see — structured, diffable, auditable. A new column appears as a single XML attribute change. A new web role appears as a single new file.
+Open the GitHub web view (`gh repo view --web`), open `src/solution/`. This is what your reviewers will see — structured, diffable, auditable. A new column appears as a single XML attribute change. A new web role appears as a single new file. A new environment variable wiring is one new file plus a one-line change in the affected site setting.
 
-### Step 4: bump version and pack
+### Step 3.4: bump version and pack
 
-When you (or a teammate) pull an approved branch, first bump the version, then re-pack the source into a zip. The version stamp is what lets CI and humans tell deploys apart:
+When you (or a teammate) pull an approved branch, first bump the version, then re-pack the source into a zip:
 
 ```bash
 git pull origin main
-pac solution online-version --solution-name SupplierPortal   # or bump in maker portal solution settings
+pac solution online-version --solution-name SupplierPortal   # or bump in maker portal
 pac solution pack --folder src/solution --zipfile build/SupplierPortal.zip --packagetype Unmanaged
 ```
 
-In Lab 12, the CI pipeline bumps the version automatically before each integration deploy.
+In Lab 13, the CI pipeline bumps the version automatically before each integration deploy.
 
-### Step 5: import
+### Step 3.5: `/import-solution`
 
-Import the re-packed zip into the target environment to apply the changes:
+`/import-solution` wraps `pac solution import` with optional **staging** — for unfamiliar target envs, it can import in stage-only mode first to validate dependencies before applying.
 
-```bash
-pac solution import --path build/SupplierPortal.zip --force-overwrite --publish-changes
+```
+/import-solution
+
+Import build/SupplierPortal.zip into the dev env, direct mode,
+publish changes after import.
 ```
 
-`--force-overwrite` lets the import overwrite components that already exist. `--publish-changes` publishes customizations after the import so they're live without a manual publish.
+For high-stakes target envs (pre-prod, prod), use staged mode instead:
+
+```
+/import-solution
+
+Import build/SupplierPortal.zip into pre-prod, staged mode first.
+If staging passes, prompt me before applying.
+```
 
 ---
 
 ## What reviewers see in a PR
 
-Imagine you add a `cr_memo` column to `cr_invoice`, then run export → unpack → commit. Open a PR. Your reviewer sees:
+Imagine you add a `cr_memo` column to `cr_invoice`, run `/export-solution`, unpack, and commit. Open a PR. Your reviewer sees:
 
 ```diff
 src/solution/Entities/cr_invoice/Entity.xml
@@ -215,101 +304,29 @@ That's the payoff. Without unpack, the reviewer would see a 200KB binary blob an
 
 ---
 
-## Part C: Env-Specific site settings via environment variables
+## Part 4: env variables and key vault — what `/setup-solution` did, and what stays manual
 
-The solution you just assembled captures the *structure* (tables, columns, web roles, table permissions, site settings) and flows the same values to every environment. But each environment legitimately needs different values: dev points at a sandbox payment provider, prod points at the live one; dev allows test users, prod doesn't. Same site setting, different value per env.
+`/setup-solution` already wired your env-specific site settings to environment variables (Step 2.2) and your secret-type settings to Azure Key Vault (if you accepted that offer in Step 2.3). You don't need to wire them by hand. But two things still belong to you:
 
-For SPA sites (which use the **enhanced data model**), Microsoft Learn recommends **environment variables for site settings** as the way to handle this. Instead of hardcoding `Search/Enabled = true` in the source environment, you wire the site setting to reference an *environment variable*; each target environment supplies its own value at solution import time. Power Platform Pipelines (Lab 13) prompts the operator for these values during promotion.
+### What `/setup-solution` did
 
-> **Why this beats hardcoded site settings.** Without environment variables, every env-specific change means re-exporting the solution from a "configured" source environment, which couples your dev environment to your release process. With environment variables, the *solution* stays env-agnostic and *each target env* owns its own values.
->
-> Further reading: [Use environment variables with site settings](https://learn.microsoft.com/power-pages/configure/environment-variables-for-site-settings)
+- Created an env variable definition for each env-specific site setting (e.g. `cr_searchenabled`, `cr_authClientId`, `cr_authAuthority`).
+- Updated each affected site setting in the dev env to **read its value from the env variable** instead of from a hardcoded value.
+- For secret-type settings, created Key Vault secrets and pointed the env variables at the secret URIs.
+- Added every env variable definition (and Key Vault wiring) to the solution.
 
-### Prerequisites for environment variables
+### What stays manual
 
-Microsoft Learn calls out three version requirements for environment variables to work in Power Pages:
+1. **Per-stage values are supplied at promotion time.** The variable *definitions* travel with the solution; the *values* are stage-specific. Power Platform Pipelines prompts the operator for each value when promoting through Lab 14.
+2. **Manual imports outside Pipelines still prompt for values.** If you import the solution by hand (maker portal → Solutions → Import), the importer asks for env variable values during the import wizard.
+3. **Cache reminder.** When you change an environment variable's value (in any env), clear the site cache for the change to take effect: in **design studio**, select **Sync**; or sign in to the portal, browse to `/_services/about`, and select **Clear cache**; or restart the portal from the Power Platform admin center.
 
-- Dataverse server version 9.2.25013.x or later
-- Power Pages package version 1.0.2501.x or later
-- Power Pages runtime version 9.7.1.x or later
-
-If you provisioned your dev environment recently, you likely meet all three. If you're on an older tenant, your Power Platform admin can confirm versions in the admin center.
-
-### Step 1: pick a site setting to wire up
-
-For the hands-on, we'll wire one site setting to an environment variable so you see the full flow end-to-end. Pick something visibly different per env — `Search/Enabled` is a good demo because you can flip it on in dev and off in prod and see the impact in the UI.
-
-> **What's NOT supported.** Per Learn: site settings with the data type `data source` cannot be wired to environment variables. Site settings with the data type `secret` require Azure Key Vault setup (covered briefly at the end of this section). For your first environment variable, pick a string or boolean site setting like `Search/Enabled`, `Authentication/Registration/Enabled`, or `HTTP/SecureRandomCookie`.
-
-### Step 2: create the environment variable definition (in the solution)
-
-1. Open the [Power Apps maker portal](https://make.powerapps.com/) in your dev environment
-2. Open the **Supplier Portal** solution you created in Part A
-3. Select **+ New** → **More** → **Environment variable**
-4. Fill in:
-   - **Display name:** `Search Enabled`
-   - **Schema name:** `cr_searchenabled` (lowercase; Dataverse stores logical names in lowercase. Note the prefix `cr_` matches your publisher.)
-   - **Data type:** `Yes/No`
-   - **Default value:** `Yes`
-5. Save
-
-The environment variable definition is now part of the solution. The default value (`Yes`) is what target environments inherit unless they supply their own value.
-
-### Step 3: wire the site setting to the environment variable
-
-1. Open the **Power Pages Management app** for your dev environment
-2. Go to **Site Settings**
-3. Open the `Search/Enabled` site setting (or create it if it doesn't exist)
-4. In the **Source** dropdown, change from `Value` to **Environment Variable**
-5. In the **Environment Variable** lookup, select the `cr_searchenabled` definition you just created (search by schema name)
-6. Save
-
-The site setting now reads its runtime value from the environment variable instead of a hardcoded value.
-
-### Step 4: add the environment variable to the solution
-
-If you created the variable from inside the solution (Step 2), it's already a solution component. Confirm:
-
-1. Back in the maker portal, open your solution
-2. Verify the environment variable definition appears in the components list
-3. Also verify the `Search/Enabled` site setting is in the solution (`Add existing > Site Setting` if not)
-
-### Step 5: Re-Export and Re-Unpack
-
-The solution now carries the environment variable wiring. Re-run the export → unpack flow from Part B so the changes hit Git:
-
-```bash
-pac solution export --name SupplierPortal --path build --overwrite
-pac solution unpack --zipfile build/SupplierPortal.zip --folder src/solution --packagetype Unmanaged
-
-git add src/solution
-git commit -m "Wire Search/Enabled to cr_searchenabled environment variable"
-```
-
-A reviewer of this commit sees the new environment variable definition file and the updated site setting reference — the Dataverse-side change is auditable alongside any SPA code changes.
-
-### Step 6: what happens at import time
-
-Two ways to set target-env values:
-
-- **Manual solution import** (Power Pages Management app or solution import UI): the importer is prompted to assign a value to each environment variable in the solution. Skip the prompt and the default value (from Step 2) is used.
-- **Power Platform Pipelines** (Lab 13): the deployment user supplies the value for each environment variable when triggering the stage promotion. Pipelines stores these values per stage so subsequent runs reuse them.
-
-> **Cache reminder.** When you change an environment variable's value (in any env), clear the site cache for the change to take effect: in **design studio**, select **Sync**; or sign in to the portal, browse to `/_services/about`, and select **Clear cache**; or restart the portal from the Power Platform admin center.
-
-### Best practices (from learn)
-
-- **Use environment variables only for ALM-related site settings** — not for every site setting. Wiring everything to environment variables can degrade performance.
-- **Name consistently:** schema names like `cr_searchenabled`, `cr_authRegistrationEnabled`, `cr_apiBaseUrl` group together visually.
-- **Document each variable** in the description field — the next person to debug a misbehaving target env will thank you.
-- **Test in a non-prod env** before applying changes to production.
-
-### What if a setting Can't be wired to an environment variable?
+### What if a setting can't be wired
 
 A few scenarios that environment variables don't cover cleanly:
 
 - **`data source` data type site settings** — explicitly unsupported per Learn
-- **Per-env content snippet text** that isn't a site setting (e.g., a custom welcome banner that should differ per env)
+- **Per-env content snippet text** that isn't a site setting (a custom welcome banner that should differ per env)
 - **Per-env values inside Dataverse table records you wrote yourself** (rare, but possible)
 
 For SPA sites these are out of scope for environment variables. The pragmatic options are:
@@ -318,65 +335,80 @@ For SPA sites these are out of scope for environment variables. The pragmatic op
 - **Read config from a Dataverse table at runtime** via the Web API
 - **Live with the same value across envs** if the difference doesn't actually matter
 
-The runtime-read pattern is short. Read a site setting wired to an environment variable from the browser:
-
-```typescript
-// src/services/configService.ts
-export async function getSiteSetting(name: string): Promise<string | null> {
-  const res = await fetch(`/_api/sites/sitesettings?$filter=adx_name eq '${name}'&$select=adx_value`);
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data.value?.[0]?.adx_value ?? null;
-}
-
-// usage
-const searchEnabled = await getSiteSetting("Search/Enabled");
-```
-
-The site setting resolves on the server using the environment variable's value for whichever environment the SPA is running in — no per-env code branches needed.
-
 ---
 
 ## Troubleshooting
 
 | Problem | Fix |
 |---|---|
+| `/plan-alm` says "no PAC CLI session" | Run `pac auth list`. If empty, `pac auth create --environment <dev-url>`. Re-run `/plan-alm`. |
+| `/setup-solution` proposes the wrong publisher prefix | Cancel the proposal, ask the plugin to use the prefix from your existing tables (`/setup-solution Use the cr prefix for the publisher`). The plugin re-reads existing components and re-proposes. |
+| Key Vault provisioning fails with "subscription not found" | The Azure CLI session is signed in without an Azure subscription. Run `az login` (without `--allow-no-subscriptions`) and try again, or decline Key Vault for this run and revisit later. |
+| `/export-solution` says "solution incomplete" | The completeness check found components the plugin authored that aren't in the dev env's solution. Re-run `/setup-solution` (sync mode) to reconcile, then export. |
 | `pac solution export` says "Solution not found" | Confirm spelling matches the solution **Name** (not Display name): `pac solution list` lists everything in the env. |
 | Unpack fails with "invalid zip" | Re-export — partial downloads happen on flaky networks. |
 | Pack fails with "missing component" | Someone deleted a file from `src/solution/` without re-exporting. Either restore from Git or re-export from dev. |
-| Import fails on a fresh env with "missing dependency" | Your solution is missing a Dataverse component (table, web role, site setting). Open the solution in the maker portal and add the missing piece. |
+| `/import-solution` fails on a fresh env with "missing dependency" | Run with staged mode first (`/import-solution ... staged mode`) — staged mode tells you exactly which dependency is missing without leaving the target env half-imported. |
 | `.zip` file accidentally committed | `git rm --cached build/SupplierPortal.zip && git commit -m "Remove zip from tracking"`. Verify `.gitignore` excludes `*.zip` and `build/`. |
 
 ## Verification
 
 You have completed this lab when:
 
-- [ ] `pac solution list` shows your solution (e.g., `SupplierPortal`) in the dev environment
-- [ ] An exported solution zip exists locally and `pac solution unpack` produced an `src/solution/` tree of XML files
-- [ ] `git status` shows the unpacked `src/solution/` folder tracked, and `*.zip` files are ignored via `.gitignore`
-- [ ] At least one site setting is wired to an environment variable definition (visible under `src/solution/EnvironmentVariableDefinitions/`)
+- [ ] `/plan-alm` produced an approved plan at `docs/alm-plan.html`
+- [ ] `/setup-solution` ran and your dev env has a `Supplier Portal` solution (visible in `pac solution list`) with the site, web roles, table permissions, server logic endpoints, cloud flow registrations, OAuth providers, and tables added
+- [ ] Every env-specific site setting is wired to an environment variable definition (visible under `src/solution/EnvironmentVariableDefinitions/` after unpack)
+- [ ] Secret-type site settings are either backed by Azure Key Vault references or consciously left as plain env variables
+- [ ] `/export-solution` produced `build/SupplierPortal.zip` and the completeness check passed
+- [ ] `pac solution unpack` produced an `src/solution/` tree of XML files; `git status` shows it tracked and `*.zip` files ignored
 - [ ] `pac solution pack` from `src/solution/` produces a zip without errors
-- [ ] A re-import of the packed zip into the dev environment succeeds and the env-variable-backed site setting still resolves correctly
+- [ ] `/import-solution` of the packed zip back into the dev env succeeds and the env-variable-backed site settings still resolve correctly
+
+### Generic debug prompt
+
+If any step fails partway, paste the output back to your AI coding CLI:
+
+```
+/plan-alm reported a partial-failure state on /setup-solution.
+Here is the output. Resume from where it stopped:
+
+[paste output, including the path to docs/alm-plan.html]
+```
 
 ## Fallback
 
-If `pac solution export`, `pack`, or `import` fails repeatedly:
+If `/plan-alm` or `/setup-solution` aren't available in your tenant, or you need to set up a solution by hand for any reason, the **manual maker-portal flow** still works end-to-end:
 
-1. Run `pac auth list` and `pac org who` — confirm you are pointed at the intended environment
-2. If the export hangs or returns an empty zip, the source environment may still be applying changes from the maker portal. Wait 60 seconds and retry.
-3. If `pac solution unpack` produces a malformed `src/solution/` tree, delete the folder and re-run unpack — partial files left from a previous interrupted run will confuse the next pack.
-4. If `pac solution import` complains about a missing dependency, the target environment lacks a Dataverse component (table, web role, site-setting type). Add it to the source solution in the maker portal, re-export, retry import.
-5. As a last resort, fall back to manual solution-import via the maker portal: upload the zip under **Solutions → Import**, supply environment variable values when prompted, then `pac solution list` to confirm the import landed.
+1. **Create the solution.** make.powerapps.com → Solutions → **+ New solution**. Display name `Supplier Portal`, Name `SupplierPortal` (no spaces), pick a publisher with the `cr_` prefix, version `1.0.0.0`.
+2. **Add the SPA site.** Inside the solution → **Add existing > Site > Site** → pick your supplier portal site.
+3. **Add Dataverse dependencies explicitly.** Dataverse components are **not auto-discovered** — add each one through **Add existing > [Component type]**:
+
+   | Component type | What to add |
+   |---|---|
+   | **Table** | `cr_invoice` (and any other custom tables from Lab 02) |
+   | **Web Role** | `Authenticated Users` (or whatever role you assigned) |
+   | **Table Permission** | The permission records that grant Authenticated Users access to `cr_invoice` and related tables |
+   | **Site Setting** | All `Webapi/cr_invoice/*` settings, plus `Authentication/*` settings written by `/setup-auth`, plus any other site settings your portal depends on |
+   | **Connection reference** | Each cloud flow's connection (from Lab 06) |
+   | **Environment variable definition** | One per env-specific or secret site setting (see Part 4 above) |
+
+4. **Wire site settings to env variables manually.** Open the Power Pages Management app for the dev env → **Site Settings** → open the relevant setting → change **Source** from `Value` to **Environment Variable** → select the matching env variable definition.
+5. **Export and unpack as in Part 3.** From here, the flow rejoins the orchestrated path: export → unpack → commit → pack → import.
+
+The manual flow loses the classification proposal, the Key Vault provisioning, the completeness check, and sync-mode reconciliation. Use it only when the skills aren't an option.
+
+> **Why the UI might have moved.** The Power Platform maker portal evolves rapidly. If a button or panel name in the fallback steps doesn't match what you see, check the [Microsoft Learn solutions docs](https://learn.microsoft.com/power-apps/maker/data-platform/solutions-overview) for the current navigation.
 
 ## Key takeaways
 
-- Solutions for SPA sites are assembled in the maker portal; PAC CLI handles export/unpack/pack/import only
-- Dataverse dependencies (tables, web roles, table permissions, site settings) are **not auto-discovered** — add each one explicitly
-- The unpack pattern (export → unpack → commit; pack → import) makes Dataverse changes reviewable in a PR
-- Never commit solution `.zip` files; commit the unpacked `src/solution/` tree instead
-- **Environment variables for site settings** keep env-specific values out of source and flow naturally through solution imports and Power Platform Pipelines
-- After changing an environment variable's value in any env, clear the site cache (Sync, `/_services/about` → Clear cache, or restart the portal)
+- `/plan-alm` is the entry point for the ALM phase — it orchestrates `/setup-solution`, `/ensure-pipelines-host`, `/setup-pipeline`, `/deploy-pipeline`, `/test-site`, and `/diagnose-deployment` in the right order
+- `/setup-solution` does the maker-portal authoring for you: publisher, solution, component membership, env-variable classification, and (optional) Azure Key Vault provisioning
+- The classification step (Same-everywhere / Env-specific / Secret) is the highest-leverage decision — misclassification leaks dev values into prod
+- `/export-solution` adds a completeness check before exporting so you never export a partial solution
+- `/import-solution` supports staged mode for high-stakes target envs — use it for pre-prod and prod
+- The unpack-to-source-control loop is unchanged: solution `.zip` is never committed; `src/solution/` is the diffable source of truth
+- Manual maker-portal assembly is still the documented fallback when the skills aren't available
 
 ## What's next
 
-→ [Lab 11: Branching Strategy and Developer Workflows](./11-branching-and-workflows.md)
+→ [Lab 12: Branching Strategy and Developer Workflows](./12-branching-and-workflows.md)

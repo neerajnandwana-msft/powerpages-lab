@@ -409,11 +409,25 @@ Keep the route and visible behavior the same, but:
 | `/integrate-webapi` | Generate typed Web API services and configure permissions |
 | `/add-server-logic` | Create server-side JavaScript endpoints that run on the Power Pages runtime |
 | `/add-cloud-flow` | Register and wire up Power Automate flows callable from the site |
-| `/setup-auth` | Add login/logout and role-based access |
+| `/setup-auth` | Add sign-in, sign-out, and role-based access for any of nine identity providers (Entra ID, Entra External ID, OIDC, SAML, WS-Fed, Microsoft, Facebook, Google, local); incremental — re-run to add a second provider |
 | `/create-webroles` | Define web roles for user access management |
+| `/security-review` | Orchestrate the focused security skills and write a consolidated HTML report (code, dependencies, deployed-site, headers, WAF, table permissions, auth config) |
+| `/scan-code` | Static analysis + dependency scan on local source (opengrep + trivy); offers a manual-review fallback if tools are missing |
+| `/scan-site` | Server-side security scan against the live site; results grouped by severity |
+| `/manage-headers` | Inspect and configure browser security headers — CSP, X-Frame-Options, CORS, cookie SameSite |
+| `/manage-firewall` | Inspect and configure the web application firewall (production only) — managed rules, IP / country / path blocks, rate limits |
 | `/audit-permissions` | Audit existing table permissions and generate an HTML security report |
 | `/add-seo` | Add robots.txt, sitemap, meta tags, and favicon to the site |
-| `/test-site` | Run smoke tests against a deployed site (navigation, pages, API calls) |
+| `/test-site` | Run smoke tests against a deployed site (navigation, pages, API calls); used by `/deploy-pipeline` for post-deploy verification |
+| `/plan-alm` | Entry point for the ALM phase — detects project state, asks about promotion strategy, renders an approvable plan, and orchestrates the other ALM skills |
+| `/setup-solution` | Author the Power Platform solution — publisher, components, env-variable classification, optional Azure Key Vault for secrets |
+| `/ensure-pipelines-host` | Provision or detect a Power Platform Pipelines host environment |
+| `/setup-pipeline` | Register a pipeline definition in Dataverse and bind stages to target environments |
+| `/deploy-pipeline` | Trigger a pipeline-stage deployment with per-stage env-variable values via `deploymentSettings.json` |
+| `/force-link-environment` | Reassign a target env to a new Pipelines host when a host conflict blocks deployment (reversible) |
+| `/export-solution` | Export the solution zip with a completeness check |
+| `/import-solution` | Import the solution zip into a target env, staged or direct |
+| `/diagnose-deployment` | Match deployment failures against a catalog of known errors and propose a fix |
 
 ---
 

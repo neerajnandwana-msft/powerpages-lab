@@ -15,7 +15,7 @@ A tamper-proof duplicate-PO check on the Submit Invoice form: a server-side endp
 - Completed [Lab 04: Plan the Service Layer with /integrate-backend](./04-pick-backend-pattern.md)
 - Working portal deployed (`.powerpages-site` folder exists)
 - `/add-server-logic` available in your AI coding CLI session
-- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`) — the agent uses PAC CLI to deploy the generated server-logic files and the `az` token for any Dataverse calls it makes while wiring them up. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the plugin uses AAD-scoped tokens, which work without one.
+- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`) — the agent uses PAC CLI to deploy the generated server-logic files and the `az` token for any Dataverse calls it makes while wiring them up. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the plugin uses Microsoft Entra ID-scoped tokens, which work without one.
 
 ## Learning objectives
 

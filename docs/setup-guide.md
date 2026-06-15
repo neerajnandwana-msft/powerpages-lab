@@ -10,7 +10,7 @@ This guide walks you through everything you need to install and configure before
 
 **What you will build across the labs:** A multi-page React SPA portal connected to Microsoft Dataverse with authentication, role-based security, and live Web API integration — all generated using AI coding tools, then deployed through a real production ALM pipeline.
 
-**What you will be using:** The Power Pages plugin for your AI coding CLI creates **single-page application (SPA) sites in Power Pages** — a modern site type where your React/Angular/Vue/Astro code runs in the browser and talks directly to the Dataverse data model through the Power Pages Web API. This is different from traditional Power Pages (Liquid) sites, and the plugin handles the full stack for you: SPA front-end, Dataverse tables, table permissions, web roles, server logic, cloud flows, and AI features. Read more: [Create and deploy a single-page application in Power Pages](https://learn.microsoft.com/power-pages/configure/create-code-sites) · [Power Pages plugin for GitHub Copilot CLI and Claude Code (preview)](https://learn.microsoft.com/power-pages/configure/create-code-site-using-claude-code).
+**What you will be using:** The Power Pages plugin for your AI coding CLI creates **single-page application (SPA) sites in Power Pages** — a modern site type where your React/Angular/Vue/Astro code runs in the browser and talks directly to the Dataverse data model through the Power Pages Web API. This is different from traditional Power Pages (Liquid) sites. Across the full track, you will use plugin skills for the SPA front end, Dataverse tables, table permissions, web roles, server logic, cloud flows, and AI features; this setup guide only installs and authenticates the tools those labs rely on. Read more: [Create and deploy a single-page application in Power Pages](https://learn.microsoft.com/power-pages/configure/create-code-sites) · [Power Pages plugin for GitHub Copilot CLI and Claude Code (preview)](https://learn.microsoft.com/power-pages/configure/create-code-site-using-claude-code).
 
 **What you need:** Laptop with admin access, charger, and AI coding tools with a license (GitHub Copilot CLI and/or Claude Code CLI).
 
@@ -57,7 +57,7 @@ Node.js runs the development server and builds the React project.
 - **Install:** Run the installer, accept defaults, ensure "Add to PATH" is checked
 - **Verify:**
 
-```Shell
+```bash
 node --version
 ```
 
@@ -71,7 +71,7 @@ Git is used by Claude Code and GitHub Copilot CLI for milestone commits during s
 - **Install:** Run the installer, accept defaults
 - **Verify:**
 
-```Shell
+```bash
 git --version
 ```
 
@@ -83,7 +83,7 @@ PAC CLI deploys your site to Power Pages and manages Dataverse connections. Vers
 
 - **Install:**
 
-```Shell
+```bash
 dotnet tool install --global Microsoft.PowerApps.CLI.Tool
 ```
 
@@ -91,13 +91,13 @@ If you don't have .NET SDK, download it first from [https://dotnet.microsoft.com
 
 - **Update (if already installed):**
 
-```Shell
+```bash
 dotnet tool update --global Microsoft.PowerApps.CLI.Tool
 ```
 
 - **Verify:**
 
-```Shell
+```bash
 pac help
 ```
 
@@ -111,13 +111,13 @@ Azure CLI authenticates your session with the Microsoft Entra ID tenant that hos
 
 > **Why this matters:** Your AI coding CLI (Claude Code or GitHub Copilot CLI) uses `az` to obtain Microsoft Entra ID access tokens when running plugin skills that call Dataverse, Power Platform, and Power Automate APIs. Skills that depend on this include `/setup-datamodel`, `/add-sample-data`, `/add-cloud-flow`, and `/add-ai-webapi`, among others. Without a working `az` install and an active `az login` session, these skills will fail with auth errors. **Installing Azure CLI is required**; you will run `az login` once before starting Lab 01.
 
-> **No Azure subscription? You're still fine.** The Power Pages plugin only needs **AAD-scoped tokens** for Dataverse and Power Platform endpoints — it does *not* require an Azure subscription. If your Microsoft account has no Azure subscription attached, sign in with `az login --allow-no-subscriptions`. The flag belongs on `az login` only — per the [Azure CLI reference](https://learn.microsoft.com/cli/azure/reference-index#az-login), it tells the CLI to "support accessing tenants without subscriptions" so tenant-level commands like `az ad ...` still work. Once you've signed in this way, follow-up commands (`az account show`, `az ad app create`, plugin skills) run normally — you do not pass the flag again.
+> **No Azure subscription? You're still fine.** The Power Pages plugin only needs **Microsoft Entra ID-scoped tokens** for Dataverse and Power Platform endpoints — it does *not* require an Azure subscription. If your Microsoft account has no Azure subscription attached, sign in with `az login --allow-no-subscriptions`. The flag belongs on `az login` only — per the [Azure CLI reference](https://learn.microsoft.com/cli/azure/reference-index#az-login), it tells the CLI to "support accessing tenants without subscriptions" so tenant-level commands like `az ad ...` still work. Once you've signed in this way, follow-up commands (`az account show`, `az ad app create`, plugin skills) run normally — you do not pass the flag again.
 
 - **Download:** [https://learn.microsoft.com/cli/azure/install-azure-cli](https://learn.microsoft.com/cli/azure/install-azure-cli)
 - **Install:** Run the installer, restart your terminal after installation
 - **Verify:**
 
-```Shell
+```bash
 az --version
 ```
 
@@ -133,7 +133,7 @@ Requires an active GitHub Copilot subscription and Node.js 22+ (for the npm inst
 
 - **Install (npm):**
 
-```Shell
+```bash
 npm install -g @github/copilot
 ```
 
@@ -141,7 +141,7 @@ Other install methods (Homebrew, WinGet, install script) are listed at [https://
 
 - **Verify:**
 
-```Shell
+```bash
 copilot -h
 ```
 
@@ -152,7 +152,7 @@ copilot -h
 - **Install:** Follow instructions at [https://claude.ai/code](https://claude.ai/code)
 - **Verify:**
 
-```Shell
+```bash
 claude --version
 ```
 
@@ -166,7 +166,7 @@ The ALM labs (09-13) cover source control, branching, and CI/CD. The `gh` comman
 - **Install:** Run the installer, restart your terminal
 - **Verify:**
 
-```Shell
+```bash
 gh --version
 ```
 
@@ -174,13 +174,13 @@ gh --version
 
 **Authenticate:**
 
-```Shell
+```bash
 gh auth login
 ```
 
 Choose **GitHub.com**, **HTTPS**, **Login with a web browser**, and complete the flow. After it finishes, verify:
 
-```Shell
+```bash
 gh auth status
 ```
 
@@ -188,9 +188,37 @@ gh auth status
 
 > **Don't have a GitHub account?** Sign up at [https://github.com/signup](https://github.com/signup) before starting the ALM labs. A free personal account is sufficient for everything the labs cover.
 
-> **Note about Azure DevOps:** Lab 12 also shows the equivalent flow for Azure DevOps as a reference for teams on that platform. You do **not** need an ADO account or its CLI installed — the GitHub Actions path is the primary hands-on path. If your team uses ADO and you want to follow along on your own infrastructure, install the [Power Platform Build Tools extension](https://marketplace.visualstudio.com/items?itemName=microsoft-IsvExpTools.PowerPlatform-BuildTools) on your ADO organization separately.
+> **Note about Azure DevOps:** Lab 13 also shows the equivalent flow for Azure DevOps as a reference for teams on that platform. You do **not** need an ADO account or its CLI installed — the GitHub Actions path is the primary hands-on path. If your team uses ADO and you want to follow along on your own infrastructure, install the [Power Platform Build Tools extension](https://marketplace.visualstudio.com/items?itemName=microsoft-IsvExpTools.PowerPlatform-BuildTools) on your ADO organization separately.
 
-> **Note about service principals:** Lab 12 walks you through creating a Microsoft Entra ID app registration and a service principal during the lab. **You do not need to create one ahead of time.** All you need on your laptop is `az` (you already have it from Step 2.4) and the tenant admin permission — or willingness to ask your admin — to create the app registration during the lab.
+> **Note about service principals:** Lab 13 walks you through creating a Microsoft Entra ID app registration and a service principal during the lab. **You do not need to create one ahead of time.** All you need on your laptop is `az` (you already have it from Step 2.4) and the tenant admin permission — or willingness to ask your admin — to create the app registration during the lab.
+
+### 2.7 opengrep and trivy — optional, for Lab 09 security review
+
+[Lab 09: Security Review](integrate/09-security-review.md) uses `/scan-code` to run static analysis (opengrep) and dependency scanning (trivy) on local source. **Both tools are optional** — if either is missing, `/scan-code` falls back to a structured manual review. Install them ahead of time if you want the full automated pass; otherwise skip this section and Lab 09 still works.
+
+**opengrep — static analysis:**
+
+- **macOS:** `brew install opengrep`
+- **Windows:** `winget install opengrep` (or download the binary from [github.com/opengrep/opengrep/releases](https://github.com/opengrep/opengrep/releases))
+- **Linux:** Follow the install instructions in the [opengrep repo](https://github.com/opengrep/opengrep)
+- **Verify:**
+
+```bash
+opengrep --version
+```
+
+**trivy — dependency / CVE scanning:**
+
+- **macOS:** `brew install trivy`
+- **Windows:** `winget install AquaSecurity.Trivy`
+- **Linux:** Follow the install instructions at [trivy.dev/latest/getting-started/installation](https://trivy.dev/latest/getting-started/installation/)
+- **Verify:**
+
+```bash
+trivy --version
+```
+
+> **Don't have admin permission to install these?** Skip them. Lab 09's `/scan-code` skill detects missing tools and offers a conversational manual-review fallback that covers the same checks (static patterns, CVE-known packages, hardcoded-secret patterns). You'll still get the consolidated HTML report — sections backed by missing tools simply explain what was checked manually instead of how many findings the tool produced.
 
 ---
 
@@ -200,13 +228,13 @@ The Power Pages plugin provides AI-assisted skills for creating, deploying, and 
 
 **Windows (PowerShell):**
 
-```Powershell
+```powershell
 iwr https://raw.githubusercontent.com/microsoft/power-platform-skills/main/scripts/install.js -OutFile install.js; node install.js; del install.js
 ```
 
 **macOS / Linux / Windows (cmd):**
 
-```Shell
+```bash
 curl -fsSL https://raw.githubusercontent.com/microsoft/power-platform-skills/main/scripts/install.js | node
 ```
 
@@ -227,7 +255,7 @@ For more on what the plugin provides and how to keep it current, see [Power Page
 
 Connect PAC CLI to your Power Platform environment:
 
-```Shell
+```bash
 pac auth create --environment <your-instance-url>
 ```
 
@@ -240,7 +268,7 @@ pac auth create --environment <your-instance-url>
 
 **Verify:**
 
-```Shell
+```bash
 pac auth list
 ```
 
@@ -248,7 +276,7 @@ pac auth list
 
 **Verify environment connection:**
 
-```Shell
+```bash
 pac org who
 ```
 
@@ -262,7 +290,7 @@ pac org who
 
 Open a terminal and run each command. All should succeed before starting Lab 01.
 
-```Shell
+```bash
 node --version          # Expect: v18.x.x or higher
 git --version           # Expect: git version 2.x.x
 pac help                # Expect: help text with version 2.6.3 or higher in header (required for server logic + solution unpack)
@@ -288,7 +316,7 @@ If all commands produce the expected output, you are ready for the lab track.
 | `pac` is not recognized                         | Run `dotnet tool install --global Microsoft.PowerApps.CLI.Tool`, restart terminal. If `dotnet` is not found, install .NET SDK first.                                                                                                                                          |
 | `pac help` shows version below 2.6.3            | Run `dotnet tool update --global Microsoft.PowerApps.CLI.Tool` to get the latest version. Restart terminal after updating.                                                                                                                                                    |
 | `az` is not recognized                          | Install Azure CLI from the install link in Step 2.4, restart terminal                                                                                                                                                                                                                       |
-| `az login` says "No subscriptions found" or `az account show` returns empty | Your Microsoft account has no Azure subscription — this is fine. Sign in with `az login --allow-no-subscriptions` (the flag belongs on `az login` only). After login, run `az account show` normally to confirm the tenant context. The Power Pages plugin only needs AAD-scoped tokens for Dataverse and Power Platform, which work without a subscription. |
+| `az login` says "No subscriptions found" or `az account show` returns empty | Your Microsoft account has no Azure subscription — this is fine. Sign in with `az login --allow-no-subscriptions` (the flag belongs on `az login` only). After login, run `az account show` normally to confirm the tenant context. The Power Pages plugin only needs Microsoft Entra ID-scoped tokens for Dataverse and Power Platform, which work without a subscription. |
 | `pac auth create` fails                         | Verify the instance URL is correct (not the site URL). Try `pac auth clear` then `pac auth create` again.                                                                                                                                                                     |
 | `pac org who` shows wrong environment           | Run `pac auth list` to see all profiles. Switch with `pac auth select --index <N>`.                                                                                                                                                                                           |
 | No Power Pages environment visible              | If you don't have access to a provisioned environment, you can sign up for a Power Pages trial (includes a Dataverse database) by following the official guide: [Sign up for a Power Pages trial](https://learn.microsoft.com/en-us/power-pages/getting-started/trial-signup) |

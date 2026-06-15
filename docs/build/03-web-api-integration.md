@@ -15,7 +15,7 @@ A portal that reads and writes real Dataverse data through the Power Pages Web A
 - Completed [Lab 02: Set Up Dataverse and Security](./02-dataverse-and-security.md) (Dataverse tables created, sample data inserted, 3-5 invoices re-linked to your Contact, permissions configured, site deployed)
 - Site deployed and accessible at its public URL
 - You have signed in to the deployed site at least once (so your Contact record exists in Dataverse)
-- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions` — the plugin uses AAD-scoped tokens that don't require one.
+- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions` — the plugin uses Microsoft Entra ID-scoped tokens that don't require one.
 
 ## Learning objectives
 
@@ -422,6 +422,21 @@ You have completed this lab when:
 - [ ] Invoice Detail shows correct data for a specific record
 - [ ] Network tab shows `/_api/cr_invoices` calls and `/_layout/tokenhtml` requests
 
+### Generic debug prompt
+
+If `/integrate-webapi` or the live API call fails, paste the output back to your AI coding CLI:
+
+```
+I deployed and tested the Web API integration. A call to /_api/<table>
+failed. Diagnose the root cause and propose a fix before applying
+anything.
+
+URL: [paste the full request URL]
+Status: [paste the HTTP status code]
+Response body: [paste the full JSON response]
+Console errors: [paste any related DevTools Console errors]
+```
+
 ---
 
 ## Fallback
@@ -445,3 +460,5 @@ If Web API integration fails and you cannot resolve the issues:
 ## What's next
 
 → [Lab 04: Plan the Service Layer with /integrate-backend](../integrate/04-pick-backend-pattern.md)
+
+> **Tip:** If you ran `/integrate-webapi` here but haven't yet configured deliberate sign-in (multi-provider, claims mapping, role-based UI), [Lab 02 Part 5: Configure authentication with /setup-auth](./02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth) is the natural follow-up — the typical plugin workflow runs `/setup-auth` right after `/integrate-webapi`.

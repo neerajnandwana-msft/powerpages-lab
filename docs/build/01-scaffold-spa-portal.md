@@ -376,6 +376,18 @@ You have completed this lab when:
 | Styling looks off (no Tailwind) | Check that `tailwind.config.js` exists and `src/index.css` imports Tailwind directives. Ask the agent to fix: "Tailwind CSS is not applied. Fix the configuration." |
 | Mock data has fewer than 10 invoices | Ask the agent: "Update the mock data to include all 10 invoices with PO-2026-001 through PO-2026-010." |
 
+### Generic debug prompt
+
+If `/create-site` or one of the follow-up commands fails partway, paste the output back to your AI coding CLI:
+
+```
+I ran /create-site and it failed with the output below. Diagnose
+what went wrong and propose a fix before applying anything.
+
+[paste full terminal output, including any error and the last
+prompts the agent ran]
+```
+
 ## Fallback
 
 If generation fails completely or takes too long, ask your AI coding CLI to **start over with a simpler prompt** (e.g. "create a 2-page React + TypeScript + Tailwind app with mock invoices"), then incrementally add the remaining pages.

@@ -64,6 +64,8 @@ tell me the single most impactful change I can make to speed it up.
 
 Ask your AI coding CLI to apply the change. Either of these prompts works — use whichever matches your style:
 
+> **Carry-forward from Lab 07:** The sample prompt below includes `Search` because Lab 07 added a search page and route. If your portal does not have that page yet, complete Lab 07 first or remove `Search` from the prompt.
+
 **Outcome-based (let the agent pick the technique):**
 
 ```
@@ -371,7 +373,7 @@ Before deploying the latest build, confirm:
 - [ ] `/test-site` smoke test passed end-to-end
 - [ ] `CLAUDE.md` is up to date — future sessions will pick it up as context
 
-> **Note:** The ALM labs (starting with Lab 09) introduce source control (`git init`, `gh repo create`) and automated CI/CD via GitHub Actions. For now, your local project directory is the source of truth — deploy directly with `/deploy-site` as you have been.
+> **Note:** The ALM labs (starting with Lab 10) introduce source control (`git init`, `gh repo create`) and automated CI/CD via GitHub Actions. For now, your local project directory is the source of truth — deploy directly with `/deploy-site` as you have been.
 
 ### Step 3.2: run /deploy-site
 
@@ -418,9 +420,9 @@ If a layer is silent, something is wired wrong — re-run `/test-site` with the 
 Take a quick mental snapshot before moving into the ALM labs:
 
 - The integration env has the latest bundle, all features (server logic, cloud flows, AI APIs), and all `.powerpages-site/` permissions configured
-- Lab 09 will turn this directory into a Git repo and push it to GitHub
-- Lab 12 will set up automated CI to redeploy here on every merge to `main`
-- Lab 13 will promote this same build through pre-prod to production via Power Platform Pipelines
+- Lab 10 will turn this directory into a Git repo and push it to GitHub
+- Lab 13 will set up automated CI to redeploy here on every merge to `main`
+- Lab 14 will promote this same build through pre-prod to production via Power Platform Pipelines
 
 ---
 
@@ -448,6 +450,21 @@ You have completed this lab when:
 - [ ] Live site passes all critical-path checks in an incognito window
 - [ ] Power Pages Diagnostics shows all four integration layers firing
 
+### Generic debug prompt
+
+If `/test-site`, `/deploy-site`, or the bundle analysis fails partway, paste the output back to your AI coding CLI:
+
+```
+I ran the skill below and it failed. Diagnose the root cause and
+propose a fix before applying anything.
+
+Skill: /<skill-name>
+Output:
+[paste the terminal output, the test-results/<step>.png screenshot
+path if a /test-site step failed, and any DevTools Console errors
+if the failure surfaced in the browser]
+```
+
 ## Fallback
 
 If the deploy fails:
@@ -465,4 +482,4 @@ If the deploy fails:
 
 ## What's next
 
-→ [Lab 09: Source Control](../alm/09-source-control.md)
+→ [Lab 09: Security Review](./09-security-review.md) — the release-readiness security pass against the integration env before the ALM phase begins. After Lab 09, the ALM phase opens with [Lab 10: Source Control](../alm/10-source-control.md).

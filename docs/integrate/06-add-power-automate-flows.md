@@ -14,8 +14,15 @@ A Teams notification that fires within seconds of a supplier submitting an invoi
 
 - Completed [Lab 05: Add Server Logic](./05-add-server-logic.md) (you've seen the CSRF and web role pattern once)
 - Access to Power Automate (`make.powerautomate.com`) with permission to create flows in the same environment as your Power Pages site
-- Azure CLI authenticated (`az account show`) — `/add-cloud-flow` uses it to call the Flow RP API. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; AAD-scoped tokens work without one.
-- A Power Platform **solution** to create the flow inside. Only **solution-aware** flows can be attached to a Power Pages site — flows created outside a solution will not appear in the plugin's flow list. If you don't already have a working solution, create one in `make.powerapps.com` before starting (Solutions > + New solution, pick any publisher, name it `SupplierPortal`). Lab 10 will use the same solution for the unpacked source-control pattern, so use a name you're happy to keep.
+- Azure CLI authenticated (`az account show`) — `/add-cloud-flow` uses it to call the Flow RP API. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; Microsoft Entra ID-scoped tokens work without one.
+- A Power Platform **solution** to create the flow inside. Only **solution-aware** flows can be attached to a Power Pages site — flows created outside a solution will not appear in the plugin's flow list. If you don't already have a working solution, create one in `make.powerapps.com` before starting (Solutions > + New solution, pick any publisher, name it `SupplierPortal`). Lab 11 will use the same solution for the unpacked source-control pattern, so use a name you're happy to keep.
+
+Before starting, confirm the portal state you are carrying forward:
+
+- [ ] The site is deployed and `.powerpages-site/` exists locally
+- [ ] The Authenticated Users web role from Lab 02 exists
+- [ ] Lab 05's submit path works, so there is one place to hook the notification after invoice creation succeeds
+- [ ] The cloud flow is created inside the same environment and solution as the site
 
 ## Learning objectives
 
@@ -128,7 +135,7 @@ the portal so it runs when a supplier submits an invoice. Only signed-in
 suppliers should be able to trigger it.
 ```
 
-Claude Code runs the 8-phase workflow from the skill.
+Claude Code runs the 8-phase workflow from the skill. If `/integrate-backend` already registered this flow in Lab 04, use the rest of this lab to review the generated YAML and client code instead of creating a second consumer for the same flow.
 
 ### Step 2.2: what the plugin does behind the scenes
 
@@ -405,14 +412,18 @@ You have completed this lab when:
 - [ ] Power Automate run history shows successful runs
 - [ ] Network tab shows `eventData`-wrapped body and both required headers
 
-### Debug prompt: flow not firing
+### Generic debug prompt
 
-When the Teams message doesn't arrive and you're not sure whether it's the portal, the wiring, or the flow itself, paste this into Claude Code:
+When the Teams message doesn't arrive, or any `/add-cloud-flow` step fails partway, and you're not sure whether the problem is on the portal side or in Power Automate, paste this into your AI coding CLI:
 
 ```
-I submitted an invoice on the portal, but the finance team didn't get 
-their Teams message. I don't know whether the problem is on the portal 
+I submitted an invoice on the portal, but the finance team didn't get
+their Teams message. I don't know whether the problem is on the portal
 side or in Power Automate. Find the cause.
+
+Run history link or error: [paste from Power Automate Run history]
+Network request: [paste the /cloudflow/v1.0/trigger/... request]
+Network response: [paste the response body]
 ```
 
 ## Fallback

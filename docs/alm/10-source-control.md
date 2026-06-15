@@ -1,10 +1,10 @@
 ---
 sidebar_position: 1
-sidebar_label: "Lab 09: Source Control"
-title: "Lab 09: Source Control"
+sidebar_label: "Lab 10: Source Control"
+title: "Lab 10: Source Control"
 ---
 
-# Lab 09: Source Control
+# Lab 10: Source Control
 
 ## Why ALM matters
 
@@ -25,6 +25,7 @@ A Git repository containing your portal source, pushed to GitHub, with a `.gitig
 ## Prerequisites
 
 - Completed [Lab 08: Performance, Testing, and Deploy](../integrate/08-performance-test-deploy.md) (working portal deployed to your env)
+- Completed [Lab 09: Security Review](../integrate/09-security-review.md) (release-readiness pass against the integration env — any Critical / High findings are fixed or consciously accepted before code lands in source control)
 - Git installed and configured (`git --version`)
 - `gh` (GitHub CLI) installed and authenticated (`gh auth status`)
 - Portal directory accessible on disk (the folder where you ran `/create-site`)
@@ -35,7 +36,9 @@ By the end of this lab you will be able to:
 
 1. Initialize the portal directory as a Git repository with a `.gitignore` that protects secrets and build artifacts
 2. Create a GitHub repository from the command line using `gh repo create`
-3. Apply commit conventions and optional branch protection that pay off in Lab 11
+3. Apply commit conventions and optional branch protection that pay off in Lab 12
+
+> **Further reading:** [Microsoft Power Platform ALM basics](https://learn.microsoft.com/power-platform/alm/basics-alm) · [GitHub CLI `gh` manual](https://cli.github.com/manual/) · [About GitHub branch protection rules](https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches)
 
 ---
 
@@ -67,14 +70,14 @@ An SPA-site repo has files that should never enter source control:
 - **`dist/`** — build output, regenerated on every CI run
 - **`.env`, `.env.local`** — secrets, API keys, local connection details
 - **`.pac/`** — PAC CLI auth profiles (contain refresh tokens)
-- **`build/`** — the staging folder we'll use in Lab 10 for solution zips
+- **`build/`** — the staging folder we'll use in Lab 11 for solution zips
 - **OS junk** — `.DS_Store`, `Thumbs.db`
 
 Files that **are** committed (don't accidentally ignore them):
 
 - `src/` — your SPA source code
 - `.powerpages-site/` — portal configuration YAML (web roles, table permissions, site settings)
-- `src/solution/` — the unpacked Dataverse solution created in Lab 10 (env-specific site settings live here as environment variable references; values are supplied per target env at solution import time)
+- `src/solution/` — the unpacked Dataverse solution created in Lab 11 (env-specific site settings live here as environment variable references; values are supplied per target env at solution import time)
 - `CLAUDE.md` (and `AGENTS.md` if Copilot CLI created one) — project context for the AI coding CLI; commit so teammates' AI sessions get the same baseline
 
 Create `.gitignore` at the repo root:
@@ -88,13 +91,13 @@ node_modules/
 dist/
 build/
 
-# Solution zips (we commit unpacked source instead -- see Lab 10)
+# Solution zips (we commit unpacked source instead -- see Lab 11)
 *.zip
 
 # Local environment / secrets
-.env
-.env.local
-.env.*.local
+.env*
+!.env.example
+docs/alm/deploymentSettings.local.json
 
 # PAC CLI auth profiles
 .pac/
@@ -117,7 +120,7 @@ npm-debug.log*
 EOF
 ```
 
-**Why `*.zip` is here:** Lab 10 will export Dataverse solutions as `.zip`, then immediately unpack them into `src/solution/` for source control. The zip itself is a build artifact — ignore it. This is the **unpack-to-source-control pattern** that's the heart of the ALM phase.
+**Why `*.zip` is here:** Lab 11 will export Dataverse solutions as `.zip`, then immediately unpack them into `src/solution/` for source control. The zip itself is a build artifact — ignore it. This is the **unpack-to-source-control pattern** that's the heart of the ALM phase.
 
 Verify your `.gitignore` works:
 
@@ -125,7 +128,7 @@ Verify your `.gitignore` works:
 git status
 ```
 
-You should no longer see `node_modules/` or `dist/` in the untracked list.
+You should no longer see `node_modules/`, `dist/`, `build/`, `.pac/`, local env files, or AI-tool session folders in the untracked list.
 
 ---
 
@@ -191,7 +194,8 @@ If any of the "no" items showed up: you committed before adding `.gitignore`, or
 
 ```bash
 # Remove from index but keep on disk
-git rm -r --cached node_modules dist .env
+git rm -r --cached --ignore-unmatch node_modules dist build .pac .claude .copilot-history
+git rm --cached --ignore-unmatch .env .env.local .env.*.local *.zip docs/alm/deploymentSettings.local.json
 
 git commit -m "Remove files that should not be tracked"
 git push
@@ -201,7 +205,7 @@ git push
 
 ## Step 6: branch protection (optional)
 
-If your GitHub plan supports it, turn on branch protection for `main` now — it pays off in Lab 11.
+If your GitHub plan supports it, turn on branch protection for `main` now — it pays off in Lab 12.
 
 The simplest path is the GitHub web UI:
 
@@ -211,9 +215,9 @@ The simplest path is the GitHub web UI:
 4. Enable **Require a pull request before merging** with at least 1 approval
 5. Save
 
-This says: nobody can push directly to `main`; every change has to go through a PR with at least one approval. Lab 11 exercises this in the feature-development workflow.
+This says: nobody can push directly to `main`; every change has to go through a PR with at least one approval. Lab 12 exercises this in the feature-development workflow.
 
-> **Tip:** if your account is on GitHub Free for personal repos, branch protection requires the repo to be public OR a GitHub Pro / Team / Enterprise plan. If unavailable, skip this step — Lab 11 still works, you'll need to discipline yourself not to push to `main` directly.
+> **Tip:** if your account is on GitHub Free for personal repos, branch protection requires the repo to be public OR a GitHub Pro / Team / Enterprise plan. If unavailable, skip this step — Lab 12 still works, you'll need to discipline yourself not to push to `main` directly.
 
 ---
 
@@ -260,8 +264,8 @@ If `gh` (the GitHub CLI) will not authenticate or `gh repo create` keeps failing
 
 - A good `.gitignore` is your first line of defense against committing secrets and build output
 - `gh repo create --source=. --push` is a one-shot "init repo and ship to GitHub" command
-- Branch protection on `main` makes the workflows in Lab 11 enforceable, not merely suggested
+- Branch protection on `main` makes the workflows in Lab 12 enforceable, not merely suggested
 
 ## What's next
 
-→ [Lab 10: Solution Packaging and Dataverse Dependencies](./10-solution-and-dependencies.md)
+→ [Lab 11: Solution Packaging and Dataverse Dependencies](./11-solution-and-dependencies.md)

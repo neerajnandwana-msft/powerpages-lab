@@ -1,6 +1,7 @@
 ---
 sidebar_position: 0
 sidebar_label: "Track Overview"
+title: "Agentic Site Authoring — Track Overview"
 slug: /
 ---
 
@@ -28,7 +29,7 @@ A complete **Supplier Invoice Submission Portal** — a 5-page React SPA connect
 
 ## Lab track
 
-13 self-paced labs grouped into three phases. Each lab is self-contained with its own prerequisites, hands-on steps, verification, and pointer to the next lab.
+14 self-paced labs grouped into three phases. Each lab is self-contained with its own prerequisites, hands-on steps, verification, and pointer to the next lab.
 
 ### Build — scaffold and connect to data
 
@@ -47,16 +48,31 @@ A complete **Supplier Invoice Submission Portal** — a 5-page React SPA connect
 | 06 | [Add Power Automate Flows](integrate/06-add-power-automate-flows) | Teams notification on invoice submit |
 | 07 | [Add Generative AI APIs](integrate/07-add-ai-apis) | Copilot summary card and grounded search answers |
 | 08 | [Performance, Testing, and Deploy](integrate/08-performance-test-deploy) | Bundle splitting, Playwright tests, integration env deploy |
+| 09 | [Security Review](integrate/09-security-review) | `/security-review` end-to-end — code, dependencies, deployed-site scan, headers, WAF, table permissions, auth config |
 
 ### ALM — source control to production
 
 | # | Lab | What you'll add |
 |---|-----|------|
-| 09 | [Source Control](alm/09-source-control) | Git repo on GitHub with `.gitignore` and branch protection |
-| 10 | [Solution Packaging and Dataverse Dependencies](alm/10-solution-and-dependencies) | Unpack-to-source-control pattern, env variables for site settings |
-| 11 | [Branching Strategy and Workflows](alm/11-branching-and-workflows) | Trunk-based + feature/rollback/hotfix workflows |
-| 12 | [CI/CD with GitHub Actions](alm/12-cicd-github-actions) | Service principal, automated deploy to integration on every merge |
-| 13 | [Multi-Environment Promotion](alm/13-multi-env-promotion) | Power Platform Pipelines: integration → pre-prod → prod with manual approval |
+| 10 | [Source Control](alm/10-source-control) | Git repo on GitHub with `.gitignore` and branch protection |
+| 11 | [Solution Packaging and Dataverse Dependencies](alm/11-solution-and-dependencies) | Unpack-to-source-control pattern, env variables for site settings |
+| 12 | [Branching Strategy and Workflows](alm/12-branching-and-workflows) | Trunk-based + feature/rollback/hotfix workflows |
+| 13 | [CI/CD with GitHub Actions](alm/13-cicd-github-actions) | Service principal, automated deploy to integration on every merge |
+| 14 | [Multi-Environment Promotion](alm/14-multi-env-promotion) | Power Platform Pipelines: integration → pre-prod → prod with manual approval |
+
+### State you carry forward
+
+This track is one cumulative use case, not a set of disconnected samples. Each lab starts from the portal state produced by the previous lab:
+
+| Carry-forward artifact | Created in | Used by later labs |
+|---|---|---|
+| React SPA source and `powerpages.config.json` | Lab 01 | Every lab that changes, builds, tests, or uploads the site |
+| Deployed Power Pages site and `.powerpages-site/` metadata | Lab 02 | Server logic, cloud flows, security review, source control, and site uploads |
+| Dataverse invoice model, sample records, Contact links, and table permissions | Lab 02 | Live Web API tests, server-side rules, AI summaries, permission audit, and solution packaging |
+| Typed Web API service layer in `src/services/` and `src/types/` | Lab 03 | Server logic integration, AI API wiring, testing, and CI builds |
+| Integration features: server logic, cloud flow consumer, AI page/card | Labs 05-07 | Performance testing, security review, ALM packaging, and promotion |
+| GitHub repo and unpacked `src/solution/` tree | Labs 10-11 | Branching workflows, CI/CD, and Pipelines promotion |
+| ALM plan and ledgers under `docs/` | Labs 11 and 14 | Resumable solution packaging and multi-environment promotion |
 
 ---
 
@@ -76,14 +92,14 @@ Complete the **[Setup Guide](setup-guide)** to install all required tools and ve
 
 ---
 
-## Where to go next (after Lab 13)
+## Where to go next (after Lab 14)
 
 Once you've completed the track, here's how to take what you built into your own org.
 
 ### Optional homework
 
-1. **Set up your own service principal and integration env CI** — repeat the Lab 12 setup against a real second environment in your tenant.
-2. **Ask your Power Platform admin to set up Pipelines** — give them the pointer from Lab 13. Once the host env and pipeline definition exist, you can promote managed solutions as shown in the demo.
+1. **Set up your own service principal and integration env CI** — repeat the Lab 13 setup against a real second environment in your tenant.
+2. **Ask your Power Platform admin to set up Pipelines** — give them the pointer from Lab 14. Once the host env and pipeline definition exist, you can promote managed solutions as shown in the demo.
 3. **Add a second feature end-to-end** — pick something real your team needs. Branch, build, PR, merge to integration, promote weekly to pre-prod, manual approval to prod.
 4. **Write up your team's branching convention** — the labs showed trunk-based with `feature/`, `fix/`, `hotfix/`. Adapt it to whatever fits your org and put it in your repo's `CONTRIBUTING.md`.
 5. **Add `.github/CODEOWNERS` to your repo** — pair with branch protection so PRs auto-request the right reviewers. Suggested layout: `/src/solution/ @data-modeling-team`, `/.github/workflows/ @platform-team`, `*.md @docs`.
@@ -91,10 +107,11 @@ Once you've completed the track, here's how to take what you built into your own
 ### Production hardening checklist
 
 - **Rotate the CI client secret regularly** — typical cadence is every 6 months. Generate a new secret in Microsoft Entra ID, update with `gh secret set CLIENT_SECRET`, retire the old one in Azure.
-- **Scope the service principal down** — Lab 12 used System Administrator on the application user for simplicity. In production, use System Customizer plus the specific Power Pages roles the imports need.
+- **Scope the service principal down** — Lab 13 used System Administrator on the application user for simplicity. In production, use System Customizer plus the specific Power Pages roles the imports need.
 - **Treat prod as never-write-from-laptop** — no `pac auth create` against the prod env from anywhere other than CI. Document this in your team's runbook.
 - **Idempotency / failed deploy recovery** — solution imports are mostly idempotent; re-running the workflow after a transient failure usually succeeds. For partial-import states, fix the root cause and re-run rather than manually patching the env.
-- **`/audit-permissions` before each prod promotion** — run the Lab 02 plugin command against the integration env before the weekly Pipelines promotion to catch unintended access grants.
+- **`/security-review` before each prod promotion** — run the full Lab 09 review (or just `/audit-permissions` if you're short on time) against the integration env before the weekly Pipelines promotion. The consolidated HTML report catches code-, dependency-, header-, WAF-, and permission-level regressions in one pass.
+- **`/scan-site` on a schedule against production** — set up a monthly run of the deployed-site scan as ongoing monitoring. New CVEs and edge-case header drift land between releases; this is how you find them before the next release does.
 
 ### Cost considerations
 
