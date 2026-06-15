@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkpowerpages_lab=self.webpackChunkpowerpages_lab||[]).push([[4737],{4737:(e,a,s)=>{s.d(a,{createPieServices:()=>p.f});var p=s(532);s(9302)}}]);

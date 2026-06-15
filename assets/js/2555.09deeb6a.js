@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkpowerpages_lab=self.webpackChunkpowerpages_lab||[]).push([[2555],{2555:(e,a,s)=>{s.d(a,{createWardleyServices:()=>p.J});var p=s(4837);s(9302)}}]);

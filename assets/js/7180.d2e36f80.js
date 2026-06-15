@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkpowerpages_lab=self.webpackChunkpowerpages_lab||[]).push([[7180],{7180:(e,a,s)=>{s.d(a,{createPacketServices:()=>p.$});var p=s(4824);s(9302)}}]);

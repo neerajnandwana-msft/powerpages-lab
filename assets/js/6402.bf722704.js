@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkpowerpages_lab=self.webpackChunkpowerpages_lab||[]).push([[6402],{6402:(e,a,r)=>{r.d(a,{createArchitectureServices:()=>s.S});var s=r(5016);r(9302)}}]);
