@@ -188,8 +188,12 @@ def transform_line_outside_code(line: str) -> str:
     return result
 
 
-def process_file(path: Path) -> tuple[int, int]:
-    """Process a single markdown file. Returns (heading_changes, prose_changes)."""
+def process_file(path: Path, check: bool = False) -> tuple[int, int, bool]:
+    """Process a single markdown file.
+
+    Returns (heading_changes, prose_changes, changed). When ``check`` is True the
+    file is never written — only inspected — so the script can act as a gate.
+    """
     original = path.read_text(encoding="utf-8")
     lines = original.split("\n")
 
@@ -239,18 +243,23 @@ def process_file(path: Path) -> tuple[int, int]:
         new_lines.append(new_line)
 
     new_content = "\n".join(new_lines)
-    if new_content != original:
+    changed = new_content != original
+    if changed and not check:
         path.write_text(new_content, encoding="utf-8")
-    return heading_changes, prose_changes
+    return heading_changes, prose_changes, changed
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) < 2:
-        print("Usage: ms-learn-style-sweep.py <file-or-dir> [more...]", file=sys.stderr)
+    # `--check` reports what the sweep WOULD change and exits non-zero if anything
+    # is unstyled, without writing. Mirrors the Node script's --check flag.
+    check = "--check" in argv[1:]
+    file_args = [a for a in argv[1:] if a != "--check"]
+    if not file_args:
+        print("Usage: ms-learn-style-sweep.py [--check] <file-or-dir> [more...]", file=sys.stderr)
         return 2
 
     targets: list[Path] = []
-    for arg in argv[1:]:
+    for arg in file_args:
         p = Path(arg)
         if p.is_dir():
             targets.extend(sorted(p.rglob("*.md")))
@@ -261,13 +270,22 @@ def main(argv: list[str]) -> int:
 
     total_h = 0
     total_p = 0
+    changed_files = 0
     for f in targets:
-        h, p = process_file(f)
+        h, p, changed = process_file(f, check=check)
         if h or p:
             print(f"{f}: {h} heading changes, {p} prose-line changes")
+        if changed:
+            changed_files += 1
         total_h += h
         total_p += p
-    print(f"\nTotal: {total_h} heading changes, {total_p} prose-line changes across {len(targets)} files")
+    verb = "would change" if check else "changed"
+    print(f"\nTotal: {total_h} heading changes, {total_p} prose-line changes "
+          f"({changed_files} file(s) {verb}) across {len(targets)} files")
+    if check and changed_files > 0:
+        print(f"\n[style:check] {changed_files} file(s) need the Microsoft style sweep. "
+              f"Run the sweep to apply, then re-stage and commit.", file=sys.stderr)
+        return 1
     return 0
 
 

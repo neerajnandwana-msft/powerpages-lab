@@ -392,14 +392,16 @@ Keep the route and visible behavior the same, but:
 
 ---
 
-## Useful Claude Code Commands
+## Useful AI coding CLI commands
+
+These work in both Claude Code and GitHub Copilot CLI — the built-in commands (`/help`, `/clear`, …) and every Power Pages plugin skill (`/create-site`, `/deploy-site`, …) are the same in each. The one difference is how you reference a file: Claude Code uses `#file path/to/file`, GitHub Copilot CLI uses `@path/to/file`.
 
 | Command | What It Does |
 |---------|-------------|
 | `/help` | Show available commands and skills |
 | `/compact` | Compress conversation context to free up space |
 | `/clear` | Start a fresh conversation (clears all context) |
-| `@path/to/file` | Reference a specific file so Claude loads it into context |
+| `#file path` (Claude Code) / `@path` (Copilot CLI) | Reference a specific file so the agent loads it into context |
 | `/create-site` | Scaffold a new Power Pages SPA site |
 | `/deploy-site` | Build and upload site to Power Pages |
 | `/activate-site` | Provision a public URL for the site |
@@ -407,12 +409,13 @@ Keep the route and visible behavior the same, but:
 | `/add-sample-data` | Populate tables with test records |
 | `/integrate-backend` | Decide between Web API, Server Logic, and Cloud Flows for a scenario |
 | `/integrate-webapi` | Generate typed Web API services and configure permissions |
+| `/add-ai-webapi` | Layer generative-AI summaries (Search Summary, Data Summarization) onto pages; reuses `/integrate-webapi` permissions |
 | `/add-server-logic` | Create server-side JavaScript endpoints that run on the Power Pages runtime |
 | `/add-cloud-flow` | Register and wire up Power Automate flows callable from the site |
 | `/setup-auth` | Add sign-in, sign-out, and role-based access for any of nine identity providers (Entra ID, Entra External ID, OIDC, SAML, WS-Fed, Microsoft, Facebook, Google, local); incremental — re-run to add a second provider |
 | `/create-webroles` | Define web roles for user access management |
 | `/security-review` | Orchestrate the focused security skills and write a consolidated HTML report (code, dependencies, deployed-site, headers, WAF, table permissions, auth config) |
-| `/scan-code` | Static analysis + dependency scan on local source (opengrep + trivy); offers a manual-review fallback if tools are missing |
+| `/scan-code` | Static analysis + dependency scan on local source (opengrep); offers a manual-review fallback if the tool is missing |
 | `/scan-site` | Server-side security scan against the live site; results grouped by severity |
 | `/manage-headers` | Inspect and configure browser security headers — CSP, X-Frame-Options, CORS, cookie SameSite |
 | `/manage-firewall` | Inspect and configure the web application firewall (production only) — managed rules, IP / country / path blocks, rate limits |
@@ -503,51 +506,44 @@ Add this to your project root as `CLAUDE.md` to give the AI persistent context a
 
 ## The /create-site Prompt (ACE Exemplar)
 
-This is the exact prompt used in Lab 01 to scaffold the supplier portal. Study it as an example of the ACE Framework applied to a real task:
+This is the exact prompt used in Lab 01 to scaffold the supplier portal. Study it as an example of the ACE framework (Action / Context / Examples) applied to a real task — with the requirements framed as Jobs-To-Be-Done so the generated architecture follows user goals rather than a fixed page list:
 
 ```
-Create a Supplier Invoice Submission Portal using React with TypeScript and Tailwind CSS.
+[ACTION]
+Build a Supplier Invoice Submission Portal as a React + TypeScript + Tailwind CSS single-page 
+application. Its architecture and user experience must be designed strictly to solve the 
+Jobs-To-Be-Done (JTBD) defined below.
 
-PURPOSE: A portal where supplier companies log in, submit invoices against purchase 
-orders, and track payment status from submission through approval to payment.
+Primary job: Enable suppliers to submit invoices against purchase orders and track their 
+progress so the business gets paid accurately and on time.
 
-PAGES:
-1. Landing Page (public, route: /)
-   - Hero with "Supplier Invoice Portal" headline, "Submit invoices, track payments" subheading
-   - Three value-prop cards: Easy Submission, Real-Time Tracking, Faster Payments
-   - "Sign In" CTA button, footer with copyright
+[CONTEXT]
+Tech stack: React, TypeScript, Tailwind CSS.
+Design: a clean, professional, Microsoft Fluent Design-inspired aesthetic.
 
-2. Dashboard (authenticated, route: /dashboard)
-   - Welcome banner with user name
-   - Four metric cards: Total Invoices, Under Review (amber), Approved (green), Total Paid (blue)
-   - Recent invoices table (last 5): Invoice #, PO #, Amount, Status badge, Date
-   - "Submit New Invoice" button
+Functional jobs the app must satisfy:
+- Submit an Invoice: a submission flow capturing the required billing details (PO number, 
+  amount, due date) to initiate the payment process.
+- Track Payment Lifecycle: a visual tracking system to monitor the step-by-step status of a 
+  specific invoice.
+- Monitor Account Health: a dashboard with a high-level view of aggregated financial metrics 
+  (total invoices, amounts under review, amounts approved, and amounts paid).
+- Find Past Invoices: robust search and filter capabilities to locate historical invoices by 
+  status, dates, or specific identifying numbers.
+- Verify Invoice Details: a detailed view for individual invoices, showing granular data and a 
+  status timeline for record-keeping and dispute resolution.
 
-3. Submit Invoice (authenticated, route: /invoices/new)
-   - Form: PO Number (required), Amount (currency, required), Due Date (date picker, required), 
-     Description (textarea)
-   - Submit + Cancel buttons, success toast -> redirect to invoice list
+Layout & navigation constraints:
+- All layouts and components must be mobile-responsive by default.
+- Public layout (unauthenticated): a top navigation bar with the application logo and a 
+  "Sign In" call-to-action, plus a standard footer with copyright information.
+- Application layout (authenticated): a header (logo + user profile dropdown) and a left-aligned 
+  sidebar linking to Dashboard, Submit Invoice, and My Invoices, with the active item clearly 
+  indicated using the primary color.
 
-4. Invoice List (authenticated, route: /invoices)
-   - Status filter dropdown (All/Draft/Submitted/Under Review/Approved/Rejected/Paid), search box
-   - Sortable table: Invoice #, PO #, Amount, Status badge, Submission Date, Due Date
-   - Click row -> detail view
-
-5. Invoice Detail (authenticated, route: /invoices/:id)
-   - Invoice # + status badge header
-   - Details card: PO#, Amount, Description, Dates, Company
-   - Status timeline: Draft -> Submitted -> Under Review -> Approved/Rejected -> Paid
-
-DESIGN: Primary blue #0078D4, success green #10B981, warning amber #F59E0B, error red 
-#EF4444. Clean professional look, card-based with subtle shadows and 8px corners. Lucide 
-React icons. Mobile responsive. Typography: Use the Segoe UI font stack with antialiased 
-rendering, font-semibold (600) as the maximum weight for headings (no bold/700+), no italic 
-or uppercase tracking -- following Microsoft Fluent Design language; body text in slate-900 
-on a slate-50 background with 1.5 line-height.
-
-NAVIGATION: Left sidebar (authenticated): Dashboard, Submit Invoice, My Invoices. Header 
-with logo + profile dropdown. Public landing has top nav with logo + Sign In.
-
-MOCK DATA: 10 invoices with PO-2026-001 through PO-2026-010, amounts $1,500-$85,000, 
-mixed statuses, dates Jan-Mar 2026. Mock user: "Nancy Anderson (sample)" from "Adventure Works (sample)".
+[EXAMPLES]
+- Status lifecycle to model: Draft -> Submitted -> Under Review -> Approved/Rejected -> Paid.
+- Mock data: seed 10 sample invoices, PO-2026-001 through PO-2026-010, amounts $1,500-$85,000, 
+  spread across the full status lifecycle, dates Jan-Mar 2026.
+- Mock the signed-in user as "Nancy Anderson (sample)" from "Adventure Works (sample)".
 ```

@@ -43,6 +43,8 @@ If the **Create a site** button is missing, disabled, or the dialog fails to loa
 
 If you cannot see the environment, it does not have a Dataverse database, you lack the System Administrator role, or you cannot reach the site creation screen, contact your tenant admin to resolve before starting Lab 01.
 
+> **Allow JavaScript file uploads (do this now to avoid a blocked first deploy).** Many Dataverse environments block `.js` uploads by default, which stops an SPA from deploying — the first `pac pages upload-code-site` (Lab 02) fails with *"Import failed: The attachment is either not a valid type or is too large."* Clear it ahead of time: in the [Power Platform admin center](https://admin.powerplatform.microsoft.com/), select **Manage** → **Environments** → your environment → **Settings** → **Product** → **Privacy + Security**, remove `js` from **Blocked Attachments**, and **Save**. See [Allow JavaScript file uploads](https://learn.microsoft.com/power-pages/configure/create-code-sites#allow-javascript-file-uploads).
+
 ---
 
 ## Step 2: install required software
@@ -192,33 +194,13 @@ gh auth status
 
 > **Note about service principals:** Lab 13 walks you through creating a Microsoft Entra ID app registration and a service principal during the lab. **You do not need to create one ahead of time.** All you need on your laptop is `az` (you already have it from Step 2.4) and the tenant admin permission — or willingness to ask your admin — to create the app registration during the lab.
 
-### 2.7 opengrep and trivy — optional, for Lab 09 security review
+### 2.7 static-analysis tool — optional, for Lab 09 security review
 
-[Lab 09: Security Review](integrate/09-security-review.md) uses `/scan-code` to run static analysis (opengrep) and dependency scanning (trivy) on local source. **Both tools are optional** — if either is missing, `/scan-code` falls back to a structured manual review. Install them ahead of time if you want the full automated pass; otherwise skip this section and Lab 09 still works.
+[Lab 09: Security Review](integrate/09-security-review.md) uses `/scan-code` to scan local source with **static analysis** (opengrep) when it's available. This is optional — if the tool is missing, `/scan-code` falls back to a structured manual review, and Lab 09 also gives you a no-install `grep` / `findstr` self-check that uses tools you already have. Install opengrep ahead of time if you want the automated pass; otherwise skip this section and Lab 09 still works.
 
-**opengrep — static analysis:**
+> **No static-analysis tool? You don't need one to start.** opengrep — the engine `/scan-code` uses for static analysis — has no winget package on Windows and needs a manually downloaded binary, so this guide doesn't require it. `/scan-code` detects the missing tool and offers a conversational manual-review fallback, and [Lab 09](integrate/09-security-review.md) includes a quick `grep` / `findstr` pattern check that runs on the Git Bash `grep` and Windows `findstr` you already have. Add opengrep later from the [release binaries](https://github.com/opengrep/opengrep/releases) if you want full semantic static analysis.
 
-- **macOS:** `brew install opengrep`
-- **Windows:** `winget install opengrep` (or download the binary from [github.com/opengrep/opengrep/releases](https://github.com/opengrep/opengrep/releases))
-- **Linux:** Follow the install instructions in the [opengrep repo](https://github.com/opengrep/opengrep)
-- **Verify:**
-
-```bash
-opengrep --version
-```
-
-**trivy — dependency / CVE scanning:**
-
-- **macOS:** `brew install trivy`
-- **Windows:** `winget install AquaSecurity.Trivy`
-- **Linux:** Follow the install instructions at [trivy.dev/latest/getting-started/installation](https://trivy.dev/latest/getting-started/installation/)
-- **Verify:**
-
-```bash
-trivy --version
-```
-
-> **Don't have admin permission to install these?** Skip them. Lab 09's `/scan-code` skill detects missing tools and offers a conversational manual-review fallback that covers the same checks (static patterns, CVE-known packages, hardcoded-secret patterns). You'll still get the consolidated HTML report — sections backed by missing tools simply explain what was checked manually instead of how many findings the tool produced.
+> **Don't have admin permission to install opengrep?** Skip it. Lab 09's `/scan-code` skill detects missing tools and offers a conversational manual-review fallback that covers the same checks (static patterns, CVE-known packages, hardcoded-secret patterns). You'll still get the consolidated HTML report — sections backed by missing tools simply explain what was checked manually instead of how many findings the tool produced.
 
 ---
 

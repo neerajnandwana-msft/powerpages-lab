@@ -8,6 +8,11 @@
 /.docusaurus
 .cache-loader
 
+# Vale: ignore downloaded style packages (run `npm run lint:prose` to fetch),
+# but keep the committed project vocabulary under .vale/styles/config.
+/.vale/styles/*
+!/.vale/styles/config
+
 # Misc
 .DS_Store
 .env

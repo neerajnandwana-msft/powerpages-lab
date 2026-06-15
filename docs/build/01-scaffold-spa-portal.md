@@ -81,7 +81,7 @@ This lab uses **React + TypeScript + Tailwind CSS + Vite**, following **Microsof
 
 - [Setup Guide](../setup-guide.md) tools installed and verified (Node.js, PAC CLI, Azure CLI, AI coding CLI, Power Pages plugin)
 - [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md) open in a tab for reference
-- Familiarity with the ACE framework — see [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md) if you haven't met it yet
+- Familiarity with the ACE framework (Action / Context / Examples) — see the [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md); this lab's prompt uses ACE structure with a Jobs-To-Be-Done framing of the requirements
 
 ## Learning objectives
 
@@ -125,57 +125,49 @@ You should see `/create-site` listed among the available skills.
 
 ## Step 2: run `/create-site`
 
-Type `/create-site` in your AI coding CLI, then paste the following prompt. This prompt uses the ACE framework.
+Type `/create-site` in your AI coding CLI, then paste the following prompt. It uses the **ACE structure** (Action / Context / Examples) for the prompt skeleton, with a **Jobs-To-Be-Done (JTBD)** framing of the requirements: the functional jobs sit in the Context, so the generated architecture follows the user goals rather than a fixed page list. The two work together — ACE keeps the prompt well-organized, JTBD keeps it focused on outcomes.
 
 ```
-Create a Supplier Invoice Submission Portal using React with TypeScript and Tailwind CSS.
+[ACTION]
+Build a Supplier Invoice Submission Portal as a React + TypeScript + Tailwind CSS single-page 
+application. Its architecture and user experience must be designed strictly to solve the 
+Jobs-To-Be-Done (JTBD) defined below.
 
-PURPOSE: A portal where supplier companies log in, submit invoices against purchase 
-orders, and track payment status from submission through approval to payment.
+Primary job: Enable suppliers to submit invoices against purchase orders and track their 
+progress so the business gets paid accurately and on time.
 
-PAGES:
-1. Landing Page (public, route: /)
-   - Hero with "Supplier Invoice Portal" headline, "Submit invoices, track payments" subheading
-   - Three value-prop cards: Easy Submission, Real-Time Tracking, Faster Payments
-   - "Sign In" CTA button, footer with copyright
+[CONTEXT]
+Tech stack: React, TypeScript, Tailwind CSS.
+Design: a clean, professional, Microsoft Fluent Design-inspired aesthetic.
 
-2. Dashboard (authenticated, route: /dashboard)
-   - Welcome banner with user name
-   - Four metric cards: Total Invoices, Under Review (amber), Approved (green), Total Paid (blue)
-   - Recent invoices table (last 5): Invoice #, PO #, Amount, Status badge, Date
-   - "Submit New Invoice" button
+Functional jobs the app must satisfy:
+- Submit an Invoice: a submission flow capturing the required billing details (PO number, 
+  amount, due date) to initiate the payment process.
+- Track Payment Lifecycle: a visual tracking system to monitor the step-by-step status of a 
+  specific invoice.
+- Monitor Account Health: a dashboard with a high-level view of aggregated financial metrics 
+  (total invoices, amounts under review, amounts approved, and amounts paid).
+- Find Past Invoices: robust search and filter capabilities to locate historical invoices by 
+  status, dates, or specific identifying numbers.
+- Verify Invoice Details: a detailed view for individual invoices, showing granular data and a 
+  status timeline for record-keeping and dispute resolution.
 
-3. Submit Invoice (authenticated, route: /invoices/new)
-   - Form: PO Number (required), Amount (currency, required), Due Date (date picker, required), 
-     Description (textarea)
-   - Submit + Cancel buttons, success toast -> redirect to invoice list
+Layout & navigation constraints:
+- All layouts and components must be mobile-responsive by default.
+- Public layout (unauthenticated): a top navigation bar with the application logo and a 
+  "Sign In" call-to-action, plus a standard footer with copyright information.
+- Application layout (authenticated): a header (logo + user profile dropdown) and a left-aligned 
+  sidebar linking to Dashboard, Submit Invoice, and My Invoices, with the active item clearly 
+  indicated using the primary color.
 
-4. Invoice List (authenticated, route: /invoices)
-   - Status filter dropdown (All/Draft/Submitted/Under Review/Approved/Rejected/Paid), search box
-   - Sortable table: Invoice #, PO #, Amount, Status badge, Submission Date, Due Date
-   - Click row -> detail view
-
-5. Invoice Detail (authenticated, route: /invoices/:id)
-   - Invoice # + status badge header
-   - Details card: PO#, Amount, Description, Dates, Company
-   - Status timeline: Draft -> Submitted -> Under Review -> Approved/Rejected -> Paid
-
-DESIGN: Primary blue #0078D4, success green #10B981, warning amber #F59E0B, error red 
-#EF4444. Clean professional look, card-based with subtle shadows and 8px corners. Lucide 
-React icons. Mobile responsive. Typography: Use the Segoe UI font stack 
-('Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif) 
-with antialiased rendering, font-semibold (600) as the maximum weight for headings 
-(no bold/700+), no italic or uppercase tracking -- following Microsoft Fluent Design 
-language; body text in slate-900 on a slate-50 background with 1.5 line-height.
-
-NAVIGATION: Left sidebar (authenticated): Dashboard, Submit Invoice, My Invoices. Header 
-with logo + profile dropdown. Public landing has top nav with logo + Sign In.
-
-MOCK DATA: 10 invoices with PO-2026-001 through PO-2026-010, amounts $1,500-$85,000, 
-mixed statuses, dates Jan-Mar 2026. Mock user: "Nancy Anderson (sample)" from "Adventure Works (sample)".
+[EXAMPLES]
+- Status lifecycle to model: Draft -> Submitted -> Under Review -> Approved/Rejected -> Paid.
+- Mock data: seed 10 sample invoices, PO-2026-001 through PO-2026-010, amounts $1,500-$85,000, 
+  spread across the full status lifecycle, dates Jan-Mar 2026.
+- Mock the signed-in user as "Nancy Anderson (sample)" from "Adventure Works (sample)".
 ```
 
-> **Tip:** The full prompt is also reproduced in the [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md#the-create-site-prompt-ace-exemplar).
+> **Tip:** This prompt follows the **ACE structure** (Action / Context / Examples) with a Jobs-To-Be-Done framing of the requirements. The [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md#the-create-site-prompt-ace-exemplar) breaks down the ACE framework and shows another worked example you can compare against.
 
 ---
 
@@ -183,7 +175,7 @@ mixed statuses, dates Jan-Mar 2026. Mock user: "Nancy Anderson (sample)" from "A
 
 Your AI coding CLI will analyze your prompt and present an implementation plan. Before approving, verify:
 
-- [ ] All 5 pages are listed with correct routes (`/`, `/dashboard`, `/invoices/new`, `/invoices`, `/invoices/:id`)
+- [ ] All five functional jobs map to pages — Landing (public), Dashboard, Submit Invoice, Invoice List, Invoice Detail — each with a sensible route (e.g. `/`, `/dashboard`, `/invoices/new`, `/invoices`, `/invoices/:id`)
 - [ ] Framework is React + Vite + TypeScript
 - [ ] Tailwind CSS is included
 - [ ] Mock data is mentioned (10 invoices)
@@ -216,7 +208,7 @@ Your AI coding CLI will now generate the entire project. Watch the terminal as f
 | `src/components/` | Reusable components (StatusBadge, MetricCard, InvoiceTable, etc.) |
 | `src/data/mockInvoices.ts` | 10 sample invoices with realistic data |
 | `src/types/` | TypeScript interfaces for Invoice, User, etc. |
-| `powerpages.config.json` | Deployment configuration (`{"compiledPath": "dist"}`) |
+| `powerpages.config.json` | Deployment configuration (`siteName`, `compiledPath`, `defaultLandingPage`) |
 | `docs/` | Where the plugin writes design-decision artifacts (plans, audits) as you run later skills |
 | `CLAUDE.md` | Project context for future Claude Code sessions |
 
@@ -248,19 +240,19 @@ Open your browser to `http://localhost:5173` (Vite's default port).
 ### Walk through each page
 
 **1. Landing Page** (route: `/`)
-- [ ] Hero section with "Supplier Invoice Portal" headline
-- [ ] Three value-prop cards below the hero
-- [ ] "Sign In" button visible
-- [ ] Footer at the bottom
+- [ ] A hero / intro section introducing the portal (exact copy is AI-generated)
+- [ ] Supporting value props or feature highlights
+- [ ] "Sign In" button visible in the top nav
+- [ ] Footer with copyright at the bottom
 
 **2. Dashboard** (route: `/dashboard`)
 - [ ] Welcome banner: "Welcome back, Nancy Anderson (sample)"
-- [ ] Four metric cards: Total Invoices, Under Review (amber), Approved (green), Total Paid (blue)
+- [ ] Four metric cards: Total Invoices, Under Review, Approved, Total Paid
 - [ ] Recent invoices table with 5 rows
 - [ ] "Submit New Invoice" button
 
 **3. Submit Invoice** (route: `/invoices/new`)
-- [ ] Form with PO Number, Amount, Due Date, Description fields
+- [ ] Form with PO Number, Amount, and Due Date fields (Description optional)
 - [ ] Submit and Cancel buttons
 - [ ] Try submitting — expect a success toast or redirect
 
@@ -275,7 +267,7 @@ Open your browser to `http://localhost:5173` (Vite's default port).
 - [ ] Details card with PO#, Amount, Description, Dates, Company
 - [ ] Status timeline showing progression
 
-> **Expected:** All pages render with Fluent Design styling (Segoe UI font, #0078D4 primary color, card-based layouts with subtle shadows). Data is mock data — Lab 03 connects the portal to live Dataverse.
+> **Expected:** All pages render with Fluent Design styling (Segoe UI font, a Fluent primary blue, card-based layouts with subtle shadows). Data is mock data — Lab 03 connects the portal to live Dataverse.
 
 ---
 
@@ -295,7 +287,7 @@ supplier-invoice-portal/
 │   ├── data/            # Mock data (replaced in Lab 03)
 │   ├── types/           # TypeScript interfaces
 │   └── App.tsx          # Router and layout
-├── powerpages.config.json   # {"compiledPath": "dist"} for PAC CLI
+├── powerpages.config.json   # siteName + compiledPath + defaultLandingPage for PAC CLI
 ├── .powerpages-site/        # Will hold permissions and settings (empty for now)
 ├── docs/                    # Agent-generated plans and audits (populated by later labs)
 ├── CLAUDE.md                # Project context
@@ -324,13 +316,16 @@ supplier-invoice-portal/
 
 All linked to mock user "Nancy Anderson (sample)" at "Adventure Works (sample)".
 
-**powerpages.config.json**: This tells PAC CLI where the compiled output is:
+**powerpages.config.json**: This tells PAC CLI how to upload your site. Three fields are required — `siteName`, `compiledPath`, and `defaultLandingPage`:
 ```json
 {
-  "schema": "1.0.0",
-  "compiledPath": "dist"
+  "$schema": "https://www.schemastore.org/powerpages.config.json",
+  "siteName": "Supplier Invoice Portal",
+  "compiledPath": "dist",
+  "defaultLandingPage": "index.html"
 }
 ```
+Later labs add an optional `bundleFilePatterns` field here to clean up stale bundles on each deploy (Lab 08). See the [`powerpages.config.json` reference](https://learn.microsoft.com/power-pages/configure/create-code-sites#defining-upload-parameters-with-powerpagesconfigjson).
 
 **CLAUDE.md**: Review the project context Claude created. This file will help your AI coding CLI maintain consistency in future sessions.
 
@@ -397,7 +392,7 @@ If generation fails completely or takes too long, ask your AI coding CLI to **st
 ## Key takeaways
 
 - `/create-site` generates a complete, working React SPA from a natural language prompt
-- The ACE-structured prompt produced all 5 pages with correct styling and mock data
+- The ACE-structured, JTBD-framed prompt produced all 5 pages with correct styling and mock data — the functional jobs in the Context mapped cleanly onto pages
 - The project structure separates pages, components, data, and types cleanly
 - `powerpages.config.json` is the bridge between your local project and Power Pages deployment
 - The site currently uses mock data — the next labs replace it with live Dataverse data

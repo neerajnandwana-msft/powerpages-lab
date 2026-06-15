@@ -28,5 +28,9 @@
       "Bash(node scripts/ms-learn-style-sweep.mjs docs/intro.md)",
       "Bash(node scripts/ms-learn-style-sweep.mjs docs/)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "microsoft-learn"
+  ],
+  "enableAllProjectMcpServers": true
 }

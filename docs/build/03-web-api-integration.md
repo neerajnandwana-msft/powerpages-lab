@@ -17,6 +17,14 @@ A portal that reads and writes real Dataverse data through the Power Pages Web A
 - You have signed in to the deployed site at least once (so your Contact record exists in Dataverse)
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions` — the plugin uses Microsoft Entra ID-scoped tokens that don't require one.
 
+> **Before you start — confirm your Lab 02 state.** The live tests in this lab depend on it:
+>
+> - [ ] The site is deployed and reachable at its public URL
+> - [ ] You signed in once, and 3-5 invoices have **Submitted By** set to your Contact (Lab 02, Step 2.5)
+> - [ ] `/setup-auth` completed, so sign-in works (Lab 02, Part 5)
+>
+> If you skipped the Contact re-link, the Invoice List will look empty here even though everything else is correct — go back and finish Step 2.5 first.
+
 ## Learning objectives
 
 By the end of this lab you will be able to:
@@ -26,7 +34,7 @@ By the end of this lab you will be able to:
 3. Perform end-to-end CRUD testing through the portal UI: create a real invoice, read live data, verify updates
 4. Diagnose and fix common Web API errors (403, 400, CORS, empty responses)
 
-> **Important:** The Power Pages Web API (`/_api/`) only works on the deployed site, not on localhost. You will test by deploying and opening the live site URL, not localhost:5173.
+> **Important:** Out of the box, the Power Pages Web API (`/_api/`) responds only on the deployed site, where the session cookie and anti-forgery token are issued. So this lab tests by deploying and opening the live site URL, not `localhost:5173`. Calling the Web API from localhost *is* possible, but it takes extra setup — Microsoft Entra v1 bearer authentication plus a dev-server proxy — which the labs skip for simplicity. If you want it later, see [Set up local development by enabling Web API calls from localhost](https://learn.microsoft.com/power-pages/configure/create-code-sites#set-up-local-development-by-enabling-web-api-calls-from-localhost-using-microsoft-entra-id-authentication).
 
 > **Further reading:** [Power Pages Web API overview](https://learn.microsoft.com/power-pages/configure/web-api-overview) · [Site settings for the Web API](https://learn.microsoft.com/power-pages/configure/web-api-overview#site-settings-for-the-web-api) · [Configure table permissions](https://learn.microsoft.com/power-pages/security/table-permissions) · [CSRF token wrapper for Web API calls](https://learn.microsoft.com/power-pages/configure/web-api-http-requests-handle-errors)
 
@@ -259,6 +267,28 @@ Simulate a finance manager approving the invoice:
 4. Back in the portal, navigate to that invoice's detail page
 5. **Refresh the page** — the status badge and timeline should now show "Approved"
 
+### Step 3.5b: test DELETE (expected to fail)
+
+The table permission you configured in Lab 02 grants Read, Create, and Write — but **not** Delete. A supplier shouldn't be able to delete invoices, so this operation should fail. Confirming that it fails is how you prove the permission layer is doing its job.
+
+On the deployed site, signed in, open the DevTools Console and try to delete one of your invoices (swap in a real `cr_invoiceid` from the Network tab):
+
+```javascript
+const token = await fetch('/_layout/tokenhtml')
+  .then(r => r.text())
+  .then(html => html.match(/value="([^"]+)"/)[1]);
+
+await fetch('/_api/cr_invoices(<your-invoice-guid>)', {
+  method: 'DELETE',
+  headers: { '__RequestVerificationToken': token }
+}).then(r => console.log('Status:', r.status));
+```
+
+- [ ] The request returns **403 Forbidden** — Delete isn't granted to the Authenticated Users role
+- [ ] The record still exists in make.powerapps.com
+
+This is correct behavior. Deletion happens only through the model-driven app by internal users with higher privileges.
+
 ### Step 3.6: inspect network traffic
 
 Open browser DevTools (F12) and go to the **Network** tab. Navigate around the portal and observe:
@@ -333,7 +363,7 @@ If you encounter issues during testing, use this reference to diagnose and fix t
 | **403 on GET** | `fetch('/_api/cr_invoices')` returns 403 | Table not enabled for Web API | Verify `Webapi/cr_invoice/enabled` site setting exists and is `"true"`. Redeploy. |
 | **403 on POST** | Creating an invoice returns 403 | Missing CSRF token or wrong header name | Verify `webApi.ts` fetches `/_layout/tokenhtml` and sends the extracted token as the `__RequestVerificationToken` header. |
 | **400 "Field not in allowed list"** | Specific field causes 400 | Field not in the site setting's allowed fields | Add the field to `Webapi/cr_invoice/fields` in the site setting YAML. Use the API name (e.g., `_cr_submittedby_value` for lookups). Redeploy. |
-| **CORS error** | Browser console shows CORS policy error | Running on localhost instead of deployed site | The Web API only works on the deployed Power Pages URL. Deploy first, then test on the live site. |
+| **CORS error** | Browser console shows CORS policy error | Calling the Web API from localhost without the local-dev setup | The Web API responds on the deployed Power Pages URL out of the box. Deploy first and test on the live site. (Localhost calls need Entra v1 bearer auth plus a dev-server proxy — out of scope here.) |
 | **TypeScript compile error** | "Property does not exist on type" | Field name mismatch between interface and API | Check `entities.ts` uses `cr_` prefixed names from Dataverse. Lookup fields need `_` prefix and `_value` suffix. |
 | **Empty response `{"value":[]}`** | API returns empty array | Permission scope mismatch or no linked data | Verify the logged-in user's Contact record matches the `cr_submittedby` on invoices. Check scope is Contact (not Self or Global). |
 | **500 Internal Server Error** | Server error on API call | Dataverse issue | Check Power Platform admin center for service health. Try the call again in 30 seconds. |
@@ -452,7 +482,7 @@ If Web API integration fails and you cannot resolve the issues:
 
 - `/integrate-webapi` generates a complete typed service layer: API client, TypeScript interfaces, and table-specific CRUD services
 - CSRF tokens (fetched from `/_layout/tokenhtml`) are required for all write operations (POST, PATCH, DELETE) — the API client handles this automatically
-- The Web API only works on the deployed site, not localhost
+- The Web API responds on the deployed site out of the box; calling it from localhost is possible but needs extra Entra v1 bearer-auth and proxy setup
 - OData parameters ($select, $filter, $orderby, $top) give you powerful server-side querying
 - Contact-scoped permissions ensure data isolation: each supplier sees only their own invoices, even through direct API calls
 - When debugging, always check all three security layers and the browser Network tab

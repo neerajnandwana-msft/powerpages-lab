@@ -18,6 +18,12 @@ A Dataverse solution that packages your SPA site with every dependency (tables, 
 - PAC CLI 2.6.3 or higher (`pac help` shows the version) — `/setup-solution` and the other ALM skills require it
 - Active PAC CLI session against your dev environment (`pac auth list`)
 
+> **Before you start — confirm your Lab 10 state.** This lab commits the unpacked solution alongside the source you pushed in Lab 10:
+>
+> - [ ] The portal directory is a Git repo with `origin` on GitHub (`git remote -v`)
+> - [ ] `.gitignore` excludes `*.zip` and `build/` (Lab 10, Step 2) — you're about to export zips into `build/`
+> - [ ] If you intend to follow Lab 12's PR workflow, branch protection on `main` is on (Lab 10, Step 6); enable it now if you skipped it
+
 ## Learning objectives
 
 By the end of this lab you will be able to:
@@ -44,6 +50,8 @@ A **Dataverse solution** packages all of those components together as a unit. On
 - Diff the solution contents in a PR (with the unpack pattern below)
 - Roll back a Dataverse change with `git revert`
 - Hand the repo to a teammate who can recreate the portal end-to-end
+
+> **Managed vs unmanaged — you'll meet both.** A solution exports in one of two forms, for two different jobs. **Unmanaged** is the editable development form: its components are human-readable XML you can unpack, diff, and commit — that's what this lab uses for source control (`pac solution unpack ... --packagetype Unmanaged`). **Managed** is the sealed, versioned form built for promotion *into* other environments: you don't edit it, you import it as a unit. Labs 13 and 14 export and promote the **managed** solution to integration, pre-prod, and prod. Same components, two packaging modes — keep the distinction in mind, because it decides which command you reach for.
 
 > **Two directories, two purposes.** Your repo will end up with both `.powerpages-site/` (created by Lab 01's `/create-site`) and `src/solution/` (created by this lab). They have different jobs:
 >
@@ -317,7 +325,7 @@ That's the payoff. Without unpack, the reviewer would see a 200KB binary blob an
 
 ### What stays manual
 
-1. **Per-stage values are supplied at promotion time.** The variable *definitions* travel with the solution; the *values* are stage-specific. Power Platform Pipelines prompts the operator for each value when promoting through Lab 14.
+1. **Per-stage values are supplied at promotion time.** The variable *definitions* travel with the solution; the *values* are stage-specific. In [Lab 14](./14-multi-env-promotion.md), `/deploy-pipeline` collects each stage's values and applies them through a `deploymentSettings.json` file at import — so the env variable definitions you create here are the exact mechanism Lab 14 uses to give pre-prod and prod their own configuration. (A manual maker-portal import prompts for the same values in its wizard instead.)
 2. **Manual imports outside Pipelines still prompt for values.** If you import the solution by hand (maker portal → Solutions → Import), the importer asks for env variable values during the import wizard.
 3. **Cache reminder.** When you change an environment variable's value (in any env), clear the site cache for the change to take effect: in **design studio**, select **Sync**; or sign in to the portal, browse to `/_services/about`, and select **Clear cache**; or restart the portal from the Power Platform admin center.
 

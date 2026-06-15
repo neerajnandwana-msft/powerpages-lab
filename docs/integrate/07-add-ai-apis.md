@@ -18,6 +18,7 @@ Two AI features for the portal, both built with the same plugin:
 - Completed [Lab 06: Add Power Automate Flows](./06-add-power-automate-flows.md) (portal has Web API, server logic, and cloud flow integrations working)
 - The typed service layer from [Lab 03](../build/03-web-api-integration.md) still exists (`src/services/webApi.ts`, entity-specific services, and `src/types/entities.ts`). `/add-ai-webapi` extends that pattern; do not delete or broadly refactor those files before running it.
 - Admin has enabled generative AI at the tenant and environment level (verify with your Power Platform admin before starting)
+- For Part 4 (Search Summary) you also need the **site-level** "Site search (preview)" toggle on. The plugin can't flip it — Step 4.2 walks you through it, but confirm you have maker access to the site's **Set up workspace** → **Copilot** settings now, so Part 4 doesn't stall
 - Site deployed via `/deploy-site` at least once (required for AI site settings phase)
 - `/add-ai-webapi` available in your AI coding CLI session
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`) — `/add-ai-webapi` queries environment and site AI configuration via Dataverse, which requires a live `az` token. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the Microsoft Entra ID-scoped Dataverse token works without one.
@@ -90,6 +91,17 @@ Both mean the same thing: "somewhere in the tenant → environment → site chai
 | 90041004 | Content length exceeds the limit — bump `Summarization/Data/ContentSizeLimit` (default 100000 chars) |
 | 90041005 | No records found to summarize — target collection is empty or row-level security hid everything |
 | 90041006 | Error occurred while summarizing the content — generic summarization failure; check prompt YAML and retry |
+
+### Layer 1/2 vs layer 3 — what these terms mean here
+
+The plugin's manifest and the troubleshooting below talk about "Layer 1/2" and "Layer 3." These describe the **AI-integration stack**, and they're a different axis from both Lab 02's three-layer security model and the tenant → environment → site admin hierarchy above:
+
+| Term | What it is | Who owns it | Typical failure |
+|------|-----------|-------------|-----------------|
+| **Layer 1/2 — Web API foundation** | Table permissions, `Webapi/<table>/fields`, and web roles. A summarization call reads the record through the Web API, so these must already exist. | `/integrate-webapi` (delegated automatically) | **403** on the summarization call |
+| **Layer 3 — AI site settings** | `Summarization/Data/Enable` plus the `Summarization/prompt/<id>` template. | `/add-ai-webapi` (this skill) | **400** with `90041003` |
+
+Keep this straight: a **403** is always Layer 1/2 (Web API), never the AI layer; a **400** points at Layer 3 or the admin hierarchy.
 
 ---
 

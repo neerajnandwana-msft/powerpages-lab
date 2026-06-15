@@ -12,7 +12,11 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "style": "node scripts/ms-learn-style-sweep.mjs docs",
+    "style:check": "node scripts/ms-learn-style-sweep.mjs --check docs",
+    "lint:prose": "vale sync && vale docs",
+    "check": "npm run typecheck && npm run style:check && npm run build"
   },
   "dependencies": {
     "@docusaurus/core": "3.7.0",

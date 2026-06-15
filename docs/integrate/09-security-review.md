@@ -18,7 +18,7 @@ This is the release-readiness gate before the ALM phase. You harden the integrat
 - `/setup-auth` ran in [Lab 02, Part 5](../build/02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth) so at least one identity provider is configured
 - Active PAC CLI session against the integration env (`pac auth list`)
 - For the deployed-site scan, the integration env's portal URL is reachable from your machine
-- For dependency / static analysis: [opengrep](https://github.com/opengrep/opengrep) and [trivy](https://github.com/aquasecurity/trivy) installed (the plugin offers a manual-review fallback if either is missing)
+- For static analysis: [opengrep](https://github.com/opengrep/opengrep) installed (the plugin offers a manual-review fallback if it's missing)
 
 ## Learning objectives
 
@@ -104,7 +104,7 @@ Sections covered:
 | Section | What you're reading |
 |---|---|
 | **Code (`/scan-code`)** | Static analysis findings from opengrep — patterns like `dangerouslySetInnerHTML` without sanitization, hardcoded URLs / secrets, missing input validation |
-| **Dependencies** | trivy output — known CVEs in your npm packages, by severity. License flags also surface here |
+| **Dependencies** | Dependency-scan findings — known CVEs in your npm packages, by severity. License flags also surface here |
 | **Deployed-site scan (`/scan-site`)** | Server-side scan results from the Power Pages security engine — outdated cipher suites, missing security headers on the live URL, leaked information in error responses |
 | **Browser security headers (`/manage-headers`)** | Diff between current site settings (`.powerpages-site/site-settings/HttpHeaders/*`) and recommended defaults — Content Security Policy, X-Frame-Options, CORS, cookie SameSite |
 | **Web application firewall (`/manage-firewall`)** | WAF posture: managed rule state, custom rules (IP / country / path blocks, rate limits). Available only on production sites in supported regions; an "ineligible" status is surfaced here |
@@ -232,6 +232,26 @@ the PR. Skip Low / Info findings — I'll catch those in the
 weekly security review.
 ```
 
+#### No-install option — a quick grep / findstr self-check
+
+Don't want to install a static-analysis tool? `/scan-code` already falls back to a manual review without opengrep, and you can run a 10-second text scan yourself with tools you already have — `grep` (ships with Git Bash on Windows, native on macOS / Linux) or the built-in Windows `findstr`:
+
+```bash
+# Git Bash / macOS / Linux
+grep -rn "dangerouslySetInnerHTML" src/                                       # unsanitized HTML injection
+grep -rniE "(api[_-]?key|secret|password|token|bearer)[[:space:]]*[:=]" src/  # hardcoded secrets
+grep -rn "http://" src/                                                       # non-TLS endpoints
+```
+
+```bat
+:: Windows (built-in findstr)
+findstr /s /n /i "dangerouslySetInnerHTML" src\*.ts src\*.tsx
+findstr /s /n /i "apikey secret password token bearer" src\*.ts src\*.tsx
+findstr /s /n "http://" src\*.ts src\*.tsx
+```
+
+> **This is a smell test, not a security scan.** `grep` and `findstr` match raw text — they can't follow data flow, tell a real secret from a variable named `token`, or catch anything semantic. They produce false positives *and* miss real issues. Use this as a fast pre-push check; rely on `/scan-code` (with opengrep) or the consolidated `/security-review` for actual static analysis.
+
 ### Step 3.2: deployed-site scan as ongoing monitoring
 
 `/scan-site` runs the server-side Power Pages security engine against a live URL. It's slow on large sites (minutes to hours) and finds things only the live runtime knows — TLS configuration, header response on edge nodes, error-response leakage.
@@ -254,7 +274,7 @@ The point of running this lab here, before the ALM phase, is that the integratio
 
 ### When you reach Lab 13 (CI/CD with GitHub actions)
 
-Lab 13 has an optional **Step 4e: wire `/scan-code` into the PR check job**. It installs opengrep + trivy on the runner and fails any PR that introduces a Critical or High finding. Pick that step up if you want the security gate to run on every PR rather than just before each release.
+Lab 13 has an optional **Step 4e: wire `/scan-code` into the PR check job**. It installs opengrep on the runner and fails any PR that introduces a Critical or High finding. Pick that step up if you want the security gate to run on every PR rather than just before each release.
 
 ### When you reach Lab 14 (Multi-Environment promotion)
 
@@ -272,11 +292,11 @@ After Lab 14 puts a site in prod, schedule a monthly run of `/scan-site` against
 
 | Problem | Cause | Fix |
 |---|---|---|
-| `/security-review` says "opengrep not installed" and offers a manual review | The static-analysis tool isn't on PATH | Install opengrep (or trivy if dependencies is the issue). On Windows, `winget install opengrep`; on macOS, `brew install opengrep`. Re-run the skill. |
+| `/security-review` says "opengrep not installed" and offers a manual review | The static-analysis tool isn't on PATH | Install opengrep. On Windows, `winget install opengrep`; on macOS, `brew install opengrep`. Re-run the skill. |
 | `/scan-site` returns "site unreachable" | Integration env URL isn't accessible from your machine, or the site isn't activated | Confirm the URL opens in a browser. If the site was reactivated to a new subdomain, the plugin's cached URL may be stale — re-run `/activate-site` first |
 | `/manage-firewall` reports "WAF not available in this region" | Your integration env is in a region where WAF is not offered, or the env is not a production-eligible tier | Skip the WAF section. Re-run `/manage-firewall` against production after Lab 14's promotion. |
 | `/audit-permissions` says "deployed permissions out of sync with YAML" | Someone changed permissions directly in the maker portal | Either accept the maker-portal state (re-export and unpack), or redeploy from the committed YAML — pick one source of truth |
-| The HTML report has a section that's empty | The corresponding focused skill's prerequisite wasn't met | The empty section's header explains which prerequisite was missing (e.g. "trivy not installed", "site not reachable"). Resolve it and re-run with the same goal |
+| The HTML report has a section that's empty | The corresponding focused skill's prerequisite wasn't met | The empty section's header explains which prerequisite was missing (e.g. "opengrep not installed", "site not reachable"). Resolve it and re-run with the same goal |
 | Report says CSP is too weak but `/manage-headers` proposes the same value back | Browser cached the old headers | Hard-refresh (Ctrl+Shift+R) or use an incognito window. Re-run `/manage-headers` after re-deploy. |
 
 ## Verification
@@ -303,7 +323,7 @@ with this output. Diagnose and propose a fix:
 
 ## Fallback
 
-If a focused skill's underlying tool isn't installed (opengrep, trivy) and you can't install it in the lab session:
+If a focused skill's underlying tool isn't installed (opengrep) and you can't install it in the lab session:
 
 1. **Run `/security-review` anyway.** Sections backed by missing tools fall back to a structured **manual review** — the plugin walks you through the same checks conversationally instead of with the tool.
 2. **Use the deployed-site scan as your floor.** `/scan-site` requires no local tooling — just a reachable URL and an authenticated PAC CLI session.

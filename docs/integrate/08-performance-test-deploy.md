@@ -16,6 +16,12 @@ A polished, deployed portal: bundle analyzed and split for fast first paint, aut
 - `npm run build` completes without errors in your project directory
 - Deployed site is reachable and responsive
 
+> **Before you start — confirm your prior state.** The test pass in Part 2 exercises the whole portal, so all the integration features need to be live:
+>
+> - [ ] Server logic (Lab 05), the cloud flow (Lab 06), and both AI features (Lab 07) are deployed and working
+> - [ ] The account you'll hand to `/test-site` has **already signed in once**, so its Contact exists in Dataverse — first sign-in creates the Contact and breaks scripted test flows
+> - [ ] `npm run build` succeeds locally
+
 ## Learning objectives
 
 By the end of this lab you will be able to:

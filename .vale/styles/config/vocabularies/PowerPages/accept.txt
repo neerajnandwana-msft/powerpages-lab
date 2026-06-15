@@ -1,0 +1,56 @@
+(?i)Microsoft
+(?i)agentic
+Dataverse
+Power Pages
+Power Platform
+Power Automate
+Power Apps
+Power BI
+Azure
+Entra
+Liquid
+SharePoint
+OneDrive
+Outlook
+Copilot
+GitHub
+GitLab
+Docusaurus
+Mermaid
+TypeScript
+JavaScript
+PowerShell
+Node\.js
+React
+Angular
+Astro
+Vite
+Claude
+Anthropic
+OpenAI
+OData
+opengrep
+[Tt]rivy
+Vale
+npm
+PAC
+CSRF
+CRUD
+SPA
+SPAs
+ALM
+OIDC
+SAML
+WS-Federation
+SEO
+WAF
+CSP
+CORS
+Webapi
+webApi
+powerpages-site
+(?i)env
+(?i)config
+(?i)repo
+(?i)localhost
+(?i)datamodel

@@ -17,6 +17,12 @@ A tamper-proof duplicate-PO check on the Submit Invoice form: a server-side endp
 - `/add-server-logic` available in your AI coding CLI session
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`) — the agent uses PAC CLI to deploy the generated server-logic files and the `az` token for any Dataverse calls it makes while wiring them up. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the plugin uses Microsoft Entra ID-scoped tokens, which work without one.
 
+> **Before you start — confirm your prior state.** This lab replaces a direct Web API write with a server-logic call, so the Web API layer must already be in place:
+>
+> - [ ] Lab 03's typed service layer exists (`src/services/webApi.ts`, `invoiceService.ts`) and the deployed site reads live data
+> - [ ] If you ran `/integrate-backend` in Lab 04, its Web API step finished — server logic builds on top of that foundation
+> - [ ] The `.powerpages-site/` folder exists and the site is deployed
+
 ## Learning objectives
 
 By the end of this lab you will be able to:
@@ -295,7 +301,7 @@ const handleSubmit = async (values) => {
 };
 ```
 
-The new service file `src/services/serverLogicService.ts` contains the fetch + CSRF token logic. Claude Code reuses the CSRF helper you already have from Lab 03's `webApi.ts`.
+The new service file `src/services/serverLogicService.ts` contains the fetch + CSRF token logic. Depending on how your Lab 03 client is structured, the plugin either imports the existing anti-forgery-token helper from `webApi.ts` or defines an equivalent one in the new service — either way, the token is fetched from `/_layout/tokenhtml` and sent as `__RequestVerificationToken`. If you see the logic duplicated and would rather share one helper, ask your AI coding CLI to extract it.
 
 Verify:
 

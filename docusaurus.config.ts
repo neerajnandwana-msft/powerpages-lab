@@ -14,8 +14,8 @@ const config: Config = {
   projectName: 'powerpages-lab',
   trailingSlash: false,
 
-  onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'throw',
 
   markdown: {
     mermaid: true,

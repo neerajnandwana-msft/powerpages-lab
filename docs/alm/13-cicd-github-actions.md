@@ -17,6 +17,12 @@ A GitHub Actions workflow that, on every merge to `main`, packs your unpacked so
 - Tenant admin access (or willingness to ask your admin) to create a Microsoft Entra ID app registration
 - Your "integration" environment for this exercise is your existing Power Platform env — we're reframing it for the workflow
 
+> **Before you start — confirm your prior state.** The workflow checks out your repo and runs `npm ci`, so:
+>
+> - [ ] `package-lock.json` is committed (`git ls-files | grep package-lock.json` returns it) — `npm ci` fails without it
+> - [ ] `src/solution/` is committed from Lab 11 and `main` is up to date after Lab 12
+> - [ ] `powerpages.config.json` still points at the SPA build output (`compiledPath`)
+
 ## Learning objectives
 
 By the end of this lab you will be able to:
@@ -48,7 +54,9 @@ Order matters: the solution must import **first** (so the data model is in place
 
 ## Step 1: create a service principal
 
-CI cannot use your personal `pac auth create --environment <url>` — that uses interactive sign-in. Instead, CI authenticates as a **service principal** (an app identity in Microsoft Entra ID).
+CI cannot use your personal `pac auth create --environment <url>` — that uses interactive sign-in, which needs a browser, and CI runs headless. Instead, CI authenticates as a **service principal** (an app identity in Microsoft Entra ID) that signs in with a client secret.
+
+> **The service principal is for CI only.** Keep the client secret in GitHub Actions, not on your laptop. You verify the credential locally once in Step 1d, but your day-to-day local development keeps using your personal `pac auth create` — don't switch local work over to the service principal.
 
 ### 1a. register the app in Microsoft Entra ID
 
@@ -73,6 +81,8 @@ az ad app credential reset --id <appId> --append
 ```
 
 Record the `password` (client secret).
+
+> **Client secrets expire — plan to rotate.** A secret has a finite lifetime (commonly 6-24 months). When it expires, CI starts failing auth. Rotate ahead of expiry: `az ad app credential reset --id <appId> --append` for a new secret, then `gh secret set CLIENT_SECRET --body "<new-secret>"`, and retire the old one. The track overview's production hardening checklist suggests a 6-month cadence.
 
 ### 1c. create the application user in Power Platform
 
@@ -243,7 +253,7 @@ A few choices worth calling out — they're the difference between a workflow th
 - **`workflow_dispatch`** lets you re-run the deploy from the GitHub Actions UI without committing anything. Handy for forcing a deploy after a manual fix in dev.
 - **`schedule: cron: '0 0 * * *'`** runs the deploy nightly. Catches drift if anyone touched the dev env outside the normal flow.
 - **`vars.*` for non-secret IDs, `secrets.*` for the client secret** — tenant ID, app ID, and environment URL are identifiers, not secrets. Storing them as GitHub Actions *variables* (not secrets) keeps the workflow YAML reusable across orgs without editing inline.
-- **`upload-paportal` with `model-version: 2`** — the official Microsoft action for uploading portal/SPA content. `model-version: 2` is the [enhanced data model](https://learn.microsoft.com/power-pages/admin/enhanced-data-model) that SPA sites use. Prefer this over a raw `pac` invocation in CI.
+- **`upload-paportal` with `model-version: 2`** — the official Microsoft action for uploading portal/SPA content. `model-version: 2` is the [enhanced data model](https://learn.microsoft.com/power-pages/admin/enhanced-data-model) that SPA sites use. Prefer this over a raw `pac` invocation in CI. Confirm your site is actually on the enhanced model before you rely on `2` — run `pac pages list -v` locally; if it reports the standard data model, use `model-version: 1` instead.
 - **Env-specific site setting values flow with the solution** — the environment variables you wired in Lab 11 carry the variable definitions; each target env supplies its own value at import time. No extra workflow plumbing needed.
 - **`runs-on: windows-latest`** — the Power Platform actions are tested most heavily on Windows. Linux runners often work but Windows is the safer default for this stack.
 
@@ -299,24 +309,18 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/opengrep/opengrep/main/install.sh | sh
           echo "$HOME/.opengrep/bin" >> $GITHUB_PATH
 
-      - name: Install trivy
-        uses: aquasecurity/setup-trivy@v0.2.0
-
       - name: Install the Power Pages plugin (your AI coding CLI of choice)
         run: |
           # Replace with the install step for your CI-friendly CLI:
           #   - GitHub Copilot CLI in headless mode: see GitHub docs
-          #   - Or invoke opengrep/trivy directly without the plugin wrapper
+          #   - Or invoke opengrep directly without the plugin wrapper
           echo "Skipping plugin install — falling back to direct tool invocation"
 
       - name: Static analysis
         run: opengrep --severity ERROR --error src/ .powerpages-site/
-
-      - name: Dependency scan
-        run: trivy fs --severity HIGH,CRITICAL --exit-code 1 .
 ```
 
-> **Note:** Running the focused skills *through* an AI coding CLI inside GitHub Actions is still evolving — different CLIs have different headless / non-interactive modes. The workflow above falls back to invoking `opengrep` and `trivy` directly, which is exactly what `/scan-code` does under the hood when the tools are installed. The signal (PR fails on Critical / High) is the same; the interactive remediation flow is gone, which is fine because the developer reads the failed-check log and fixes it locally before pushing again.
+> **Note:** Running the focused skills *through* an AI coding CLI inside GitHub Actions is still evolving — different CLIs have different headless / non-interactive modes. The workflow above falls back to invoking `opengrep` directly, which is exactly what `/scan-code` does under the hood when the tool is installed. The signal (PR fails on Critical / High) is the same; the interactive remediation flow is gone, which is fine because the developer reads the failed-check log and fixes it locally before pushing again.
 
 Commit and push. Open a PR with a deliberate Critical finding (e.g. a hardcoded `Bearer` token in a `.ts` file) and confirm the PR check fails. Remove the finding, push again, confirm it passes.
 

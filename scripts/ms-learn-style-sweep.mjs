@@ -135,7 +135,7 @@ function transformProseLine(line) {
   return result;
 }
 
-function processFile(path) {
+function processFile(path, { check = false } = {}) {
   const original = readFileSync(path, 'utf8');
   const lines = original.split('\n');
 
@@ -190,10 +190,11 @@ function processFile(path) {
   }
 
   const newContent = newLines.join('\n');
-  if (newContent !== original) {
+  const changed = newContent !== original;
+  if (changed && !check) {
     writeFileSync(path, newContent, 'utf8');
   }
-  return { headingChanges, proseChanges };
+  return { headingChanges, proseChanges, changed };
 }
 
 function collectMarkdown(target, out) {
@@ -207,9 +208,13 @@ function collectMarkdown(target, out) {
   }
 }
 
-const args = process.argv.slice(2);
+const rawArgs = process.argv.slice(2);
+// `--check` reports what the sweep WOULD change and exits non-zero if anything
+// is unstyled, without writing. Used by `npm run check` and the pre-commit hook.
+const check = rawArgs.includes('--check');
+const args = rawArgs.filter((a) => a !== '--check');
 if (args.length === 0) {
-  console.error('Usage: node scripts/ms-learn-style-sweep.mjs <file-or-dir> [more...]');
+  console.error('Usage: node scripts/ms-learn-style-sweep.mjs [--check] <file-or-dir> [more...]');
   process.exit(2);
 }
 
@@ -220,12 +225,19 @@ for (const arg of args) {
 
 let totalH = 0;
 let totalP = 0;
+let changedFiles = 0;
 for (const f of targets) {
-  const { headingChanges, proseChanges } = processFile(f);
+  const { headingChanges, proseChanges, changed } = processFile(f, { check });
   if (headingChanges || proseChanges) {
     console.log(`${f}: ${headingChanges} heading changes, ${proseChanges} prose-line changes`);
   }
+  if (changed) changedFiles++;
   totalH += headingChanges;
   totalP += proseChanges;
 }
-console.log(`\nTotal: ${totalH} heading changes, ${totalP} prose-line changes across ${targets.length} files`);
+const verb = check ? 'would change' : 'changed';
+console.log(`\nTotal: ${totalH} heading changes, ${totalP} prose-line changes (${changedFiles} file(s) ${verb}) across ${targets.length} files`);
+if (check && changedFiles > 0) {
+  console.error(`\n[style:check] ${changedFiles} file(s) need the Microsoft style sweep. Run \`npm run style\` to apply, then re-stage and commit.`);
+  process.exit(1);
+}

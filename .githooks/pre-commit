@@ -1,0 +1,24 @@
+#!/bin/sh
+# Pre-commit gate for the docs site.
+#  1. Microsoft style sweep (--check) on staged Markdown under docs/
+#  2. TypeScript typecheck (config files are .ts)
+#
+# Enable once per clone:  git config core.hooksPath .githooks
+# Skip in an emergency:   git commit --no-verify
+set -e
+
+staged_md=$(git diff --cached --name-only --diff-filter=ACM -- 'docs/**/*.md' 'docs/*.md')
+
+if [ -n "$staged_md" ]; then
+  echo "[pre-commit] Microsoft style check on staged docs..."
+  # shellcheck disable=SC2086
+  if ! node scripts/ms-learn-style-sweep.mjs --check $staged_md; then
+    echo "[pre-commit] Style issues found. Run 'npm run style' to fix, then re-stage." >&2
+    exit 1
+  fi
+fi
+
+echo "[pre-commit] typecheck..."
+npm run typecheck --silent
+
+echo "[pre-commit] OK"

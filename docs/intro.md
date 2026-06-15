@@ -81,7 +81,7 @@ This track is one cumulative use case, not a set of disconnected samples. Each l
 These reference docs sit outside the lab sequence — read them when you need them.
 
 - [Setup Guide](setup-guide) — install all required tools (Node.js, PAC CLI, Azure CLI, GitHub CLI, AI coding CLI, Power Pages plugin)
-- [Prompt Cheat Sheet](reference/prompt-cheat-sheet) — ACE framework, prompt patterns, design tokens, Claude Code commands
+- [Prompt Cheat Sheet](reference/prompt-cheat-sheet) — ACE framework, prompt patterns, design tokens, AI coding CLI commands
 - [AI Coding CLI Orientation](reference/ai-coding-cli-orientation) — Claude Code and GitHub Copilot CLI: slash commands, context management, plugins
 
 ---

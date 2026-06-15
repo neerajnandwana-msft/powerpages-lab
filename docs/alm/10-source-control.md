@@ -16,11 +16,29 @@ Imagine three things happen this week:
 2. **A change you deployed broke the dashboard for everyone.** You want to roll back. You don't have yesterday's bundle. You don't remember which migration to undo. The site is broken until you re-author the change.
 3. **A reviewer asks you to prove that the recent permission change to `cr_invoice` was reviewed before it shipped.** You have no record. No PR. No audit trail.
 
-Each of these is a normal Tuesday in production. ALM is the practice that makes them survivable. This lab is the first step: putting your portal under source control.
+Each of these is a normal Tuesday in production. ALM is the practice that makes them survivable. The ALM phase solves them with a three-part strategy, one built on top of the next:
+
+1. **Source control** (Labs 10-12) — code review and history on GitHub
+2. **Solution packaging** (Lab 11) — your Dataverse components captured as reproducible source
+3. **Automated promotion** (Labs 13-14) — CI/CD to integration, then manual approval gates up to production
+
+End to end, that pipeline looks like this:
+
+```mermaid
+flowchart LR
+    Dev["Dev env<br/>(your laptop)"] -->|git push / PR| GH["GitHub<br/>source of truth"]
+    GH -->|CI on merge<br/>(Lab 13)| Int["Integration env"]
+    Int -->|Pipelines + approval<br/>(Lab 14)| Pre["Pre-prod env"]
+    Pre -->|manual approval<br/>(Lab 14)| Prod["Production env"]
+```
+
+This lab is the first step: putting your portal under source control.
 
 ## What you will build
 
 A Git repository containing your portal source, pushed to GitHub, with a `.gitignore` that protects secrets and build artifacts and (optionally) branch protection on `main` enforcing PR reviews.
+
+> **Why GitHub and solutions, not Power Platform Git integration?** Power Platform has a built-in [Git integration](https://learn.microsoft.com/power-platform/alm/git-integration/overview) feature, but it **doesn't support SPA (code) sites**. So this track uses a plain GitHub repository for the source plus the `pac solution` unpack/pack workflow (Lab 11) for the Dataverse components — the combination that *does* work for SPA sites.
 
 ## Prerequisites
 
@@ -29,6 +47,8 @@ A Git repository containing your portal source, pushed to GitHub, with a `.gitig
 - Git installed and configured (`git --version`)
 - `gh` (GitHub CLI) installed and authenticated (`gh auth status`)
 - Portal directory accessible on disk (the folder where you ran `/create-site`)
+
+> **Before you start.** You're putting the *existing* portal directory under source control — the folder with `package.json` and `.powerpages-site/`. You do **not** need to re-deploy: the site already live in your environment from Lab 08 stays as it is, and the same source files and configuration on disk are all this lab needs.
 
 ## Learning objectives
 

@@ -39,8 +39,10 @@ Your Lab 13 GitHub Actions workflow deploys to **one** environment (your integra
 
 Two things to know up front:
 
-- Pipelines move **managed solutions**, not unmanaged. The integration env exports the solution as managed; pipelines imports the managed version into pre-prod and prod.
+- Pipelines move **managed solutions**, not unmanaged. Recall the distinction from [Lab 11](./11-solution-and-dependencies.md#why-solutions-why-now): unmanaged is the editable form you commit to source control; managed is the sealed form built for promotion. The integration env exports the solution as managed; pipelines imports the managed version into pre-prod and prod.
 - Pipelines does **not** auto-activate the site after deploy. A maker has to reactivate the site in the target environment. `/test-site` calls this out and offers to run `/activate-site` for you in sequence.
+
+> **The big picture — three tools, three layers.** This lab adds the third and final piece of the delivery pipeline. Before diving in, it helps to know the boundary between the tools: **GitHub Actions** (Lab 13) owns code-side build and single-env deploys; **Power Platform Pipelines** (this lab) owns managed-solution promotion across environments with approvals; **environment variables** (Lab 11) supply each stage's configuration. [Part 6](#part-6-three-tools-three-layers-reference) lays out exactly who owns what — skim it now if you want the map before the steps.
 
 > **Further reading:** [Power Platform pipelines](https://learn.microsoft.com/power-platform/alm/pipelines) · [Power Pages pipelines](https://learn.microsoft.com/power-pages/configure/power-pages-pipelines) · [Pipeline deployment settings](https://learn.microsoft.com/power-platform/alm/pipelines-deployment-settings)
 
@@ -281,7 +283,7 @@ You don't need to re-run the entire `/plan-alm`. The deployment ledger persists 
 
 ---
 
-## Part 6: reference — three tools, three layers
+## Part 6: three tools, three layers (reference)
 
 You now have three pieces in play. They're complementary, not competing — each owns a layer of the delivery story.
 

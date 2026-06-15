@@ -15,6 +15,14 @@ The full Dataverse backend for your portal: real tables, sample records, web rol
 - Completed [Lab 01: Scaffold an SPA Portal](./01-scaffold-spa-portal.md) (supplier portal scaffolded and running locally)
 - Active PAC CLI and Azure CLI sessions — re-authenticate if expired (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the plugin only needs Microsoft Entra ID-scoped tokens, and downstream `az` commands run normally afterward.
 
+> **Before you start — confirm your Lab 01 state.** This track is cumulative; each lab builds on the last. Verify:
+>
+> - [ ] `npm run dev` runs and `http://localhost:5173` shows the landing page
+> - [ ] All 5 pages are reachable, with 10 mock invoices on the list
+> - [ ] `powerpages.config.json` exists at the project root
+>
+> If any of these fail, finish [Lab 01](./01-scaffold-spa-portal.md) before continuing.
+
 ## Learning objectives
 
 By the end of this lab you will be able to:
@@ -58,6 +66,8 @@ Before creating tables, deploy your site so it exists in Power Pages:
 Your AI coding CLI will:
 1. Build the project (`npm run build`)
 2. Upload to Power Pages (`pac pages upload-code-site`)
+
+> **First deploy fails with "The attachment is either not a valid type or is too large"?** Many Dataverse environments block `.js` file uploads by default, which stops an SPA from uploading. Remove `js` from the blocked-attachment list: in the [Power Platform admin center](https://admin.powerplatform.microsoft.com/), select **Manage** → **Environments** → your environment → **Settings** → **Product** → **Privacy + Security**, then delete `js` from **Blocked Attachments** and **Save**. Redeploy. (The plugin's `/deploy-site` also detects this and prints the same fix.) See [Allow JavaScript file uploads](https://learn.microsoft.com/power-pages/configure/create-code-sites#allow-javascript-file-uploads).
 
 If the site has not been activated yet:
 
@@ -128,7 +138,14 @@ Power Pages Studio has a built-in **Data workspace** that shows the Dataverse ta
    - [ ] Autonumber format is `INV-{SEQNUM:6}`
    - [ ] Lookups to Contact and Account are present
 
-> **Concept: Publisher Prefix.** Every custom table and column gets a prefix (e.g., `cr_`) from your environment's default publisher. This prefix appears in all API calls: `cr_invoices`, `cr_ponumber`, `cr_amount`. Note your prefix — you will need it in later sessions.
+> **Concept: publisher prefix and singular vs plural names.** Every custom table and column gets a prefix (e.g., `cr_`) from your environment's default publisher. Note your prefix — you reuse it in every later lab. Two forms of the table name show up, and using the wrong one in the wrong place is a common error:
+>
+> | Form | Example | Where you use it |
+> |------|---------|------------------|
+> | **Logical name** (singular) | `cr_invoice` | YAML files: table permissions, site settings (`Webapi/cr_invoice/enabled`) |
+> | **Entity set name** (plural) | `cr_invoices` | Web API calls: `/_api/cr_invoices` |
+>
+> Lookup columns add a third twist — in API responses they return with a `_` prefix and `_value` suffix, so `cr_submittedby` becomes `_cr_submittedby_value`. The rest of this lab and Labs 03, 05, and 07 all depend on this convention.
 
 > **Alternative:** You can also verify in the Power Apps maker portal at https://make.powerapps.com → **Tables** → your invoice table. Power Pages Studio is preferred because it shows only the tables your site uses.
 
@@ -242,7 +259,7 @@ Layer 3: Table Permissions
     "What CRUD operations can this role perform? On which records?"
 ```
 
-All three layers must be configured for the Web API to work. If any layer is missing, the API returns 403 Forbidden.
+All three layers must be configured for the Web API to work. A missing layer — site setting off, no web role, or no table permission — returns **403 Forbidden**. A request for a column that isn't in the allow-list, or a malformed OData query, returns **400 Bad Request** instead. Keep that distinction in mind when you debug in Part 4.
 
 ### Concept: permission scopes
 
@@ -312,11 +329,15 @@ authenticatedusersrole: true
 
 ### Step 3.2: generate permissions configuration
 
-Claude Code generates these files as part of the Web API integration. You can either:
+Claude Code generates these files as part of the Web API integration. Pick the path that fits how you want to pace the next two labs:
 
-**Option A:** Run `/integrate-webapi` now (which generates both the API code and the permission YAML files). Lab 03 takes this approach.
+**Option A — generate code and permissions together (recommended for a continuous flow).** Run `/integrate-webapi` now. It generates both the typed API service layer *and* the permission YAML files, so the app makes live `/_api/` calls as soon as you deploy — and Part 4 below tests through the app UI. Lab 03 then becomes a guided review of what was generated. This is the path the rest of this lab assumes.
 
-**Option B:** Ask your AI coding CLI to generate just the permission files:
+```
+/integrate-webapi
+```
+
+**Option B — generate only the permission files now.** Ask your AI coding CLI for just the YAML. Your app still runs on mock data until Lab 03 wires it to live data, so in Part 4 you verify permissions with direct `/_api/` calls in the browser console rather than through the app UI.
 
 ```
 Set up the Web API permissions for the supplier invoice portal. Create the site 
@@ -390,15 +411,24 @@ PAC CLI uploads both the compiled site and the `.powerpages-site/` YAML files (p
 Open your deployed site URL in a browser and sign in with a test account. Now open DevTools (press **F12**) and keep two tabs visible while you test:
 
 - **Console tab** — shows JavaScript errors from the app. It should stay clean; red messages mean something is wrong.
-- **Network tab** — filter by **Fetch/XHR** to watch the app's live API calls to `/_api/*`. Successful calls return **200 OK** with a JSON response body.
+- **Network tab** — filter by **Fetch/XHR** to watch API calls to `/_api/*`. Successful calls return **200 OK** with a JSON response body.
 
-Use the app the way a supplier would:
+**If you took Option A** (ran `/integrate-webapi`), use the app the way a supplier would:
 
 1. Navigate to the Invoice List page — does data load?
 2. Open an individual invoice — does the detail view populate?
 3. Try any other page or action wired up in your scaffolded site.
 
 As you navigate, glance at the Network tab. Each `/_api/cr_invoices...` request should be green (200 OK). Select a request and check the **Response** tab to confirm the data looks right.
+
+**If you took Option B** (permissions only), the app still uses mock data, so test the permission layer directly. With the deployed site open and signed in, paste this into the DevTools Console:
+
+```js
+fetch('/_api/cr_invoices?$select=cr_ponumber,cr_amount,cr_status')
+  .then(r => r.json()).then(console.log)
+```
+
+A 200 response with a `value` array confirms all three layers are wired correctly. Lab 03 then replaces the mock data so the app itself makes these calls.
 
 ### Step 4.3: verify contact scoping
 
@@ -438,7 +468,9 @@ The flow:
 
 ## Part 5: configure authentication with `/setup-auth`
 
-So far the deployed site is open: anyone with the URL can browse it, and Lab 02 Step 2.5 relied on the **default Microsoft Entra ID identity provider** that every activated site gets. That default is fine for "sign in once so my Contact exists", but real sites usually need a deliberate provider mix, role-based UI, claims mapping, and a sign-in page that fits the audience. `/setup-auth` handles all of that — including the legwork in the identity provider's admin center.
+So far the deployed site is open: anyone with the URL can browse it, and Lab 02 Step 2.5 relied on the **default Microsoft Entra ID identity provider** that every activated site gets. That default is fine for "sign in once so my Contact exists", but real sites need a deliberate provider mix, role-based UI, claims mapping, and a sign-in page that fits the audience. `/setup-auth` handles all of that — including the legwork in the identity provider's admin center.
+
+> **Required for this track, not optional.** Part 5 produces the auth service and role helpers (`hasRole`, `RequireAuth`, `RequireRole`) and the session keepalive hook that the later labs assume are present — and the verification checklist below expects them. Complete it before moving to Lab 03.
 
 > **Important:** Server-side table permissions (Part 3) are what actually protect your data. The client-side helpers `/setup-auth` generates (`hasRole`, `RequireAuth`, `RequireRole`) only control what the UI *shows*. Keep both layers in mind: server-side enforces access, client-side improves UX.
 

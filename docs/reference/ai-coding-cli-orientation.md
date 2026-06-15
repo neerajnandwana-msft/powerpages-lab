@@ -81,7 +81,7 @@ Shows version, model, account, and connectivity. Handy for confirming which mode
 /model
 ```
 
-Opens an interactive picker. You can also switch directly with `/model opus` or `/model sonnet`, or pin a specific version like `/model claude-opus-4-7[1m]` for extended context.
+Opens an interactive picker. You can also switch directly with `/model opus` or `/model sonnet`, or pin a specific version like `/model claude-opus-4-8[1m]`. The `[1m]` suffix selects the 1-million-token extended-context variant of that model — useful when a long lab session or a large codebase fills the standard window.
 
 ### Plugins and marketplace
 
