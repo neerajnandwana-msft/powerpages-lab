@@ -1,19 +1,19 @@
 ---
 sidebar_position: 2
-sidebar_label: "Lab 11: Solution and Dependencies"
-title: "Lab 11: Solution Packaging and Dataverse Dependencies"
+sidebar_label: "Lab 11: Package the solution"
+title: "Lab 11: Package the solution and dependencies"
 ---
 
-# Lab 11: Solution Packaging and Dataverse Dependencies
+# Lab 11: Package the solution and dependencies
 
-## What you will build
+## Goal
 
-A Dataverse solution that packages your SPA site with every dependency (tables, columns, web roles, table permissions, site settings, server logic, cloud flow registrations, identity provider settings), authored by `/setup-solution`, classified for env-specific values, and unpacked into XML so PR reviewers see Dataverse changes line-by-line, not as opaque binary blobs.
+Package the SPA site and Dataverse dependencies into a solution that can be reviewed, versioned, and promoted across environments.
 
-## Prerequisites
+## State you carry forward
 
-- Completed [Lab 10: Source Control](./10-source-control.md): portal directory is a Git repo on GitHub
-- Completed [Lab 09: Security Review](../integrate/09-security-review.md): release-readiness security pass against the integration env
+- Completed [Lab 10: Put the site under source control](./10-source-control.md): portal directory is a Git repo on GitHub
+- Completed [Lab 09: Run a security review](../integrate/09-security-review.md): release-readiness security pass against the integration env
 - SPA site uses the **enhanced data model** (required to add an SPA site to a solution; `/create-site` produces this by default)
 - PAC CLI 2.6.3 or higher (`pac help` shows the version): `/setup-solution` and the other ALM skills require it
 - Active PAC CLI session against your dev environment (`pac auth list`)
@@ -96,10 +96,10 @@ Open `docs/alm-plan.html` and skim it. For the supplier portal scenario, the pla
 | Phase | Skill | What it does |
 |---|---|---|
 | **1. Author solution** | `/setup-solution` | Creates publisher + solution, adds Power Pages components, classifies site settings, proposes env variables (this lab) |
-| **2. Pipelines host** | `/ensure-pipelines-host` | Provisions or detects the Pipelines host environment ([Lab 13: Multi-Environment Promotion](./13-multi-env-promotion.md)) |
-| **3. Pipeline definition** | `/setup-pipeline` | Registers the pipeline in Dataverse, binds stages to target envs ([Lab 13: Multi-Environment Promotion](./13-multi-env-promotion.md)) |
-| **4. Stage deployments** | `/deploy-pipeline` | Triggers a deployment for a target stage ([Lab 13: Multi-Environment Promotion](./13-multi-env-promotion.md)) |
-| **5. Post-deploy** | `/test-site` + `/diagnose-deployment` | Verifies the deployment and matches any failure against the catalog ([Lab 13: Multi-Environment Promotion](./13-multi-env-promotion.md)) |
+| **2. Pipelines host** | `/ensure-pipelines-host` | Provisions or detects the Pipelines host environment ([Lab 13: Promote across environments](./13-multi-env-promotion.md)) |
+| **3. Pipeline definition** | `/setup-pipeline` | Registers the pipeline in Dataverse, binds stages to target envs ([Lab 13: Promote across environments](./13-multi-env-promotion.md)) |
+| **4. Stage deployments** | `/deploy-pipeline` | Triggers a deployment for a target stage ([Lab 13: Promote across environments](./13-multi-env-promotion.md)) |
+| **5. Post-deploy** | `/test-site` + `/diagnose-deployment` | Verifies the deployment and matches any failure against the catalog ([Lab 13: Promote across environments](./13-multi-env-promotion.md)) |
 
 For this lab, you're going to complete **Phase 1** end-to-end. Phases 2-5 land in Lab 13.
 
@@ -411,6 +411,6 @@ The manual flow loses the classification proposal, the Key Vault provisioning, t
 - The unpack-to-source-control loop is unchanged: solution `.zip` is never committed; `src/solution/` is the diffable source of truth
 - Manual maker-portal assembly is still the documented fallback when the skills aren't available
 
-## What's next
+## Next step
 
-→ [Lab 12: Branching Strategy and Developer Workflows](./12-branching-and-workflows.md)
+→ [Lab 12: Adopt branching and developer workflows](./12-branching-and-workflows.md)

@@ -1,18 +1,18 @@
 ---
 sidebar_position: 1
-sidebar_label: "Lab 04: Plan Service Layer"
-title: "Lab 04: Plan the Service Layer with /integrate-backend"
+sidebar_label: "Lab 04: Plan the service layer"
+title: "Lab 04: Plan the service layer with /integrate-backend"
 ---
 
-# Lab 04: Plan the Service Layer with `/integrate-backend`
+# Lab 04: Plan the service layer with `/integrate-backend`
 
-## What you will build
+## Goal
 
-A reviewed, sequenced integration plan for your prototype (every feature in the Supplier Invoice portal classified into Web API, Server Logic, Cloud Flow, or AI API) and the foundation artifacts kicked off by the orchestrator before you dive into the deep-dive labs (05, 06, 07, 08).
+Create a reviewed integration plan that classifies each supplier portal feature into the right backend pattern before you build it.
 
-## Prerequisites
+## State you carry forward
 
-- Completed [Lab 03: Connect to Live Data via Web API](../build/03-web-api-integration.md) (typed Web API service layer in `src/services/`, working CRUD on the deployed site)
+- Completed [Lab 03: Connect the SPA to live Dataverse data](../build/03-web-api-integration.md) (typed Web API service layer in `src/services/`, working CRUD on the deployed site)
 - Working portal deployed (`.powerpages-site/` folder exists, deploy succeeded at least once)
 - `/integrate-backend` available in your AI coding CLI session
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`. The orchestrator uses Microsoft Entra ID-scoped tokens that work without one.
@@ -297,6 +297,6 @@ If `/integrate-backend` will not start, or the plan never opens:
 - Validate-and-execute beats validate-only for any browser-bypassable rule
 - The site must be deployed for Server Logic and Cloud Flow endpoints to respond. Local development cannot exercise these patterns end-to-end
 
-## What's next
+## Next step
 
-→ [Lab 05: Add Server Logic](./05-add-server-logic.md): dive deep into the Server Logic pattern, especially when you want to understand or customize what the orchestrator generated.
+→ [Lab 05: Add server logic](./05-add-server-logic.md): dive deep into the Server Logic pattern, especially when you want to understand or customize what the orchestrator generated.

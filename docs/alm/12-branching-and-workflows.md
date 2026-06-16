@@ -1,19 +1,19 @@
 ---
 sidebar_position: 3
-sidebar_label: "Lab 12: Branching and Workflows"
-title: "Lab 12: Branching Strategy and Developer Workflows"
+sidebar_label: "Lab 12: Adopt branching workflows"
+title: "Lab 12: Adopt branching and developer workflows"
 ---
 
-# Lab 12: Branching Strategy and Developer Workflows
+# Lab 12: Adopt branching and developer workflows
 
-## What you will build
+## Goal
 
-A working understanding of trunk-based development applied to an SPA-site repo, exercised through three real workflows: feature development (with combined SPA + Dataverse PR), rollback via `git revert`, and a hotfix that promotes faster than the weekly cadence.
+Practice the feature, rollback, and hotfix workflows that keep the supplier portal repo safe for team development.
 
-## Prerequisites
+## State you carry forward
 
-- Completed [Lab 10: Source Control](./10-source-control.md) (Git repo on GitHub)
-- Completed [Lab 11: Solution Packaging and Dataverse Dependencies](./11-solution-and-dependencies.md) (`src/solution/` tree committed)
+- Completed [Lab 10: Put the site under source control](./10-source-control.md) (Git repo on GitHub)
+- Completed [Lab 11: Package the solution and dependencies](./11-solution-and-dependencies.md) (`src/solution/` tree committed)
 - Branch protection on `main` enabled (Lab 10, Step 6). If you skipped it, enable it now or expect direct pushes to `main` instead of PRs
 
 ## Learning objectives
@@ -414,6 +414,6 @@ If branch protection cannot be applied via `gh` or the GitHub UI:
 - Hotfix branches follow the same path as feature branches; what changes is *promotion*: a hotfix triggers Pipelines manually instead of waiting for the weekly cadence
 - If your team adopts long-lived release branches later, **cherry-pick** fixes back to `main` per MS guidance. Never merge a release branch into `main`
 
-## What's next
+## Next step
 
-→ [Lab 13: Multi-Environment Promotion](./13-multi-env-promotion.md)
+→ [Lab 13: Promote across environments](./13-multi-env-promotion.md)

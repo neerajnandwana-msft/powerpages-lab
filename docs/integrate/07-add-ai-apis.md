@@ -1,21 +1,18 @@
 ---
 sidebar_position: 4
-sidebar_label: "Lab 07: AI APIs"
-title: "Lab 07: Add Generative AI APIs"
+sidebar_label: "Lab 07: Add AI APIs"
+title: "Lab 07: Add generative AI APIs"
 ---
 
-# Lab 07: Add Generative AI APIs
+# Lab 07: Add generative AI APIs
 
-## What you will build
+## Goal
 
-Two AI features for the portal, both built with the same plugin:
+Add AI-powered invoice summaries and grounded search answers to the supplier portal by using the Power Pages AI APIs.
 
-1. **Copilot summary card on Invoice Detail**: one paragraph summarizing PO number, amount, description, and status. Powered by the Data Summarization API.
-2. **Search answer on a new search page**: type a question like "Which invoices are overdue?" and get an AI-generated answer grounded in Dataverse data with clickable citations. Powered by the Search Summary API.
+## State you carry forward
 
-## Prerequisites
-
-- Completed [Lab 06: Add Power Automate Flows](./06-add-power-automate-flows.md) (portal has Web API, server logic, and cloud flow integrations working)
+- Completed [Lab 06: Add Power Automate flows](./06-add-power-automate-flows.md) (portal has Web API, server logic, and cloud flow integrations working)
 - The typed service layer from [Lab 03](../build/03-web-api-integration.md) still exists (`src/services/webApi.ts`, entity-specific services, and `src/types/entities.ts`). `/add-ai-webapi` extends that pattern; do not delete or broadly refactor those files before running it.
 - Admin has enabled generative AI at the tenant and environment level (verify with your Power Platform admin before starting)
 - For Part 4 (Search Summary) you also need the **site-level** "Site search (preview)" toggle on. The plugin can't flip it; Step 4.2 walks you through it, but confirm you have maker access to the site's **Set up workspace** → **Copilot** settings now, so Part 4 doesn't stall
@@ -506,6 +503,6 @@ If AI calls consistently return `90041001` and the admin hierarchy is known to b
 - `/add-ai-webapi` uses sequential agent spawning. Subsequent runs extend the existing service file rather than duplicating it
 - Always rewrite Search Summary citation URLs. The raw URLs point at a page that doesn't exist in SPA sites
 
-## What's next
+## Next step
 
-→ [Lab 08: Performance, Testing, and Deploy](./08-performance-test-deploy.md)
+→ [Lab 08: Improve performance, test, and deploy](./08-performance-test-deploy.md)

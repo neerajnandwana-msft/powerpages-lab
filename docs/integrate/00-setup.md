@@ -19,7 +19,7 @@ For the staged, cross-phase view of what gets installed when, see the [Setup Gui
 
 ## Optional: static analysis for Lab 09
 
-[Lab 09: Security Review](09-security-review.md) uses `/scan-code` to scan local source with **static analysis** (opengrep) when it's available. This is optional: if the tool is missing, `/scan-code` falls back to a structured manual review, and Lab 09 also gives you a no-install `grep` / `findstr` self-check that uses tools you already have. Install opengrep ahead of time if you want the automated pass; otherwise skip this section and Lab 09 still works.
+[Lab 09: Run a security review](09-security-review.md) uses `/scan-code` to scan local source with **static analysis** (opengrep) when it's available. This is optional: if the tool is missing, `/scan-code` falls back to a structured manual review, and Lab 09 also gives you a no-install `grep` / `findstr` self-check that uses tools you already have. Install opengrep ahead of time if you want the automated pass; otherwise skip this section and Lab 09 still works.
 
 > **No static-analysis tool? You don't need one to start.** opengrep, the engine `/scan-code` uses for static analysis, has no winget package on Windows and needs a manually downloaded binary, so this guide doesn't require it. `/scan-code` detects the missing tool and offers a conversational manual-review fallback, and [Lab 09](09-security-review.md) includes a quick `grep` / `findstr` pattern check that runs on the Git Bash `grep` and Windows `findstr` you already have. Add opengrep later from the [release binaries](https://github.com/opengrep/opengrep/releases) if you want full semantic static analysis.
 
@@ -29,4 +29,4 @@ For the staged, cross-phase view of what gets installed when, see the [Setup Gui
 
 ## What's next
 
-→ [Lab 04: Plan the Service Layer with /integrate-backend](04-pick-backend-pattern.md)
+→ [Lab 04: Plan the service layer with /integrate-backend](04-pick-backend-pattern.md)

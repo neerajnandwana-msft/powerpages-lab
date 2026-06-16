@@ -131,7 +131,7 @@ Add `--scope project` or `--scope user` to change the scope.
 
 ### Context management
 
-**CLAUDE.md:** A file at your project root that gives Claude persistent context about your project (tech stack, design preferences, conventions). [Lab 01: Scaffold an SPA Portal](../build/01-scaffold-spa-portal.md) creates one as part of the scaffold.
+**CLAUDE.md:** A file at your project root that gives Claude persistent context about your project (tech stack, design preferences, conventions). [Lab 01: Scaffold a Power Pages SPA](../build/01-scaffold-spa-portal.md) creates one as part of the scaffold.
 
 **#file references:** Type `#file path/to/file` in your prompt to load a specific file into Claude's context. Useful when you want Claude to look at existing code before making changes.
 
@@ -323,7 +323,7 @@ Walks you through adding a server interactively (name, transport, command or URL
 
 ### Context management
 
-**AGENTS.md:** A file at your project root that gives Copilot persistent context about your project (tech stack, design preferences, conventions). Copilot CLI also auto-loads `CLAUDE.md` at the repo root if present, so the file [Lab 01: Scaffold an SPA Portal](../build/01-scaffold-spa-portal.md) creates works for both tools, no duplication needed. Other auto-loaded paths: `.github/copilot-instructions.md` (repo-wide) and `$HOME/.copilot/copilot-instructions.md` (user-global).
+**AGENTS.md:** A file at your project root that gives Copilot persistent context about your project (tech stack, design preferences, conventions). Copilot CLI also auto-loads `CLAUDE.md` at the repo root if present, so the file [Lab 01: Scaffold a Power Pages SPA](../build/01-scaffold-spa-portal.md) creates works for both tools, no duplication needed. Other auto-loaded paths: `.github/copilot-instructions.md` (repo-wide) and `$HOME/.copilot/copilot-instructions.md` (user-global).
 
 **@file references:** Type `@path/to/file` in your prompt to attach a specific file to Copilot's context.
 

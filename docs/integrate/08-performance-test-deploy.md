@@ -1,18 +1,18 @@
 ---
 sidebar_position: 5
-sidebar_label: "Lab 08: Performance, Test, Deploy"
-title: "Lab 08: Performance, Testing, and Deploy"
+sidebar_label: "Lab 08: Improve, test, deploy"
+title: "Lab 08: Improve performance, test, and deploy"
 ---
 
-# Lab 08: Performance, Testing, and Deploy
+# Lab 08: Improve performance, test, and deploy
 
-## What you will build
+## Goal
 
-A polished, deployed portal: bundle analyzed and split for fast first paint, automated end-to-end tests passing via `/test-site`, and the latest build live in your integration environment. The ALM labs that follow promote this build through pre-prod and prod.
+Prepare the integrated portal for ALM by improving bundle performance, running deployed-site tests, and deploying to the integration environment.
 
-## Prerequisites
+## State you carry forward
 
-- Completed [Lab 07: Add Generative AI APIs](./07-add-ai-apis.md) (the portal now has Web API, server logic, cloud flows, and two AI features)
+- Completed [Lab 07: Add generative AI APIs](./07-add-ai-apis.md) (the portal now has Web API, server logic, cloud flows, and two AI features)
 - `npm run build` completes without errors in your project directory
 - Deployed site is reachable and responsive
 
@@ -485,6 +485,6 @@ If the deploy fails:
 - `/test-site` runs Playwright with natural-language prompts, giving you smoke coverage without writing a test file
 - `/deploy-site` to the integration env is the handoff between the integration phase and the ALM phase; the ALM labs take this same build through real production via source control + Pipelines
 
-## What's next
+## Next step
 
-→ [Lab 09: Security Review](./09-security-review.md): the release-readiness security pass against the integration env before the ALM phase begins. After Lab 09, the ALM phase opens with [Lab 10: Source Control](../alm/10-source-control.md).
+→ [Lab 09: Run a security review](./09-security-review.md): the release-readiness security pass against the integration env before the ALM phase begins. After Lab 09, the ALM phase opens with [Lab 10: Put the site under source control](../alm/10-source-control.md).

@@ -1,18 +1,18 @@
 ---
 sidebar_position: 3
-sidebar_label: "Lab 06: Power Automate Flows"
-title: "Lab 06: Add Power Automate Flows"
+sidebar_label: "Lab 06: Add Power Automate flows"
+title: "Lab 06: Add Power Automate flows"
 ---
 
-# Lab 06: Add Power Automate Flows
+# Lab 06: Add Power Automate flows
 
-## What you will build
+## Goal
 
-A Teams notification that fires within seconds of a supplier submitting an invoice: PO number, amount, and a link to the invoice detail page, posted to a finance team channel. Built with a Power Automate cloud flow wired to the portal via `/add-cloud-flow`.
+Add a Power Automate cloud flow that sends a Teams notification when a supplier submits an invoice.
 
-## Prerequisites
+## State you carry forward
 
-- Completed [Lab 05: Add Server Logic](./05-add-server-logic.md) (you've seen the CSRF and web role pattern once)
+- Completed [Lab 05: Add server logic](./05-add-server-logic.md) (you've seen the CSRF and web role pattern once)
 - Access to Power Automate (`make.powerautomate.com`) with permission to create flows in the same environment as your Power Pages site
 - Azure CLI authenticated (`az account show`). `/add-cloud-flow` uses it to call the Flow RP API. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; Microsoft Entra ID-scoped tokens work without one.
 - A Power Platform **solution** to create the flow inside. Only **solution-aware** flows can be attached to a Power Pages site. Flows created outside a solution will not appear in the plugin's flow list. If you don't already have a working solution, create one in `make.powerapps.com` before starting (Solutions > + New solution, pick any publisher, name it `SupplierPortal`). Lab 11 will use the same solution for the unpacked source-control pattern, so use a name you're happy to keep.
@@ -443,6 +443,6 @@ If the flow does not fire at all:
 - Fire-and-forget calls use `.catch` to log failures without blocking the user journey
 - `/add-cloud-flow` handles the boilerplate (YAML, web roles, typed service function); you focus on the flow logic and UI integration
 
-## What's next
+## Next step
 
-→ [Lab 07: Add Generative AI APIs](./07-add-ai-apis.md)
+→ [Lab 07: Add generative AI APIs](./07-add-ai-apis.md)

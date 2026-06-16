@@ -32,4 +32,4 @@ Each setup page lists its install steps, a verification checklist, and troublesh
 
 ## What's next
 
-→ [Build phase setup](build/00-setup.md) → [Lab 01: Scaffold an SPA Portal](build/01-scaffold-spa-portal.md)
+→ [Build phase setup](build/00-setup.md) → [Lab 01: Scaffold a Power Pages SPA](build/01-scaffold-spa-portal.md)

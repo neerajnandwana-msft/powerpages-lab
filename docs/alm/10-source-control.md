@@ -1,10 +1,24 @@
 ---
 sidebar_position: 1
-sidebar_label: "Lab 10: Source Control"
-title: "Lab 10: Source Control"
+sidebar_label: "Lab 10: Use source control"
+title: "Lab 10: Put the site under source control"
 ---
 
-# Lab 10: Source Control
+# Lab 10: Put the site under source control
+
+## Goal
+
+Put the portal source in a GitHub repository with a protective `.gitignore` and optional branch protection on `main`.
+
+## State you carry forward
+
+- Completed [Lab 08: Improve performance, test, and deploy](../integrate/08-performance-test-deploy.md) (working portal deployed to your env)
+- Completed [Lab 09: Run a security review](../integrate/09-security-review.md) (release-readiness pass against the integration env: any Critical / High findings are fixed or consciously accepted before code lands in source control)
+- Git installed and configured (`git --version`)
+- `gh` (GitHub CLI) installed and authenticated (`gh auth status`). This is the one new tool the ALM phase adds; install and sign in now via [ALM phase setup](00-setup.md) if you skipped it earlier
+- Portal directory accessible on disk (the folder where you ran `/create-site`)
+
+> **Before you start.** You're putting the *existing* portal directory under source control: the folder with `package.json` and `.powerpages-site/`. You do **not** need to re-deploy: the site already live in your environment from Lab 08 stays as it is, and the same source files and configuration on disk are all this lab needs.
 
 ## Why ALM matters
 
@@ -33,22 +47,6 @@ flowchart LR
 ```
 
 This lab is the first step: putting your portal under source control.
-
-## What you will build
-
-A Git repository containing your portal source, pushed to GitHub, with a `.gitignore` that protects secrets and build artifacts and (optionally) branch protection on `main` enforcing PR reviews.
-
-> **Why GitHub and solutions, not Power Platform Git integration?** Power Platform has a built-in [Git integration](https://learn.microsoft.com/power-platform/alm/git-integration/overview) feature, but it **doesn't support SPA (code) sites**. So this track uses a plain GitHub repository for the source plus the `pac solution` unpack/pack workflow (Lab 11) for the Dataverse components, the combination that *does* work for SPA sites.
-
-## Prerequisites
-
-- Completed [Lab 08: Performance, Testing, and Deploy](../integrate/08-performance-test-deploy.md) (working portal deployed to your env)
-- Completed [Lab 09: Security Review](../integrate/09-security-review.md) (release-readiness pass against the integration env: any Critical / High findings are fixed or consciously accepted before code lands in source control)
-- Git installed and configured (`git --version`)
-- `gh` (GitHub CLI) installed and authenticated (`gh auth status`). This is the one new tool the ALM phase adds; install and sign in now via [ALM phase setup](00-setup.md) if you skipped it earlier
-- Portal directory accessible on disk (the folder where you ran `/create-site`)
-
-> **Before you start.** You're putting the *existing* portal directory under source control: the folder with `package.json` and `.powerpages-site/`. You do **not** need to re-deploy: the site already live in your environment from Lab 08 stays as it is, and the same source files and configuration on disk are all this lab needs.
 
 ## Learning objectives
 
@@ -286,6 +284,6 @@ If `gh` (the GitHub CLI) will not authenticate or `gh repo create` keeps failing
 - `gh repo create --source=. --push` is a one-shot "init repo and ship to GitHub" command
 - Branch protection on `main` makes the workflows in Lab 12 enforceable, not merely suggested
 
-## What's next
+## Next step
 
-→ [Lab 11: Solution Packaging and Dataverse Dependencies](./11-solution-and-dependencies.md)
+→ [Lab 11: Package the solution and dependencies](./11-solution-and-dependencies.md)

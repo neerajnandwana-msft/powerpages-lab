@@ -45,29 +45,29 @@ You scaffold and activate the site (`/create-site`, `/activate-site`), set up th
 
 | # | Lab | What you'll add |
 |---|-----|------|
-| 01 | [Scaffold an SPA Portal](build/01-scaffold-spa-portal) | A working React SPA running locally with mock data |
-| 02 | [Set Up Dataverse and Security](build/02-dataverse-and-security) | Real Dataverse tables, sample data, three-layer security |
-| 03 | [Connect to Live Data via Web API](build/03-web-api-integration) | Typed service layer, CSRF handling, end-to-end CRUD |
+| 01 | [Scaffold a Power Pages SPA](build/01-scaffold-spa-portal) | A working React SPA running locally with mock data |
+| 02 | [Set up Dataverse and security](build/02-dataverse-and-security) | Real Dataverse tables, sample data, three-layer security |
+| 03 | [Connect the SPA to live Dataverse data](build/03-web-api-integration) | Typed service layer, CSRF handling, end-to-end CRUD |
 
 ### Integrate: server logic, automation, AI
 
 | # | Lab | What you'll add |
 |---|-----|------|
-| 04 | [Pick the Right Backend Pattern](integrate/04-pick-backend-pattern) | Decision matrix: Web API vs Server Logic vs Cloud Flow vs AI API |
-| 05 | [Add Server Logic](integrate/05-add-server-logic) | Tamper-proof validate-and-execute on the server |
-| 06 | [Add Power Automate Flows](integrate/06-add-power-automate-flows) | Teams notification on invoice submit |
-| 07 | [Add Generative AI APIs](integrate/07-add-ai-apis) | Copilot summary card and grounded search answers |
-| 08 | [Performance, Testing, and Deploy](integrate/08-performance-test-deploy) | Bundle splitting, Playwright tests, integration env deploy |
-| 09 | [Security Review](integrate/09-security-review) | `/security-review` end-to-end: code, dependencies, deployed-site scan, headers, WAF, table permissions, auth config |
+| 04 | [Plan the service layer with `/integrate-backend`](integrate/04-pick-backend-pattern) | Decision matrix: Web API vs Server Logic vs Cloud Flow vs AI API |
+| 05 | [Add server logic](integrate/05-add-server-logic) | Tamper-proof validate-and-execute on the server |
+| 06 | [Add Power Automate flows](integrate/06-add-power-automate-flows) | Teams notification on invoice submit |
+| 07 | [Add generative AI APIs](integrate/07-add-ai-apis) | Copilot summary card and grounded search answers |
+| 08 | [Improve performance, test, and deploy](integrate/08-performance-test-deploy) | Bundle splitting, Playwright tests, integration env deploy |
+| 09 | [Run a security review](integrate/09-security-review) | `/security-review` end-to-end: code, dependencies, deployed-site scan, headers, WAF, table permissions, auth config |
 
 ### ALM: source control to production
 
 | # | Lab | What you'll add |
 |---|-----|------|
-| 10 | [Source Control](alm/10-source-control) | Git repo on GitHub with `.gitignore` and branch protection |
-| 11 | [Solution Packaging and Dataverse Dependencies](alm/11-solution-and-dependencies) | Unpack-to-source-control pattern, env variables for site settings |
-| 12 | [Branching Strategy and Workflows](alm/12-branching-and-workflows) | Trunk-based + feature/rollback/hotfix workflows |
-| 13 | [Multi-Environment Promotion](alm/13-multi-env-promotion) | Power Platform Pipelines: integration → pre-prod → prod with manual approval |
+| 10 | [Put the site under source control](alm/10-source-control) | Git repo on GitHub with `.gitignore` and branch protection |
+| 11 | [Package the solution and dependencies](alm/11-solution-and-dependencies) | Unpack-to-source-control pattern, env variables for site settings |
+| 12 | [Adopt branching and developer workflows](alm/12-branching-and-workflows) | Trunk-based + feature/rollback/hotfix workflows |
+| 13 | [Promote across environments](alm/13-multi-env-promotion) | Power Platform Pipelines: integration → pre-prod → prod with manual approval |
 
 ### State you carry forward
 
@@ -81,7 +81,7 @@ This track is one cumulative use case, not a set of disconnected samples. Each l
 | Typed Web API service layer in `src/services/` and `src/types/` | Lab 03 | Server logic integration, AI API wiring, testing, and CI builds |
 | Integration features: server logic, cloud flow consumer, AI page/card | Labs 05-07 | Performance testing, security review, ALM packaging, and promotion |
 | GitHub repo and unpacked `src/solution/` tree | Labs 10-11 | Branching workflows and Pipelines promotion |
-| ALM plan and ledgers under `docs/` | Labs 11 and 14 | Resumable solution packaging and multi-environment promotion |
+| ALM plan and ledgers under `docs/` | Labs 11 and 13 | Resumable solution packaging and multi-environment promotion |
 
 ---
 

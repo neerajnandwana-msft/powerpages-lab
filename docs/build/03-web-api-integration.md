@@ -1,18 +1,18 @@
 ---
 sidebar_position: 3
-sidebar_label: "Lab 03: Web API Integration"
-title: "Lab 03: Connect to Live Data via Web API"
+sidebar_label: "Lab 03: Connect to live data"
+title: "Lab 03: Connect the SPA to live Dataverse data"
 ---
 
-# Lab 03: Connect to Live Data via Web API
+# Lab 03: Connect the SPA to live Dataverse data
 
-## What you will build
+## Goal
 
-A portal that reads and writes real Dataverse data through the Power Pages Web API: a typed service layer, CSRF token handling, working CRUD on the deployed site, and OData queries for filtering, sorting, and pagination.
+Connect the portal to real Dataverse records through the Power Pages Web API with typed services, CSRF handling, and end-to-end CRUD validation.
 
-## Prerequisites
+## State you carry forward
 
-- Completed [Lab 02: Set Up Dataverse and Security](./02-dataverse-and-security.md) (Dataverse tables created, sample data inserted, 3-5 invoices re-linked to your Contact, permissions configured, site deployed)
+- Completed [Lab 02: Set up Dataverse and security](./02-dataverse-and-security.md) (Dataverse tables created, sample data inserted, 3-5 invoices re-linked to your Contact, permissions configured, site deployed)
 - Site deployed and accessible at its public URL
 - You have signed in to the deployed site at least once (so your Contact record exists in Dataverse)
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`. The plugin uses Microsoft Entra ID-scoped tokens that don't require one.
@@ -487,10 +487,10 @@ If Web API integration fails and you cannot resolve the issues:
 - Contact-scoped permissions ensure data isolation: each supplier sees only their own invoices, even through direct API calls
 - When debugging, always check all three security layers and the browser Network tab
 
-## What's next
+## Next step
 
 That wraps the **Build phase**. The Integrate phase needs no new tools. Your Build-phase setup carries straight through. Skim [Integrate phase setup](../integrate/00-setup.md) for the one-paragraph confirmation (and the optional static-analysis add-on for Lab 09), then start Lab 04.
 
-→ [Integrate phase setup](../integrate/00-setup.md) → [Lab 04: Plan the Service Layer with /integrate-backend](../integrate/04-pick-backend-pattern.md)
+→ [Integrate phase setup](../integrate/00-setup.md) → [Lab 04: Plan the service layer with /integrate-backend](../integrate/04-pick-backend-pattern.md)
 
 > **Tip:** If you ran `/integrate-webapi` here but haven't yet configured deliberate sign-in (multi-provider, claims mapping, role-based UI), [Lab 02 Part 5: Configure authentication with /setup-auth](./02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth) is the natural follow-up. The typical plugin workflow runs `/setup-auth` right after `/integrate-webapi`.

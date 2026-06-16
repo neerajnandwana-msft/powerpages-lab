@@ -1,20 +1,18 @@
 ---
 sidebar_position: 6
-sidebar_label: "Lab 09: Security Review"
-title: "Lab 09: Security Review"
+sidebar_label: "Lab 09: Run a security review"
+title: "Lab 09: Run a security review"
 ---
 
-# Lab 09: Security Review
+# Lab 09: Run a security review
 
-## What you will build
+## Goal
 
-A consolidated HTML security report for your portal, produced by `/security-review` orchestrating focused checks across code, dependencies, deployed-site scan results, browser headers, WAF posture, table permissions, and authentication configuration, followed by targeted fixes applied through the matching skills in interactive mode.
+Run the release-readiness security gate and fix findings before the portal enters the ALM phase.
 
-This is the release-readiness gate before the ALM phase. You harden the integration env now so what promotes to pre-prod and prod is already clean.
+## State you carry forward
 
-## Prerequisites
-
-- Completed [Lab 08: Performance, Testing, and Deploy](./08-performance-test-deploy.md): site is built, tested, and deployed to your integration environment
+- Completed [Lab 08: Improve performance, test, and deploy](./08-performance-test-deploy.md): site is built, tested, and deployed to your integration environment
 - `/setup-auth` ran in [Lab 02, Part 5](../build/02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth) so at least one identity provider is configured
 - Active PAC CLI session against the integration env (`pac auth list`)
 - For the deployed-site scan, the integration env's portal URL is reachable from your machine
@@ -335,8 +333,8 @@ If a focused skill's underlying tool isn't installed (opengrep) and you can't in
 - WAF (`/manage-firewall`) is production-only in most regions. Plan its application during the pipeline-driven prod promotion, not during integration env work
 - Run this lab **before** the ALM phase: the integration env is the last place a finding is cheap to fix
 
-## What's next
+## Next step
 
 That wraps the **Integrate phase**. The ALM phase adds one new tool, **GitHub CLI**, plus a GitHub account. Set those up first ([ALM phase setup](../alm/00-setup.md) takes a few minutes), then start Lab 10.
 
-→ [ALM phase setup](../alm/00-setup.md) (install GitHub CLI) → [Lab 10: Source Control](../alm/10-source-control.md)
+→ [ALM phase setup](../alm/00-setup.md) (install GitHub CLI) → [Lab 10: Put the site under source control](../alm/10-source-control.md)

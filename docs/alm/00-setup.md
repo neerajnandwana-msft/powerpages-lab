@@ -6,7 +6,7 @@ title: "ALM phase setup"
 
 # ALM phase setup
 
-You've finished the Integrate phase (through Lab 09). The ALM phase (Labs 10–13) adds source control, branching, and multi-environment promotion. Everything from the [Build phase setup](../build/00-setup.md) still applies. You don't reinstall anything. You only need to add **GitHub CLI** and have a **GitHub account** ready before [Lab 10: Source Control](10-source-control.md).
+You've finished the Integrate phase (through Lab 09). The ALM phase (Labs 10–13) adds source control, branching, and multi-environment promotion. Everything from the [Build phase setup](../build/00-setup.md) still applies. You don't reinstall anything. You only need to add **GitHub CLI** and have a **GitHub account** ready before [Lab 10: Put the site under source control](10-source-control.md).
 
 For the staged, cross-phase view of what gets installed when, see the [Setup Guide overview](../setup-guide.md).
 
@@ -65,4 +65,4 @@ gh auth status          # Expect: logged in as <your-github-username>
 
 ## What's next
 
-→ [Lab 10: Source Control](10-source-control.md)
+→ [Lab 10: Put the site under source control](10-source-control.md)

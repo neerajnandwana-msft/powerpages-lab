@@ -6,7 +6,7 @@ title: "Build phase setup"
 
 # Build phase setup
 
-Complete this section before [Lab 01: Scaffold an SPA Portal](01-scaffold-spa-portal.md). It installs and authenticates the tools the Build phase needs, and the same tools carry you through the [Integrate phase](../integrate/00-setup.md) (Labs 04–09). The [ALM phase](../alm/00-setup.md) adds one more tool (GitHub CLI) later. You don't need it yet.
+Complete this section before [Lab 01: Scaffold a Power Pages SPA](01-scaffold-spa-portal.md). It installs and authenticates the tools the Build phase needs, and the same tools carry you through the [Integrate phase](../integrate/00-setup.md) (Labs 04–09). The [ALM phase](../alm/00-setup.md) adds one more tool (GitHub CLI) later. You don't need it yet.
 
 For the staged, cross-phase view of what gets installed when, see the [Setup Guide overview](../setup-guide.md).
 
@@ -264,4 +264,4 @@ If all commands produce the expected output, you are ready for **Lab 01**.
 
 ## What's next
 
-→ [Lab 01: Scaffold an SPA Portal](01-scaffold-spa-portal.md)
+→ [Lab 01: Scaffold a Power Pages SPA](01-scaffold-spa-portal.md)

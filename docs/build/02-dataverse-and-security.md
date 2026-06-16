@@ -1,18 +1,18 @@
 ---
 sidebar_position: 2
-sidebar_label: "Lab 02: Dataverse and Security"
-title: "Lab 02: Set Up Dataverse and Security"
+sidebar_label: "Lab 02: Set up Dataverse and security"
+title: "Lab 02: Set up Dataverse and security"
 ---
 
-# Lab 02: Set Up Dataverse and Security
+# Lab 02: Set up Dataverse and security
 
-## What you will build
+## Goal
 
-The full Dataverse backend for your portal: real tables, sample records, web roles, and the three-layer security model that gates Web API access.
+Replace mock-only assumptions with a Dataverse backend, sample data, web roles, table permissions, and authentication for the supplier portal.
 
-## Prerequisites
+## State you carry forward
 
-- Completed [Lab 01: Scaffold an SPA Portal](./01-scaffold-spa-portal.md) (supplier portal scaffolded and running locally)
+- Completed [Lab 01: Scaffold a Power Pages SPA](./01-scaffold-spa-portal.md) (supplier portal scaffolded and running locally)
 - Active PAC CLI and Azure CLI sessions, re-authenticate if expired (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the plugin only needs Microsoft Entra ID-scoped tokens, and downstream `az` commands run normally afterward.
 
 > **Before you start: confirm your Lab 01 state.** This track is cumulative; each lab builds on the last. Verify:
@@ -634,7 +634,7 @@ You have completed this lab when:
 - [ ] `/setup-auth` ran successfully and produced the auth service, `hasRole` / `RequireAuth` / `RequireRole` utilities, the session keepalive hook, and (if you configured more than one provider) a `/login` page
 - [ ] Site settings for each configured identity provider exist under `.powerpages-site/site-settings/` (provider authority, client ID, claims mapping, registration mode)
 - [ ] You can sign in to the deployed site with each configured provider in an incognito window
-- [ ] Optional: run `/audit-permissions` and review the HTML report it generates. It cross-checks your YAML against the deployed site and flags any over- or under-permissive grants. A complete end-to-end security review (code + dependencies + headers + WAF + permissions + deployed-site scan) is the focus of [Lab 09: Security Review](../integrate/09-security-review.md) after the integration phase
+- [ ] Optional: run `/audit-permissions` and review the HTML report it generates. It cross-checks your YAML against the deployed site and flags any over- or under-permissive grants. A complete end-to-end security review (code + dependencies + headers + WAF + permissions + deployed-site scan) is the focus of [Lab 09: Run a security review](../integrate/09-security-review.md) after the integration phase
 
 ---
 
@@ -689,6 +689,6 @@ If Dataverse table creation fails via API, create the table manually:
 - Re-running `/setup-auth` lets you add a new identity provider without overwriting existing ones: start with one provider, add others incrementally
 - Client-side authorization (`RequireAuth`, `RequireRole`, `hasRole`) is for UX only; server-side table permissions are what actually enforce access
 
-## What's next
+## Next step
 
-→ [Lab 03: Connect to Live Data via Web API](./03-web-api-integration.md)
+→ [Lab 03: Connect the SPA to live Dataverse data](./03-web-api-integration.md)

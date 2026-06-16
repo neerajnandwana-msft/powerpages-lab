@@ -1,18 +1,18 @@
 ---
 sidebar_position: 2
-sidebar_label: "Lab 05: Add Server Logic"
-title: "Lab 05: Add Server Logic"
+sidebar_label: "Lab 05: Add server logic"
+title: "Lab 05: Add server logic"
 ---
 
-# Lab 05: Add Server Logic
+# Lab 05: Add server logic
 
-## What you will build
+## Goal
 
-A tamper-proof duplicate-PO check on the Submit Invoice form: a server-side endpoint that validates uniqueness **and** creates the invoice in a single call, so the client cannot bypass the rule.
+Add a server-side validate-and-execute endpoint that prevents duplicate purchase orders while creating invoices securely.
 
-## Prerequisites
+## State you carry forward
 
-- Completed [Lab 04: Plan the Service Layer with /integrate-backend](./04-pick-backend-pattern.md)
+- Completed [Lab 04: Plan the service layer with /integrate-backend](./04-pick-backend-pattern.md)
 - Working portal deployed (`.powerpages-site` folder exists)
 - `/add-server-logic` available in your AI coding CLI session
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). The agent uses PAC CLI to deploy the generated server-logic files and the `az` token for any Dataverse calls it makes while wiring them up. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the plugin uses Microsoft Entra ID-scoped tokens, which work without one.
@@ -423,6 +423,6 @@ If `/add-server-logic` fails to deploy:
 - Validate-and-execute only wins if the direct Web API path is equally locked down
 - The `/add-server-logic` plugin takes care of the boilerplate (web roles, metadata GUID, CSRF handling on the client)
 
-## What's next
+## Next step
 
-→ [Lab 06: Add Power Automate Flows](./06-add-power-automate-flows.md)
+→ [Lab 06: Add Power Automate flows](./06-add-power-automate-flows.md)

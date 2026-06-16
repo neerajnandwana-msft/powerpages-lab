@@ -1,18 +1,18 @@
 ---
 sidebar_position: 4
-sidebar_label: "Lab 13: Multi-Env Promotion"
-title: "Lab 13: Multi-Environment Promotion"
+sidebar_label: "Lab 13: Promote across environments"
+title: "Lab 13: Promote across environments"
 ---
 
-# Lab 13: Multi-Environment Promotion
+# Lab 13: Promote across environments
 
-## What you will build
+## Goal
 
-A Power Platform Pipelines flow that promotes your managed solution through **integration → pre-prod → prod**, orchestrated by `/plan-alm` and driven by five skills: `/ensure-pipelines-host`, `/setup-pipeline`, `/deploy-pipeline`, `/test-site`, and `/diagnose-deployment`. Per-stage environment-variable values flow through `deploymentSettings.json` so each stage gets its own configuration without touching the solution. The manual `/export-solution` + `/import-solution` path is still available as a documented fallback for tenants without Pipelines.
+Promote the managed solution through integration, pre-prod, and production with Power Platform Pipelines and deployment diagnostics.
 
-## Prerequisites
+## State you carry forward
 
-- Completed [Lab 11: Solution Packaging and Dataverse Dependencies](./11-solution-and-dependencies.md) (`/plan-alm` ran, `/setup-solution` authored the solution, env-variable wiring is in place)
+- Completed [Lab 11: Package the solution and dependencies](./11-solution-and-dependencies.md) (`/plan-alm` ran, `/setup-solution` authored the solution, env-variable wiring is in place)
 - Your integration environment is deployed and up to date. It's the source stage the pipeline promotes from
 - Pre-prod and prod target environments exist (or your admin can provision them)
 - Tenant-level permission to install the Pipelines app in a host environment, OR an existing pipelines host you can use
@@ -254,7 +254,7 @@ The plugin matches the error against its catalog. Common matches:
 | **Stale manifest** | A component was added/removed in the dev env but `/setup-solution` wasn't re-run in sync mode | Re-run `/setup-solution`, re-export, retry deploy |
 | **Missing dependency** | Target env lacks a Dataverse component (table, web role, site-setting type) | Add the missing component to the source solution, re-export, retry |
 | **Host conflict** | Target env is linked to a different Pipelines host | Run `/force-link-environment` to reassign |
-| **Blocked JavaScript** | A site setting or WAF rule on the target blocks an inline script | Resolve via `/manage-headers` or `/manage-firewall` ([Lab 09: Security Review](../integrate/09-security-review.md)) |
+| **Blocked JavaScript** | A site setting or WAF rule on the target blocks an inline script | Resolve via `/manage-headers` or `/manage-firewall` ([Lab 09: Run a security review](../integrate/09-security-review.md)) |
 | **Expired authentication** | Your PAC CLI or `az` session expired | Re-authenticate (`pac auth create`, `az login --allow-no-subscriptions`) and re-run the deploy |
 
 The plugin proposes a fix and **never applies it without your consent**. Approve the fix, then re-run `/deploy-pipeline` for the failed stage.
@@ -373,6 +373,6 @@ In every other case, prefer `/deploy-pipeline`. The audit trail, approval gates,
 - The manual `/export-solution` + `/import-solution` path is a documented fallback when Pipelines isn't available
 - Two layers: `/deploy-pipeline` for managed-solution promotion, `/setup-solution`-authored env variables for per-stage configuration
 
-## What's next
+## Next step
 
 You've reached the end of the lab track. To keep learning, see the resources list and optional next steps in the [track overview](../intro.md).
