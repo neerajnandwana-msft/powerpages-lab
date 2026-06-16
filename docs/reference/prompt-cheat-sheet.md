@@ -10,7 +10,7 @@ A quick reference for prompting techniques and design tokens used throughout thi
 
 ---
 
-## The ACE Framework
+## The ACE framework
 
 Structure every prompt with three components for consistently better results.
 
@@ -20,7 +20,7 @@ Structure every prompt with three components for consistently better results.
 | **Context** | Background, constraints, tech stack, design system. | "...using React + TypeScript + Tailwind CSS, following Fluent Design..." |
 | **Examples** | Desired output format, sample data, reference patterns. | "...similar to the invoice list page, with status badges like: Draft (gray), Approved (green), Rejected (red)." |
 
-### ACE Template
+### ACE template
 
 Use this template when writing prompts for Claude Code or GitHub Copilot CLI:
 
@@ -40,7 +40,7 @@ Sample data: [provide realistic examples]
 Expected behavior: [describe user interaction flow]
 ```
 
-### ACE in Practice
+### ACE in practice
 
 A concrete before/after to make the difference visible.
 
@@ -74,7 +74,7 @@ The second prompt produces a dramatically better result because the AI knows exa
 
 ---
 
-## Top 10 Prompt Patterns for Power Pages
+## Top 10 prompt patterns for Power Pages
 
 ### 1. Zero-Shot
 
@@ -118,7 +118,7 @@ What are the relationships? Which standard Dataverse tables can we reuse instead
 of creating custom ones?
 ```
 
-### 5. Role Prompting
+### 5. role prompting
 
 Assign a role to frame the AI's perspective.
 
@@ -141,7 +141,7 @@ Create the Invoice List page with these constraints:
 - Use Lucide React icons only
 ```
 
-### 7. Iterative Refinement
+### 7. iterative refinement
 
 Start broad, then narrow with follow-up prompts.
 
@@ -174,7 +174,7 @@ The invoice form fields are overlapping on mobile. Here's a screenshot:
 Fix the layout so fields stack vertically on screens under 768px.
 ```
 
-### 10. Incremental Building
+### 10. incremental building
 
 Build features one at a time rather than all at once.
 
@@ -191,28 +191,28 @@ Step 4: "Show a 'No results' message when filters return empty"
 
 Five prompting mistakes to avoid as you work through the labs.
 
-### 1. Vague prompts
+### 1. vague prompts
 
 **Bad:** "Make the dashboard better."
 **Good:** "Increase the gap between metric cards from 4 to 8, and right-align their numeric values."
 
-Tell the AI *what* to change and *to what*. "Better" is subjective — the model will guess.
+Tell the AI *what* to change and *to what*. "Better" is subjective. The model will guess.
 
-### 2. Mixing concerns in one prompt
+### 2. mixing concerns in one prompt
 
 **Bad:** "Create the invoice form, save it to Dataverse, add validation, and send an approval email."
-**Good:** Break into separate prompts — form UI, Web API integration, validation, flow trigger — and verify each before moving on.
+**Good:** Break into separate prompts (form UI, Web API integration, validation, flow trigger) and verify each before moving on.
 
 Large prompts produce large, hard-to-review diffs and compound errors across unrelated layers.
 
-### 3. Skipping context
+### 3. skipping context
 
 **Bad:** "Build a status badge component."
-**Good:** "Build a status badge component using Tailwind, Lucide icons, Fluent Design, max font-weight 600 — see @src/components/MetricCard.tsx for the existing pattern."
+**Good:** "Build a status badge component using Tailwind, Lucide icons, Fluent Design, max font-weight 600, see @src/components/MetricCard.tsx for the existing pattern."
 
 If your `CLAUDE.md` already covers tech stack and design, you can skip restating it; otherwise include it every time.
 
-### 4. No reference pattern for non-trivial UI
+### 4. no reference pattern for non-trivial UI
 
 **Bad:** "Add a data table with filters."
 **Good:** "Add a data table with filters, following the same column layout, pagination, and empty-state pattern used in @src/pages/InvoiceList.tsx."
@@ -228,7 +228,7 @@ If you find yourself re-explaining the same thing, it belongs in `CLAUDE.md`.
 
 ---
 
-## Design System Quick Reference
+## Design system quick reference
 
 Use these tokens in your prompts to maintain visual consistency across the labs.
 
@@ -249,11 +249,11 @@ Use these tokens in your prompts to maintain visual consistency across the labs.
 |----------|-------|
 | Font stack | `'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif` |
 | Rendering | Antialiased |
-| Max heading weight | `font-semibold` (600) — never use bold/700+ |
+| Max heading weight | `font-semibold` (600), never use bold/700+ |
 | Body line-height | 1.5 |
 | Style | No italic, no uppercase tracking |
 
-### Design Language
+### Design language
 
 ```
 Following Microsoft Fluent Design: clean professional look, card-based layouts 
@@ -262,7 +262,7 @@ with subtle shadows and 8px rounded corners, Lucide React icons, mobile responsi
 
 ---
 
-## Design System Shortcuts
+## Design system shortcuts
 
 When prompting for UI, naming a mature design system implicitly covers typography, spacing, motion, elevation, and accessibility. One phrase replaces a paragraph of constraints.
 
@@ -270,8 +270,8 @@ When prompting for UI, naming a mature design system implicitly covers typograph
 
 | System | Best For | Covers Implicitly | Lab Fit |
 |--------|----------|-------------------|---------|
-| **Fluent Design** | Enterprise dashboards, data-heavy apps | Depth, subtle motion, accessibility, Microsoft ecosystem alignment | **Primary** — matches Power Pages context |
-| **Material Design 3** | Most complete "single-name" coverage | Type scale, elevation, motion durations/easing, responsive breakpoints, design tokens | **Secondary** — pair with Fluent for layout/motion completeness |
+| **Fluent Design** | Enterprise dashboards, data-heavy apps | Depth, subtle motion, accessibility, Microsoft ecosystem alignment | **Primary**: matches Power Pages context |
+| **Material Design 3** | Most complete "single-name" coverage | Type scale, elevation, motion durations/easing, responsive breakpoints, design tokens | **Secondary**: pair with Fluent for layout/motion completeness |
 | **Apple HIG** | Polished, minimal consumer UX | Typography hierarchy, micro-interactions, content-first layouts | Less prescriptive on shadows/elevation |
 | **Ant Design** | Forms, tables, admin panels | Strong enterprise component defaults, dense data patterns | Less emphasis on motion |
 
@@ -279,9 +279,9 @@ When prompting for UI, naming a mature design system implicitly covers typograph
 
 For the Supplier Invoice Portal example used in these labs, lead with **Fluent** (matches Microsoft + Power Pages context); add **Material 3** when you want explicit motion or layout coverage.
 
-### Copy-Paste Prompt Lines
+### Copy-Paste prompt lines
 
-**Fluent Design (Primary — recommended default):**
+**Fluent Design (Primary, recommended default):**
 
 ```text
 Use Microsoft Fluent Design System with emphasis on depth, subtle motion, and accessible components.
@@ -315,11 +315,11 @@ Use Material Design 3 (layout, motion, tokens) + Fluent Design (depth, enterpris
 
 ---
 
-## React Best Practices and Application Structure
+## React best practices and application structure
 
 Use this section when prompting Claude Code or GitHub Copilot CLI to create or refactor React code. Clear structure constraints help the AI generate code that stays maintainable after the first demo.
 
-### Recommended Application Structure
+### Recommended application structure
 
 ```text
 src/
@@ -344,7 +344,7 @@ src/
   test/                     # Test helpers and mock data
 ```
 
-### Best Practices Checklist
+### Best practices checklist
 
 | Practice | Prompt Guidance |
 |----------|-----------------|
@@ -359,7 +359,7 @@ src/
 | Keep styling consistent | "Use Tailwind utility classes and the design tokens from this cheat sheet." |
 | Make errors visible | "Surface actionable error messages instead of failing silently." |
 
-### Copy-Paste Prompt Lines
+### Copy-Paste prompt lines
 
 ```text
 Structure this React app using feature folders: shared layout/components under `components/`, feature-specific pages/components/services/types under `features/<feature-name>/`, and cross-cutting helpers under `lib/` and `hooks/`.
@@ -377,7 +377,7 @@ For every async page, include loading, error, empty, and success states. Use acc
 Before editing, inspect the existing folder structure and follow the nearest established pattern. Do not create a new architecture if a matching pattern already exists.
 ```
 
-### Refactoring Prompt Example
+### Refactoring prompt example
 
 ```text
 Refactor the Invoice List page to follow React best practices.
@@ -394,7 +394,7 @@ Keep the route and visible behavior the same, but:
 
 ## Useful AI coding CLI commands
 
-These work in both Claude Code and GitHub Copilot CLI — the built-in commands (`/help`, `/clear`, …) and every Power Pages plugin skill (`/create-site`, `/deploy-site`, …) are the same in each. The one difference is how you reference a file: Claude Code uses `#file path/to/file`, GitHub Copilot CLI uses `@path/to/file`.
+These work in both Claude Code and GitHub Copilot CLI. The built-in commands (`/help`, `/clear`, …) and every Power Pages plugin skill (`/create-site`, `/deploy-site`, …) are the same in each. The one difference is how you reference a file: Claude Code uses `#file path/to/file`, GitHub Copilot CLI uses `@path/to/file`.
 
 | Command | What It Does |
 |---------|-------------|
@@ -412,18 +412,18 @@ These work in both Claude Code and GitHub Copilot CLI — the built-in commands 
 | `/add-ai-webapi` | Layer generative-AI summaries (Search Summary, Data Summarization) onto pages; reuses `/integrate-webapi` permissions |
 | `/add-server-logic` | Create server-side JavaScript endpoints that run on the Power Pages runtime |
 | `/add-cloud-flow` | Register and wire up Power Automate flows callable from the site |
-| `/setup-auth` | Add sign-in, sign-out, and role-based access for any of nine identity providers (Entra ID, Entra External ID, OIDC, SAML, WS-Fed, Microsoft, Facebook, Google, local); incremental — re-run to add a second provider |
+| `/setup-auth` | Add sign-in, sign-out, and role-based access for any of nine identity providers (Entra ID, Entra External ID, OIDC, SAML, WS-Fed, Microsoft, Facebook, Google, local); incremental, re-run to add a second provider |
 | `/create-webroles` | Define web roles for user access management |
 | `/security-review` | Orchestrate the focused security skills and write a consolidated HTML report (code, dependencies, deployed-site, headers, WAF, table permissions, auth config) |
 | `/scan-code` | Static analysis + dependency scan on local source (opengrep); offers a manual-review fallback if the tool is missing |
 | `/scan-site` | Server-side security scan against the live site; results grouped by severity |
-| `/manage-headers` | Inspect and configure browser security headers — CSP, X-Frame-Options, CORS, cookie SameSite |
-| `/manage-firewall` | Inspect and configure the web application firewall (production only) — managed rules, IP / country / path blocks, rate limits |
+| `/manage-headers` | Inspect and configure browser security headers: CSP, X-Frame-Options, CORS, cookie SameSite |
+| `/manage-firewall` | Inspect and configure the web application firewall (production only): managed rules, IP / country / path blocks, rate limits |
 | `/audit-permissions` | Audit existing table permissions and generate an HTML security report |
 | `/add-seo` | Add robots.txt, sitemap, meta tags, and favicon to the site |
 | `/test-site` | Run smoke tests against a deployed site (navigation, pages, API calls); used by `/deploy-pipeline` for post-deploy verification |
-| `/plan-alm` | Entry point for the ALM phase — detects project state, asks about promotion strategy, renders an approvable plan, and orchestrates the other ALM skills |
-| `/setup-solution` | Author the Power Platform solution — publisher, components, env-variable classification, optional Azure Key Vault for secrets |
+| `/plan-alm` | Entry point for the ALM phase: detects project state, asks about promotion strategy, renders an approvable plan, and orchestrates the other ALM skills |
+| `/setup-solution` | Author the Power Platform solution: publisher, components, env-variable classification, optional Azure Key Vault for secrets |
 | `/ensure-pipelines-host` | Provision or detect a Power Platform Pipelines host environment |
 | `/setup-pipeline` | Register a pipeline definition in Dataverse and bind stages to target environments |
 | `/deploy-pipeline` | Trigger a pipeline-stage deployment with per-stage env-variable values via `deploymentSettings.json` |
@@ -434,13 +434,13 @@ These work in both Claude Code and GitHub Copilot CLI — the built-in commands 
 
 ---
 
-## Context Engineering
+## Context engineering
 
 Beyond individual prompts, *context engineering* is about giving the AI the right background information across your entire session. Three techniques cover most of the value.
 
-### CLAUDE.md — Persistent Project Context
+### CLAUDE.md: persistent project context
 
-A `CLAUDE.md` file at your project root gives Claude Code persistent context about your project. Every time you start a conversation in that directory, Claude reads this file automatically — so anything in it is "free" context that you don't have to restate.
+A `CLAUDE.md` file at your project root gives Claude Code persistent context about your project. Every time you start a conversation in that directory, Claude reads this file automatically, so anything in it is "free" context that you don't have to restate.
 
 **What to include in `CLAUDE.md`:**
 
@@ -452,7 +452,7 @@ A `CLAUDE.md` file at your project root gives Claude Code persistent context abo
 
 A ready-to-use sample is in the next section.
 
-### `@file` References — Load Specific Files
+### `@file` references: load specific files
 
 When you want Claude to look at existing code before making changes, point at the file directly:
 
@@ -461,20 +461,20 @@ Look at @src/components/MetricCard.tsx and create a similar
 SupplierCard component following the same patterns.
 ```
 
-This loads the file into Claude's context so new code matches your existing style. Use it whenever you say "follow the same pattern as..." — the agent does a noticeably better job when it can see the reference instead of guessing.
+This loads the file into Claude's context so new code matches your existing style. Use it whenever you say "follow the same pattern as...". The agent does a noticeably better job when it can see the reference instead of guessing.
 
-### Managing the Context Window with `/compact` and `/clear`
+### Managing the context window with `/compact` and `/clear`
 
 Claude Code has a limited context window. As you work, the conversation accumulates context. When it gets full:
 
-- **`/compact`** — Compresses conversation history while retaining key information. Use within a task when context gets long but you want to keep going.
-- **`/clear`** — Starts a completely fresh conversation. Use between tasks, or when context has become cluttered with irrelevant turns.
+- **`/compact`**: Compresses conversation history while retaining key information. Use within a task when context gets long but you want to keep going.
+- **`/clear`**: Starts a completely fresh conversation. Use between tasks, or when context has become cluttered with irrelevant turns.
 
 **Rule of thumb:** Use `/compact` *within* a task. Use `/clear` *between* tasks. If you find yourself re-explaining the same thing every `/clear`, move it into `CLAUDE.md`.
 
 ---
 
-## Sample CLAUDE.md for the Supplier Portal
+## Sample CLAUDE.md for the supplier portal
 
 Add this to your project root as `CLAUDE.md` to give the AI persistent context about your project:
 
@@ -504,9 +504,9 @@ Add this to your project root as `CLAUDE.md` to give the AI persistent context a
 
 ---
 
-## The /create-site Prompt (ACE Exemplar)
+## The /create-site prompt (ACE exemplar)
 
-This is the exact prompt used in Lab 01 to scaffold the supplier portal. Study it as an example of the ACE framework (Action / Context / Examples) applied to a real task — with the requirements framed as Jobs-To-Be-Done so the generated architecture follows user goals rather than a fixed page list:
+This is the exact prompt used in Lab 01 to scaffold the supplier portal. Study it as an example of the ACE framework (Action / Context / Examples) applied to a real task, with the requirements framed as Jobs-To-Be-Done so the generated architecture follows user goals rather than a fixed page list:
 
 ```
 [ACTION]

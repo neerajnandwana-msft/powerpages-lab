@@ -18,18 +18,18 @@ Imagine three things happen this week:
 
 Each of these is a normal Tuesday in production. ALM is the practice that makes them survivable. The ALM phase solves them with a three-part strategy, one built on top of the next:
 
-1. **Source control** (Labs 10-12) — code review and history on GitHub
-2. **Solution packaging** (Lab 11) — your Dataverse components captured as reproducible source
-3. **Automated promotion** (Labs 13-14) — CI/CD to integration, then manual approval gates up to production
+1. **Source control** (Labs 10-12): code review and history on GitHub
+2. **Solution packaging** (Lab 11): your Dataverse components captured as reproducible source
+3. **Multi-environment promotion** (Lab 13): Power Platform Pipelines through integration and pre-prod with manual approval gates up to production
 
 End to end, that pipeline looks like this:
 
 ```mermaid
 flowchart LR
     Dev["Dev env<br/>(your laptop)"] -->|git push / PR| GH["GitHub<br/>source of truth"]
-    GH -->|CI on merge<br/>(Lab 13)| Int["Integration env"]
-    Int -->|Pipelines + approval<br/>(Lab 14)| Pre["Pre-prod env"]
-    Pre -->|manual approval<br/>(Lab 14)| Prod["Production env"]
+    GH -->|"deploy to integration"| Int["Integration env"]
+    Int -->|"Pipelines + approval<br/>(Lab 13)"| Pre["Pre-prod env"]
+    Pre -->|"manual approval<br/>(Lab 13)"| Prod["Production env"]
 ```
 
 This lab is the first step: putting your portal under source control.
@@ -38,17 +38,17 @@ This lab is the first step: putting your portal under source control.
 
 A Git repository containing your portal source, pushed to GitHub, with a `.gitignore` that protects secrets and build artifacts and (optionally) branch protection on `main` enforcing PR reviews.
 
-> **Why GitHub and solutions, not Power Platform Git integration?** Power Platform has a built-in [Git integration](https://learn.microsoft.com/power-platform/alm/git-integration/overview) feature, but it **doesn't support SPA (code) sites**. So this track uses a plain GitHub repository for the source plus the `pac solution` unpack/pack workflow (Lab 11) for the Dataverse components — the combination that *does* work for SPA sites.
+> **Why GitHub and solutions, not Power Platform Git integration?** Power Platform has a built-in [Git integration](https://learn.microsoft.com/power-platform/alm/git-integration/overview) feature, but it **doesn't support SPA (code) sites**. So this track uses a plain GitHub repository for the source plus the `pac solution` unpack/pack workflow (Lab 11) for the Dataverse components, the combination that *does* work for SPA sites.
 
 ## Prerequisites
 
 - Completed [Lab 08: Performance, Testing, and Deploy](../integrate/08-performance-test-deploy.md) (working portal deployed to your env)
-- Completed [Lab 09: Security Review](../integrate/09-security-review.md) (release-readiness pass against the integration env — any Critical / High findings are fixed or consciously accepted before code lands in source control)
+- Completed [Lab 09: Security Review](../integrate/09-security-review.md) (release-readiness pass against the integration env: any Critical / High findings are fixed or consciously accepted before code lands in source control)
 - Git installed and configured (`git --version`)
-- `gh` (GitHub CLI) installed and authenticated (`gh auth status`)
+- `gh` (GitHub CLI) installed and authenticated (`gh auth status`). This is the one new tool the ALM phase adds; install and sign in now via [ALM phase setup](00-setup.md) if you skipped it earlier
 - Portal directory accessible on disk (the folder where you ran `/create-site`)
 
-> **Before you start.** You're putting the *existing* portal directory under source control — the folder with `package.json` and `.powerpages-site/`. You do **not** need to re-deploy: the site already live in your environment from Lab 08 stays as it is, and the same source files and configuration on disk are all this lab needs.
+> **Before you start.** You're putting the *existing* portal directory under source control: the folder with `package.json` and `.powerpages-site/`. You do **not** need to re-deploy: the site already live in your environment from Lab 08 stays as it is, and the same source files and configuration on disk are all this lab needs.
 
 ## Learning objectives
 
@@ -78,7 +78,7 @@ git init
 git status
 ```
 
-`git status` should list every file in the directory as "Untracked". Don't commit anything yet — the next step adds a `.gitignore` so we don't commit secrets or build output.
+`git status` should list every file in the directory as "Untracked". Don't commit anything yet: the next step adds a `.gitignore` so we don't commit secrets or build output.
 
 ---
 
@@ -86,19 +86,19 @@ git status
 
 An SPA-site repo has files that should never enter source control:
 
-- **`node_modules/`** — 100k+ files, fully reproducible from `package-lock.json`
-- **`dist/`** — build output, regenerated on every CI run
-- **`.env`, `.env.local`** — secrets, API keys, local connection details
-- **`.pac/`** — PAC CLI auth profiles (contain refresh tokens)
-- **`build/`** — the staging folder we'll use in Lab 11 for solution zips
-- **OS junk** — `.DS_Store`, `Thumbs.db`
+- **`node_modules/`**: 100k+ files, fully reproducible from `package-lock.json`
+- **`dist/`**: build output, regenerated on every CI run
+- **`.env`, `.env.local`**: secrets, API keys, local connection details
+- **`.pac/`**: PAC CLI auth profiles (contain refresh tokens)
+- **`build/`**: the staging folder we'll use in Lab 11 for solution zips
+- **OS junk**: `.DS_Store`, `Thumbs.db`
 
 Files that **are** committed (don't accidentally ignore them):
 
-- `src/` — your SPA source code
-- `.powerpages-site/` — portal configuration YAML (web roles, table permissions, site settings)
-- `src/solution/` — the unpacked Dataverse solution created in Lab 11 (env-specific site settings live here as environment variable references; values are supplied per target env at solution import time)
-- `CLAUDE.md` (and `AGENTS.md` if Copilot CLI created one) — project context for the AI coding CLI; commit so teammates' AI sessions get the same baseline
+- `src/`: your SPA source code
+- `.powerpages-site/`: portal configuration YAML (web roles, table permissions, site settings)
+- `src/solution/`: the unpacked Dataverse solution created in Lab 11 (env-specific site settings live here as environment variable references; values are supplied per target env at solution import time)
+- `CLAUDE.md` (and `AGENTS.md` if Copilot CLI created one): project context for the AI coding CLI; commit so teammates' AI sessions get the same baseline
 
 Create `.gitignore` at the repo root:
 
@@ -140,7 +140,7 @@ npm-debug.log*
 EOF
 ```
 
-**Why `*.zip` is here:** Lab 11 will export Dataverse solutions as `.zip`, then immediately unpack them into `src/solution/` for source control. The zip itself is a build artifact — ignore it. This is the **unpack-to-source-control pattern** that's the heart of the ALM phase.
+**Why `*.zip` is here:** Lab 11 will export Dataverse solutions as `.zip`, then immediately unpack them into `src/solution/` for source control. The zip itself is a build artifact: ignore it. This is the **unpack-to-source-control pattern** that's the heart of the ALM phase.
 
 Verify your `.gitignore` works:
 
@@ -195,7 +195,7 @@ git remote -v
 gh repo view --web    # opens the repo page in your browser
 ```
 
-You should see the supplier-portal source files in GitHub. Spend 30 seconds clicking through the directory listing — this is what your reviewers will see when they open a PR.
+You should see the supplier-portal source files in GitHub. Spend 30 seconds clicking through the directory listing. This is what your reviewers will see when they open a PR.
 
 ---
 
@@ -225,7 +225,7 @@ git push
 
 ## Step 6: branch protection (optional)
 
-If your GitHub plan supports it, turn on branch protection for `main` now — it pays off in Lab 12.
+If your GitHub plan supports it, turn on branch protection for `main` now. It pays off in Lab 12.
 
 The simplest path is the GitHub web UI:
 
@@ -237,7 +237,7 @@ The simplest path is the GitHub web UI:
 
 This says: nobody can push directly to `main`; every change has to go through a PR with at least one approval. Lab 12 exercises this in the feature-development workflow.
 
-> **Tip:** if your account is on GitHub Free for personal repos, branch protection requires the repo to be public OR a GitHub Pro / Team / Enterprise plan. If unavailable, skip this step — Lab 12 still works, you'll need to discipline yourself not to push to `main` directly.
+> **Tip:** if your account is on GitHub Free for personal repos, branch protection requires the repo to be public OR a GitHub Pro / Team / Enterprise plan. If unavailable, skip this step. Lab 12 still works, you'll need to discipline yourself not to push to `main` directly.
 
 ---
 
@@ -261,7 +261,7 @@ You have completed this lab when:
 | `gh repo create` says "name already exists" | Pick a different name, or `gh repo delete <name>` (asks for confirmation) |
 | `gh: command not found` | Install GitHub CLI from https://cli.github.com/, restart terminal |
 | `Permission denied (publickey)` on push | You're using SSH but `gh` set up HTTPS. Run `gh auth setup-git` to fix the credential helper. |
-| Accidentally committed `.env` | `git rm --cached .env && git commit -m "Remove .env from tracking"`. **Rotate any secrets that were in it** — they are now in your Git history forever. |
+| Accidentally committed `.env` | `git rm --cached .env && git commit -m "Remove .env from tracking"`. **Rotate any secrets that were in it**. They are now in your Git history forever. |
 
 ## Fallback
 

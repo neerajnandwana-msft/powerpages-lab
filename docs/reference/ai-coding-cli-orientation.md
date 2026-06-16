@@ -6,14 +6,14 @@ title: "AI Coding CLI Orientation"
 
 # AI Coding CLI Orientation
 
-This lab track works with two AI coding CLIs: Claude Code and GitHub Copilot CLI. Both follow the same "describe → review → approve" workflow and both support the Power Pages plugin skills used throughout the labs. Read the orientation for the tool you installed — skip the other.
+This lab track works with two AI coding CLIs: Claude Code and GitHub Copilot CLI. Both follow the same "describe → review → approve" workflow and both support the Power Pages plugin skills used throughout the labs. Read the orientation for the tool you installed. Skip the other.
 
 | You installed... | Read this section |
 |---|---|
 | **Claude Code** | "Claude Code CLI Orientation" below |
 | **GitHub Copilot CLI** | "GitHub Copilot CLI Orientation" below |
 
-Not sure which one you have? Run `claude --version` and `copilot --version` in your terminal — whichever returns a version number is the one you are set up with.
+Not sure which one you have? Run `claude --version` and `copilot --version` in your terminal. Whichever returns a version number is the one you are set up with.
 
 ---
 
@@ -59,9 +59,9 @@ Claude Code runs in one of several **permission modes** that control how actions
 
 | Mode | What It Does | When to Use |
 |------|--------------|-------------|
-| `default` | Asks you to approve each action before it runs | Safest — use when touching unfamiliar code |
+| `default` | Asks you to approve each action before it runs | Safest, use when touching unfamiliar code |
 | `acceptEdits` | Auto-approves file edits; still asks for shell commands | Iterating on edits you trust (refactors, renames) |
-| `plan` | **Read-only investigation mode** — Claude explores the codebase and proposes a written plan without making any changes. You approve the plan before leaving plan mode to execute. | Before larger multi-step tasks or unfamiliar parts of the codebase |
+| `plan` | **Read-only investigation mode**: Claude explores the codebase and proposes a written plan without making any changes. You approve the plan before leaving plan mode to execute. | Before larger multi-step tasks or unfamiliar parts of the codebase |
 
 > **Tip:** Start every multi-file task in plan mode. Claude will explore first, then present its strategy. You can redirect or approve before any file is touched.
 
@@ -81,7 +81,7 @@ Shows version, model, account, and connectivity. Handy for confirming which mode
 /model
 ```
 
-Opens an interactive picker. You can also switch directly with `/model opus` or `/model sonnet`, or pin a specific version like `/model claude-opus-4-8[1m]`. The `[1m]` suffix selects the 1-million-token extended-context variant of that model — useful when a long lab session or a large codebase fills the standard window.
+Opens an interactive picker. You can also switch directly with `/model opus` or `/model sonnet`, or pin a specific version like `/model claude-opus-4-8[1m]`. The `[1m]` suffix selects the 1-million-token extended-context variant of that model, useful when a long lab session or a large codebase fills the standard window.
 
 ### Plugins and marketplace
 
@@ -103,11 +103,11 @@ Opens a UI with four tabs: **Installed** (your plugins), **Discover** (available
 
 The format is `plugin-name@marketplace-name`.
 
-> The labs rely on the Power Pages plugin. Run `/help` and confirm you see skills starting with `/create-site`, `/setup-datamodel`, etc. If not, see the [Setup Guide](../setup-guide.md) for plugin install steps.
+> The labs rely on the Power Pages plugin. Run `/help` and confirm you see skills starting with `/create-site`, `/setup-datamodel`, etc. If not, see [Build phase setup](../build/00-setup.md) for plugin install steps.
 
 ### MCP servers
 
-MCP (Model Context Protocol) servers extend Claude with tools for external systems — Dataverse, Kusto, GitHub, and so on.
+MCP (Model Context Protocol) servers extend Claude with tools for external systems: Dataverse, Kusto, GitHub, and so on.
 
 **See configured MCP servers:**
 
@@ -141,13 +141,13 @@ Add `--scope project` or `--scope user` to change the scope.
 /context
 ```
 
-Shows a live breakdown of token usage by category — system prompt, memory, files, MCP tools, skills — plus percentage of window used. Expect slower responses as the window fills; Claude Code auto-compacts when it gets close to full.
+Shows a live breakdown of token usage by category (system prompt, memory, files, MCP tools, skills) plus percentage of window used. Expect slower responses as the window fills; Claude Code auto-compacts when it gets close to full.
 
 **Clear or compact the context:**
 
-- `/compact` — summarises the conversation (keeps key technical decisions, drops verbose tool output). Safe to use any time.
-- `/clear` — wipes the conversation completely. Use when switching to an unrelated task.
-- `/exit` (or `Ctrl+D`) — exits the session entirely.
+- `/compact`: summarises the conversation (keeps key technical decisions, drops verbose tool output). Safe to use any time.
+- `/clear`: wipes the conversation completely. Use when switching to an unrelated task.
+- `/exit` (or `Ctrl+D`): exits the session entirely.
 
 ### Resuming a previous session
 
@@ -173,11 +173,11 @@ Sessions are scoped to the current working directory, so run these from the same
 
 ### Best practices
 
-1. **Start large tasks in plan mode.** Press Shift+Tab until you see `plan`. Claude will explore the code and propose a strategy before any edit runs — saves time on wrong directions.
+1. **Start large tasks in plan mode.** Press Shift+Tab until you see `plan`. Claude will explore the code and propose a strategy before any edit runs, saves time on wrong directions.
 2. **Keep `CLAUDE.md` short.** Build commands, naming conventions, links to deeper docs. Aim for under 200 lines. Large `CLAUDE.md` files burn tokens on every session start.
 3. **Use `#file` for specific files** rather than pasting code blocks. It is faster and keeps your prompt focused.
 4. **Run `/context` when responses slow down.** Run `/compact` before continuing a long task if the window is getting full.
-5. **Commit before risky refactors.** Git is your undo button when an edit goes sideways — commit a clean baseline before accepting a large change.
+5. **Commit before risky refactors.** Git is your undo button when an edit goes sideways. Commit a clean baseline before accepting a large change.
 
 ### Try it now
 
@@ -231,9 +231,9 @@ This starts an interactive GitHub Copilot CLI session. You will see a prompt whe
 
 **Approving actions:** Before running a shell command or writing files, Copilot CLI prompts you with three choices:
 
-- **Yes** — approve this one action
-- **Yes, and approve [tool] for the rest of the running session** — auto-approve the same tool (with any options) for the rest of the session
-- **No, and tell Copilot what to do differently (Esc)** — reject and redirect
+- **Yes**: approve this one action
+- **Yes, and approve [tool] for the rest of the running session**: auto-approve the same tool (with any options) for the rest of the session
+- **No, and tell Copilot what to do differently (Esc)**: reject and redirect
 
 **Reading output:** After an action runs, Copilot CLI shows the result. Pay attention to:
 - File paths created or modified
@@ -246,10 +246,10 @@ Copilot CLI has two modes you can toggle with **Shift+Tab**, shown in the prompt
 
 | Mode | What It Does | When to Use |
 |------|--------------|-------------|
-| Execute (default) | Asks to approve each action before it runs | Safest — use when touching unfamiliar code |
+| Execute (default) | Asks to approve each action before it runs | Safest, use when touching unfamiliar code |
 | Plan | Produces an implementation plan first without editing files; you review and then switch back to Execute to carry it out | Larger multi-step tasks, before you have confidence |
 
-You can also launch with `--allow-all` (alias `--yolo`) for blanket auto-approve, or run `/allow-all on` mid-session. Use these carefully — they skip all confirmations.
+You can also launch with `--allow-all` (alias `--yolo`) for blanket auto-approve, or run `/allow-all on` mid-session. Use these carefully. They skip all confirmations.
 
 > **Tip:** Start every multi-file task in plan mode. Copilot will map out the steps first. Review the plan, switch back to Execute, and Copilot proceeds step by step.
 
@@ -261,7 +261,7 @@ You can also launch with `--allow-all` (alias `--yolo`) for blanket auto-approve
 /model
 ```
 
-Opens an interactive picker that shows the currently selected model and available alternatives. Copilot CLI supports multiple models (Claude family and GPT family — exact list depends on your account). Pick one and press Enter to switch.
+Opens an interactive picker that shows the currently selected model and available alternatives. Copilot CLI supports multiple models (Claude family and GPT family; exact list depends on your account). Pick one and press Enter to switch.
 
 > Default model availability varies by GitHub Copilot plan. Check `/model` inside the session to see what you have.
 
@@ -283,7 +283,7 @@ Lists plugins and their status.
 /skills
 ```
 
-Skills are similar to Claude Code plugin slash commands — they bundle instructions and tool access for a specific workflow.
+Skills are similar to Claude Code plugin slash commands. They bundle instructions and tool access for a specific workflow.
 
 **Use a custom agent profile:**
 
@@ -323,7 +323,7 @@ Walks you through adding a server interactively (name, transport, command or URL
 
 ### Context management
 
-**AGENTS.md:** A file at your project root that gives Copilot persistent context about your project (tech stack, design preferences, conventions). Copilot CLI also auto-loads `CLAUDE.md` at the repo root if present, so the file [Lab 01: Scaffold an SPA Portal](../build/01-scaffold-spa-portal.md) creates works for both tools — no duplication needed. Other auto-loaded paths: `.github/copilot-instructions.md` (repo-wide) and `$HOME/.copilot/copilot-instructions.md` (user-global).
+**AGENTS.md:** A file at your project root that gives Copilot persistent context about your project (tech stack, design preferences, conventions). Copilot CLI also auto-loads `CLAUDE.md` at the repo root if present, so the file [Lab 01: Scaffold an SPA Portal](../build/01-scaffold-spa-portal.md) creates works for both tools, no duplication needed. Other auto-loaded paths: `.github/copilot-instructions.md` (repo-wide) and `$HOME/.copilot/copilot-instructions.md` (user-global).
 
 **@file references:** Type `@path/to/file` in your prompt to attach a specific file to Copilot's context.
 
@@ -337,9 +337,9 @@ Shows current token-window usage. For a deeper breakdown (tool calls, session ag
 
 **Clear or compact the context:**
 
-- `/compact` — summarises the conversation to free tokens (keeps key decisions, drops verbose tool output). Copilot also auto-compacts in the background at ~95% of the token limit.
-- `/clear` — wipes the conversation completely. Use when switching to an unrelated task.
-- `/exit` — quits the session.
+- `/compact`: summarises the conversation to free tokens (keeps key decisions, drops verbose tool output). Copilot also auto-compacts in the background at ~95% of the token limit.
+- `/clear`: wipes the conversation completely. Use when switching to an unrelated task.
+- `/exit`: quits the session.
 
 ### Resuming a previous session
 
@@ -353,14 +353,14 @@ Copilot CLI persists sessions across terminal restarts.
 
 Switches to a prior session by ID. You can also manage sessions with:
 
-- `/session` — shows info about the current session (checkpoints, files, plan)
-- `/rename [NAME]` — rename the current session
-- `/share [file|html|gist]` — export to a Markdown file, an interactive HTML page, or a shareable gist (gist produces a link)
+- `/session`: shows info about the current session (checkpoints, files, plan)
+- `/rename [NAME]`: rename the current session
+- `/share [file|html|gist]`: export to a Markdown file, an interactive HTML page, or a shareable gist (gist produces a link)
 
 ### Best practices
 
-1. **Start large tasks in plan mode.** Press Shift+Tab until you see `plan`. Copilot will map out the work first and ask to approve each edit — saves time on wrong directions.
-2. **Use `/undo` when an edit is wrong.** It rewinds the last turn and reverts the files Copilot touched — your single-keystroke safety net.
+1. **Start large tasks in plan mode.** Press Shift+Tab until you see `plan`. Copilot will map out the work first and ask to approve each edit, saves time on wrong directions.
+2. **Use `/undo` when an edit is wrong.** It rewinds the last turn and reverts the files Copilot touched, your single-keystroke safety net.
 3. **Keep `AGENTS.md` or `CLAUDE.md` short.** Build commands, naming conventions, links to deeper docs. Aim for under 200 lines. Either filename works; do not duplicate across both.
 4. **Use `@file` for specific files** rather than pasting code blocks. It is faster, keeps your prompt focused, and tab-completion makes it quick.
 5. **Run `/context` when responses slow down.** Copilot auto-compacts, but a manual `/compact` before a long task keeps things snappy.

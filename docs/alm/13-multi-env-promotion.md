@@ -1,10 +1,10 @@
 ---
-sidebar_position: 5
-sidebar_label: "Lab 14: Multi-Env Promotion"
-title: "Lab 14: Multi-Environment Promotion"
+sidebar_position: 4
+sidebar_label: "Lab 13: Multi-Env Promotion"
+title: "Lab 13: Multi-Environment Promotion"
 ---
 
-# Lab 14: Multi-Environment Promotion
+# Lab 13: Multi-Environment Promotion
 
 ## What you will build
 
@@ -12,8 +12,8 @@ A Power Platform Pipelines flow that promotes your managed solution through **in
 
 ## Prerequisites
 
-- Completed [Lab 13: CI/CD with GitHub Actions](./13-cicd-github-actions.md) (CI deploys to your integration env on every merge to `main`)
 - Completed [Lab 11: Solution Packaging and Dataverse Dependencies](./11-solution-and-dependencies.md) (`/plan-alm` ran, `/setup-solution` authored the solution, env-variable wiring is in place)
+- Your integration environment is deployed and up to date. It's the source stage the pipeline promotes from
 - Pre-prod and prod target environments exist (or your admin can provision them)
 - Tenant-level permission to install the Pipelines app in a host environment, OR an existing pipelines host you can use
 - For the alternative manual path: PAC CLI authenticated against each target env
@@ -26,14 +26,14 @@ By the end of this lab you will be able to:
 2. Use `/setup-pipeline` to register a pipeline definition, define stages, and bind each stage to a target environment
 3. Use `/deploy-pipeline` to trigger a stage promotion with per-stage environment-variable overrides via `deploymentSettings.json`
 4. Use `/test-site` and `/diagnose-deployment` to verify a deployment and recover from common failures
-5. Use `/force-link-environment` to recover from the "environment already linked to a different host" error — and know why this action requires explicit consent
-6. Recognize when to use Power Platform Pipelines (multi-env Dataverse promotion) versus GitHub Actions (single-env CI), and fall back to `/export-solution` + `/import-solution` for manual promotion when Pipelines isn't available
+5. Use `/force-link-environment` to recover from the "environment already linked to a different host" error, and know why this action requires explicit consent
+6. Recognize when Power Platform Pipelines is the right promotion tool, and fall back to `/export-solution` + `/import-solution` for manual promotion when Pipelines isn't available
 
 ---
 
 ## Why pipelines, why now
 
-Your Lab 13 GitHub Actions workflow deploys to **one** environment (your integration env). It can't promote between environments because it has no concept of "the same change moving through stages with approvals."
+Deploying to a single environment, your integration env, gets a change live in one place, but that's only the first step. Promoting the *same* change onward through pre-prod to production, safely and with approvals, is a different problem: it needs a concept of "the same change moving through stages with approvals."
 
 **Power Platform Pipelines** is the Microsoft-managed promotion engine that fills that gap. It lives inside Power Platform itself, runs against managed solutions, and handles the multi-stage flow with optional approvals. The new ALM skills wrap every interaction with Pipelines, so you describe what you want and the plugin produces the Dataverse records and orchestrates the runs.
 
@@ -42,7 +42,7 @@ Two things to know up front:
 - Pipelines move **managed solutions**, not unmanaged. Recall the distinction from [Lab 11](./11-solution-and-dependencies.md#why-solutions-why-now): unmanaged is the editable form you commit to source control; managed is the sealed form built for promotion. The integration env exports the solution as managed; pipelines imports the managed version into pre-prod and prod.
 - Pipelines does **not** auto-activate the site after deploy. A maker has to reactivate the site in the target environment. `/test-site` calls this out and offers to run `/activate-site` for you in sequence.
 
-> **The big picture — three tools, three layers.** This lab adds the third and final piece of the delivery pipeline. Before diving in, it helps to know the boundary between the tools: **GitHub Actions** (Lab 13) owns code-side build and single-env deploys; **Power Platform Pipelines** (this lab) owns managed-solution promotion across environments with approvals; **environment variables** (Lab 11) supply each stage's configuration. [Part 6](#part-6-three-tools-three-layers-reference) lays out exactly who owns what — skim it now if you want the map before the steps.
+> **The big picture: two layers.** Before diving in, it helps to know the boundary between the pieces: **Power Platform Pipelines** (this lab) owns managed-solution promotion across environments with approvals; **environment variables** (Lab 11) supply each stage's configuration. [Part 6](#part-6-the-promotion-layers-reference) lays out exactly who owns what. Skim it now if you want the map before the steps.
 
 > **Further reading:** [Power Platform pipelines](https://learn.microsoft.com/power-platform/alm/pipelines) · [Power Pages pipelines](https://learn.microsoft.com/power-pages/configure/power-pages-pipelines) · [Pipeline deployment settings](https://learn.microsoft.com/power-platform/alm/pipelines-deployment-settings)
 
@@ -50,7 +50,7 @@ Two things to know up front:
 
 ## Part 1: resume `/plan-alm` for the promotion phase
 
-The plan you approved in Lab 11 carries through to this lab. Re-run `/plan-alm` and it picks up where it left off — Phase 1 (Author solution) is complete, Phases 2-5 are pending.
+The plan you approved in Lab 11 carries through to this lab. Re-run `/plan-alm` and it picks up where it left off: Phase 1 (Author solution) is complete, Phases 2-5 are pending.
 
 Before you resume, confirm `docs/alm-plan.html` exists from Lab 11. The pipeline and deployment ledgers are created later in this lab (`docs/alm/pipeline-ledger.json` after `/setup-pipeline`, `docs/alm/deployment-ledger.json` after `/deploy-pipeline`), so they do not need to exist before the first `/plan-alm` resume.
 
@@ -62,13 +62,13 @@ Before you resume, confirm `docs/alm-plan.html` exists from Lab 11. The pipeline
 
 The plugin reads the persisted plan at `docs/alm-plan.html`, detects that `/setup-solution` already ran, and proposes the remaining phases. Approve the plan and let it drive the rest.
 
-> **Note:** Every ALM skill reads from and writes to artifacts on disk: the solution manifest, plan data, pipeline ledger, deployment ledger, and test results. The orchestration is **resumable and auditable** — to see what happened at any step, inspect the artifacts.
+> **Note:** Every ALM skill reads from and writes to artifacts on disk: the solution manifest, plan data, pipeline ledger, deployment ledger, and test results. The orchestration is **resumable and auditable**. To see what happened at any step, inspect the artifacts.
 
 ---
 
 ## Part 2: provision the host with `/ensure-pipelines-host`
 
-Power Platform Pipelines requires a **host environment** with the Pipelines app installed. The host environment is where pipeline definitions live and the deployment app runs. It is not a target — it is the control plane.
+Power Platform Pipelines requires a **host environment** with the Pipelines app installed. The host environment is where pipeline definitions live and the deployment app runs. It is not a target. It is the control plane.
 
 ### Step 2.1: run `/ensure-pipelines-host`
 
@@ -76,19 +76,16 @@ Power Platform Pipelines requires a **host environment** with the Pipelines app 
 
 ```
 /ensure-pipelines-host
-
-Set up a Pipelines host for the supplier portal promotion. Pick
-the lowest-cost option available in this tenant.
 ```
 
-The plugin will:
+The skill guides you through it. When it offers host options, pick the lowest-cost one available in your tenant. The plugin will:
 
 1. Check whether a free platform host is available for your tenant (newer tenants get one without an explicit install).
 2. If no platform host exists, check whether the **Pipelines app** can be installed on an existing environment (typically the default environment).
-3. If neither is available, propose a **custom host** — a dedicated environment you provision for this purpose.
+3. If neither is available, propose a **custom host**: a dedicated environment you provision for this purpose.
 4. Report the chosen host and persist the choice so downstream skills don't ask again.
 
-> **Important:** A host environment is **per-tenant**, not per-pipeline. If your tenant already has a host (set up for another project), the plugin detects and reuses it. Don't create a second host without a specific reason — the cost is real and you typically don't need separation.
+> **Important:** A host environment is **per-tenant**, not per-pipeline. If your tenant already has a host (set up for another project), the plugin detects and reuses it. Don't create a second host without a specific reason. The cost is real and you typically don't need separation.
 
 ### Step 2.2: handle the `/force-link-environment` case
 
@@ -98,19 +95,16 @@ The recovery is `/force-link-environment`:
 
 ```
 /force-link-environment
-
-Pre-prod is currently linked to the host environment OldOrgHost.
-Reassign it to the new SupplierPortalHost so this lab can target it.
 ```
 
-The plugin will:
+The skill asks which environment to reassign, which host currently holds it, and which host to move it to. The plugin will:
 
 1. Re-confirm the source host (the one currently linked) and the target host (the one you want to use).
 2. Warn that any in-flight pipelines from the old host will stop seeing this target.
 3. **Require your explicit confirmation** before applying.
 4. Apply the reassignment via the Pipelines admin API.
 
-> **Important:** `/force-link-environment` is **reversible** — you can re-run it to point back at the original host. But it does interrupt any in-flight runs from the previous host. Coordinate with whoever set up the previous host before running it in shared tenants.
+> **Important:** `/force-link-environment` is **reversible**. You can re-run it to point back at the original host. But it does interrupt any in-flight runs from the previous host. Coordinate with whoever set up the previous host before running it in shared tenants.
 
 ---
 
@@ -122,14 +116,9 @@ A pipeline definition is a named Dataverse record on the host environment that t
 
 ```
 /setup-pipeline
-
-Register a pipeline called supplier-portal-promotion with three
-stages: integration → pre-prod → prod. The integration env is the
-one Lab 13's CI deploys to. Use the service principal from Lab 13
-as the deployment user identity on each stage.
 ```
 
-The plugin will:
+The skill walks you through naming the pipeline and defining its stages. For this lab, name it `supplier-portal-promotion`, define three stages (integration → pre-prod → prod, with integration being the env you've been deploying to), and choose your signed-in user as the deployment identity on each stage. The plugin will:
 
 1. Confirm the pipeline name and the target env URLs for each stage.
 2. Verify the deployment user (service principal or named user) has the **Deployment Pipeline User** role on the host env and **System Customizer** (or higher) on each target env.
@@ -160,28 +149,23 @@ The approver can be a specific named user, a group (Microsoft 365 Release Approv
 
 ## Part 4: promote with `/deploy-pipeline`
 
-`/deploy-pipeline` is the workhorse — it triggers a deployment for a specified stage, applies per-stage environment-variable overrides through `deploymentSettings.json`, and tracks state in a **deployment ledger** at `docs/alm/deployment-ledger.json`.
+`/deploy-pipeline` is the workhorse. It triggers a deployment for a specified stage, applies per-stage environment-variable overrides through `deploymentSettings.json`, and tracks state in a **deployment ledger** at `docs/alm/deployment-ledger.json`.
 
 ### Step 4.1: integration → pre-prod
 
 ```
 /deploy-pipeline
-
-Promote the latest integration env state to pre-prod. Use these
-env variable values for pre-prod:
-  cr_searchenabled = No
-  cr_authClientId  = <pre-prod app registration's client id>
 ```
 
-The plugin will:
+The skill asks which stage to promote and the per-stage env-variable values to apply. Promote the integration state to **pre-prod**, and when prompted for pre-prod values, supply `cr_searchenabled = No` and `cr_authClientId = <pre-prod app registration's client id>`. The plugin will:
 
 1. Export the solution from integration **as managed** (the pre-prod env imports the managed version).
-2. Write `deploymentSettings.json` containing your per-stage env-variable overrides — this file is what Pipelines reads to know which value to apply per env.
+2. Write `deploymentSettings.json` containing your per-stage env-variable overrides. This file is what Pipelines reads to know which value to apply per env.
 3. Trigger the **integration → pre-prod** stage on the host env.
 4. Poll the pipeline run until it completes; report the result.
 5. Append a row to the deployment ledger (`docs/alm/deployment-ledger.json`) for auditability.
 
-> **Why deploymentSettings.json beats prompting.** In the maker-portal Pipelines UI, an operator is prompted for each env variable value on every run. `/deploy-pipeline` writes a `deploymentSettings.json` so the values are repeatable. Commit `docs/alm/deploymentSettings.json` only when it contains non-secret values. If a deployment settings file contains secrets, keep it in `docs/alm/deploymentSettings.local.json` (gitignored in Lab 10) or move the secret values to Key Vault — coordinate per-team.
+> **Why deploymentSettings.json beats prompting.** In the maker-portal Pipelines UI, an operator is prompted for each env variable value on every run. `/deploy-pipeline` writes a `deploymentSettings.json` so the values are repeatable. Commit `docs/alm/deploymentSettings.json` only when it contains non-secret values. If a deployment settings file contains secrets, keep it in `docs/alm/deploymentSettings.local.json` (gitignored in Lab 10) or move the secret values to Key Vault. Coordinate per-team.
 
 ### Step 4.2: reactivate the site in pre-prod
 
@@ -228,11 +212,9 @@ After QA certification on pre-prod passes, trigger the prod promotion:
 
 ```
 /deploy-pipeline
-
-Promote pre-prod to prod. Use prod values for env variables:
-  cr_searchenabled = Yes
-  cr_authClientId  = <prod app registration's client id>
 ```
+
+Promote **pre-prod to prod**, and when prompted for prod values, supply `cr_searchenabled = Yes` and `cr_authClientId = <prod app registration's client id>`.
 
 If you attached an approval flow to the prod stage (Step 3.3), the pipeline pauses after `/deploy-pipeline` triggers it:
 
@@ -273,7 +255,7 @@ The plugin matches the error against its catalog. Common matches:
 | **Missing dependency** | Target env lacks a Dataverse component (table, web role, site-setting type) | Add the missing component to the source solution, re-export, retry |
 | **Host conflict** | Target env is linked to a different Pipelines host | Run `/force-link-environment` to reassign |
 | **Blocked JavaScript** | A site setting or WAF rule on the target blocks an inline script | Resolve via `/manage-headers` or `/manage-firewall` ([Lab 09: Security Review](../integrate/09-security-review.md)) |
-| **Expired authentication** | The service principal's client secret expired | Rotate via `gh secret set CLIENT_SECRET ...` and update the application user if needed |
+| **Expired authentication** | Your PAC CLI or `az` session expired | Re-authenticate (`pac auth create`, `az login --allow-no-subscriptions`) and re-run the deploy |
 
 The plugin proposes a fix and **never applies it without your consent**. Approve the fix, then re-run `/deploy-pipeline` for the failed stage.
 
@@ -283,23 +265,21 @@ You don't need to re-run the entire `/plan-alm`. The deployment ledger persists 
 
 ---
 
-## Part 6: three tools, three layers (reference)
+## Part 6: the promotion layers (reference)
 
-You now have three pieces in play. They're complementary, not competing — each owns a layer of the delivery story.
+You now have two complementary pieces in play. Each owns a layer of the delivery story.
 
 | Tool | Owns | Don't use it for |
 |---|---|---|
-| **GitHub Actions / Azure DevOps** | Code-side build (npm, lint, test). SPA bundle upload via `upload-paportal`. PR validation. Single-env deploys triggered by code changes. | Multi-env Dataverse solution promotion. Approval gating between environments. |
 | **Power Platform Pipelines (via `/deploy-pipeline`)** | Managed-solution promotion across environments. Per-stage env-variable values through `deploymentSettings.json`. Approval flows. Audit-friendly stage history inside Dataverse. | SPA build (no Node.js runtime). Code-side tests. Per-PR validation. |
 | **`/setup-solution`-authored env variables and Key Vault** | Env-specific site setting values, and secret-type values via Azure Key Vault. Variable definitions in the solution; values supplied per stage by `/deploy-pipeline`. | Non-site-setting records. For SPA sites, those typically don't need env-specific overrides; if they do, drive them from the SPA at runtime instead. |
 
 A typical delivery for a single change goes:
 
-1. Developer opens a PR — GitHub Actions runs build + tests, doesn't deploy
-2. PR merges to `main` — GitHub Actions deploys solution + SPA to integration env; site settings resolve via the integration env's environment-variable values
-3. Friday afternoon — `/deploy-pipeline` promotes the managed solution from integration to pre-prod with pre-prod env-variable values from `deploymentSettings.json`
-4. `/test-site` validates the pre-prod env over the weekend (or on-demand)
-5. Monday — approver clicks "Approve" on the Pipelines pre-prod → prod stage; managed solution lands in prod with prod-specific env-variable values; `/test-site` runs final smoke against prod
+1. The change is merged and deployed to your integration env; site settings resolve via the integration env's environment-variable values
+2. Friday afternoon: `/deploy-pipeline` promotes the managed solution from integration to pre-prod with pre-prod env-variable values from `deploymentSettings.json`
+3. `/test-site` validates the pre-prod env over the weekend (or on-demand)
+4. Monday: approver clicks "Approve" on the Pipelines pre-prod → prod stage; managed solution lands in prod with prod-specific env-variable values; `/test-site` runs final smoke against prod
 
 Each tool does the part it's best at.
 
@@ -328,7 +308,7 @@ You have completed this lab when:
 - [ ] An approval flow gates the **pre-prod → prod** stage (or you can describe how it would be wired)
 - [ ] At least one prod-stage promotion has run (or is wired and waiting for approval)
 - [ ] You have run `/diagnose-deployment` against at least one failure (real or simulated) and can read its output
-- [ ] You can articulate when to use Pipelines (multi-env promotion) versus GitHub Actions (CI on a single env) versus env variables (per-env values)
+- [ ] You can articulate when to use Pipelines (multi-env promotion) versus env variables (per-env values)
 
 ### Generic debug prompt
 
@@ -344,17 +324,15 @@ and propose a fix:
 
 ## Fallback
 
-If Power Platform Pipelines is not available in your tenant, the plugin still gives you a clean manual path through `/export-solution` and `/import-solution`. This is **not** the same as running raw `pac solution export/import` — the skills add a completeness check, optional staging, and per-stage `deploymentSettings.json` handling.
+If Power Platform Pipelines is not available in your tenant, the plugin still gives you a clean manual path through `/export-solution` and `/import-solution`. This is **not** the same as running raw `pac solution export/import`. The skills add a completeness check, optional staging, and per-stage `deploymentSettings.json` handling.
 
 ### Manual path step 1: `/export-solution` from the source env
 
 ```
 /export-solution
-
-Export Supplier Portal from integration as managed, into build/.
-The completeness check should warn me if anything authored by
-/setup-solution is missing.
 ```
+
+The skill guides you through the export. Export **Supplier Portal** from integration **as managed** into `build/`; its completeness check warns you if anything authored by `/setup-solution` is missing.
 
 ### Manual path step 2: `/import-solution` into the target env in staged mode
 
@@ -362,20 +340,16 @@ For high-stakes target envs (pre-prod, prod), use staged mode:
 
 ```
 /import-solution
-
-Import build/SupplierPortal_managed.zip into pre-prod, staged mode.
-Apply these env variable values from a deploymentSettings file:
-  cr_searchenabled = No
-  cr_authClientId  = <pre-prod client id>
-If staging passes, prompt me before applying.
 ```
+
+When prompted, import `build/SupplierPortal_managed.zip` into **pre-prod** in staged mode, apply the pre-prod env-variable values (`cr_searchenabled = No`, `cr_authClientId = <pre-prod client id>`) from a deploymentSettings file, and have it prompt you before applying.
 
 The plugin runs the import in stage-only mode, reports any conflicts or missing dependencies, and applies after your approval. Then run `/activate-site` and `/test-site` against the target env (Steps 4.2 + 4.3 above).
 
 ### Other recovery paths
 
-1. **Fewer environments (smaller setup).** If your tenant only has dev + prod (no integration or pre-prod), collapse the pipeline to a two-stage flow with a manual approval before prod. The mechanics from this lab still apply — you have fewer stages.
-2. **Reactivation step is still manual.** Whether you use Pipelines or the manual path, reactivating the SPA site after import is a Power Pages admin centre action. `/deploy-pipeline` and `/import-solution` both offer to run `/activate-site` automatically — accept the offer.
+1. **Fewer environments (smaller setup).** If your tenant only has dev + prod (no integration or pre-prod), collapse the pipeline to a two-stage flow with a manual approval before prod. The mechanics from this lab still apply. You have fewer stages.
+2. **Reactivation step is still manual.** Whether you use Pipelines or the manual path, reactivating the SPA site after import is a Power Pages admin centre action. `/deploy-pipeline` and `/import-solution` both offer to run `/activate-site` automatically. Accept the offer.
 3. **Cache clear after env variable changes.** Independent of how the solution arrived in the target env, env-variable value changes need a site-cache clear (Sync, `/_services/about` → Clear cache, or portal restart) before the new value surfaces.
 4. **As a last resort, fall back to raw `pac solution import`.** This works but skips every safeguard the skills layer adds. Use only when you're debugging the skills themselves.
 
@@ -385,19 +359,19 @@ When to use the manual path:
 - You need a one-time backport to a non-pipeline target env (e.g., a sandbox for debugging)
 - A pipeline run is blocked by a tooling bug and you need to unblock the release
 
-In every other case, prefer `/deploy-pipeline` — the audit trail, approval gates, and stage-history visibility are worth it.
+In every other case, prefer `/deploy-pipeline`. The audit trail, approval gates, and stage-history visibility are worth it.
 
 ## Key takeaways
 
 - `/plan-alm` orchestrates the full ALM phase; each pipeline skill (`/ensure-pipelines-host`, `/setup-pipeline`, `/deploy-pipeline`, `/force-link-environment`, `/test-site`, `/diagnose-deployment`) is a building block the plan invokes
 - Pipelines move **managed solutions**; the integration env exports as managed for downstream stages
-- `/deploy-pipeline` supplies per-stage env-variable values through `deploymentSettings.json` — version-controllable, repeatable
+- `/deploy-pipeline` supplies per-stage env-variable values through `deploymentSettings.json`, version-controllable, repeatable
 - After every pipeline import, **the site needs a reactivation** in the target env (the skill offers to run `/activate-site` automatically)
 - After environment variable values change, **clear the site cache** (Sync, `/_services/about` → Clear cache, or restart the portal)
-- `/diagnose-deployment` matches failures against a catalog and proposes fixes — never applies them without consent
+- `/diagnose-deployment` matches failures against a catalog and proposes fixes, never applies them without consent
 - `/force-link-environment` recovers from host conflicts; the action is reversible but interrupts in-flight runs from the previous host
 - The manual `/export-solution` + `/import-solution` path is a documented fallback when Pipelines isn't available
-- Three tools, three layers: GitHub Actions for code-side CI, `/deploy-pipeline` for managed-solution promotion, `/setup-solution`-authored env variables for per-stage configuration
+- Two layers: `/deploy-pipeline` for managed-solution promotion, `/setup-solution`-authored env variables for per-stage configuration
 
 ## What's next
 

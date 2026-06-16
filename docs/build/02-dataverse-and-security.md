@@ -13,9 +13,9 @@ The full Dataverse backend for your portal: real tables, sample records, web rol
 ## Prerequisites
 
 - Completed [Lab 01: Scaffold an SPA Portal](./01-scaffold-spa-portal.md) (supplier portal scaffolded and running locally)
-- Active PAC CLI and Azure CLI sessions — re-authenticate if expired (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the plugin only needs Microsoft Entra ID-scoped tokens, and downstream `az` commands run normally afterward.
+- Active PAC CLI and Azure CLI sessions, re-authenticate if expired (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the plugin only needs Microsoft Entra ID-scoped tokens, and downstream `az` commands run normally afterward.
 
-> **Before you start — confirm your Lab 01 state.** This track is cumulative; each lab builds on the last. Verify:
+> **Before you start: confirm your Lab 01 state.** This track is cumulative; each lab builds on the last. Verify:
 >
 > - [ ] `npm run dev` runs and `http://localhost:5173` shows the landing page
 > - [ ] All 5 pages are reachable, with 10 mock invoices on the list
@@ -33,7 +33,7 @@ By the end of this lab you will be able to:
 4. Create web roles and assign them to permission rules
 5. Enable site settings for Web API access with explicit field lists
 6. Explain the three-layer security model: Site Settings, Web Roles, Table Permissions
-7. Configure authentication with `/setup-auth` — picking the right provider mix, mapping IdP claims to Contact columns, and adding role-based UI helpers
+7. Configure authentication with `/setup-auth`: picking the right provider mix, mapping IdP claims to Contact columns, and adding role-based UI helpers
 
 > **Further reading:** [Dataverse overview](https://learn.microsoft.com/power-apps/maker/data-platform/data-platform-intro) · [Power Pages security model](https://learn.microsoft.com/power-pages/security/power-pages-security) · [Configure table permissions](https://learn.microsoft.com/power-pages/security/table-permissions) · [Assign table permissions](https://learn.microsoft.com/power-pages/security/assign-table-permissions) · [Create web roles](https://learn.microsoft.com/power-pages/security/create-web-roles) · [Configure site settings](https://learn.microsoft.com/power-pages/configure/configure-site-settings) · [Overview of authentication in Power Pages](https://learn.microsoft.com/power-pages/security/authentication/) · [Configure authentication for a Power Pages site](https://learn.microsoft.com/power-pages/security/authentication/configure-site)
 
@@ -43,7 +43,7 @@ By the end of this lab you will be able to:
 
 ### Concept: the data model
 
-Below is an **example** data model for the supplier invoice portal scenario. Your own schema will depend on what you asked the plugin to build in Lab 01, so treat this table as a reference — not a checklist.
+Below is an **example** data model for the supplier invoice portal scenario. Your own schema will depend on what you asked the plugin to build in Lab 01, so treat this table as a reference, not a checklist.
 
 | Table | Type | Purpose |
 |-------|------|---------|
@@ -51,9 +51,9 @@ Below is an **example** data model for the supplier invoice portal scenario. You
 | **Contact** | Standard (reuse) | Supplier user (linked to Account, tied to Power Pages auth) |
 | **cr_invoice** | Custom (create) | Invoice records with PO#, Amount, Status, etc. |
 
-> **Review the plan against your own portal.** When `/setup-datamodel` proposes a schema in Step 1.2, compare it against the pages and mock data your Lab 01 scaffold actually uses. If the table names, columns, or relationships don't match the example above, that is expected — your feature set drives the model, not this guide. Use the proposal screen to add, rename, or drop tables before approving.
+> **Review the plan against your own portal.** When `/setup-datamodel` proposes a schema in Step 1.2, compare it against the pages and mock data your Lab 01 scaffold actually uses. If the table names, columns, or relationships don't match the example above, that is expected: your feature set drives the model, not this guide. Use the proposal screen to add, rename, or drop tables before approving.
 
-> **One constant, regardless of your schema: Contact always represents the logged-in user.** Power Pages authentication is wired to the standard Contact table — every signed-in visitor maps to exactly one Contact row, and every Contact-scoped permission resolves through it. Do not replace Contact with a custom "User" or "Supplier" table, and do not rename it. If you need extra per-user fields, add columns to Contact or link a child table to it. Everything else in your data model is free to change.
+> **One constant, regardless of your schema: Contact always represents the logged-in user.** Power Pages authentication is wired to the standard Contact table: every signed-in visitor maps to exactly one Contact row, and every Contact-scoped permission resolves through it. Do not replace Contact with a custom "User" or "Supplier" table, and do not rename it. If you need extra per-user fields, add columns to Contact or link a child table to it. Everything else in your data model is free to change.
 
 ### Step 1.1: deploy your site first
 
@@ -138,14 +138,14 @@ Power Pages Studio has a built-in **Data workspace** that shows the Dataverse ta
    - [ ] Autonumber format is `INV-{SEQNUM:6}`
    - [ ] Lookups to Contact and Account are present
 
-> **Concept: publisher prefix and singular vs plural names.** Every custom table and column gets a prefix (e.g., `cr_`) from your environment's default publisher. Note your prefix — you reuse it in every later lab. Two forms of the table name show up, and using the wrong one in the wrong place is a common error:
+> **Concept: publisher prefix and singular vs plural names.** Every custom table and column gets a prefix (e.g., `cr_`) from your environment's default publisher. Note your prefix. You reuse it in every later lab. Two forms of the table name show up, and using the wrong one in the wrong place is a common error:
 >
 > | Form | Example | Where you use it |
 > |------|---------|------------------|
 > | **Logical name** (singular) | `cr_invoice` | YAML files: table permissions, site settings (`Webapi/cr_invoice/enabled`) |
 > | **Entity set name** (plural) | `cr_invoices` | Web API calls: `/_api/cr_invoices` |
 >
-> Lookup columns add a third twist — in API responses they return with a `_` prefix and `_value` suffix, so `cr_submittedby` becomes `_cr_submittedby_value`. The rest of this lab and Labs 03, 05, and 07 all depend on this convention.
+> Lookup columns add a third twist: in API responses they return with a `_` prefix and `_value` suffix, so `cr_submittedby` becomes `_cr_submittedby_value`. The rest of this lab and Labs 03, 05, and 07 all depend on this convention.
 
 > **Alternative:** You can also verify in the Power Apps maker portal at https://make.powerapps.com → **Tables** → your invoice table. Power Pages Studio is preferred because it shows only the tables your site uses.
 
@@ -199,7 +199,7 @@ Approve the plan. The agent inserts records in **dependency order**:
 > ```json
 > "cr_submittedby@odata.bind": "/contacts(<contact-guid>)"
 > ```
-> This special `@odata.bind` syntax sets foreign key relationships — in our sample data, the contact GUID points to Nancy Anderson (sample). Claude handles this automatically.
+> This special `@odata.bind` syntax sets foreign key relationships. In our sample data, the contact GUID points to Nancy Anderson (sample). Claude handles this automatically.
 
 ### Step 2.4: verify sample data in Power Pages Studio
 
@@ -210,9 +210,9 @@ Verify:
 - [ ] 10 records appear in the grid
 - [ ] Each row has an auto-generated Invoice Number (`INV-100001` through `INV-100010`)
 - [ ] Amount and Status values match the table in Step 2.2
-- [ ] Open one record — the **Submitted By** and **Supplier Company** lookups are populated (not blank)
+- [ ] Open one record: the **Submitted By** and **Supplier Company** lookups are populated (not blank)
 
-If the grid looks empty, select the refresh icon or reload the Data workspace — newly inserted records can take a few seconds to appear.
+If the grid looks empty, select the refresh icon or reload the Data workspace. Newly inserted records can take a few seconds to appear.
 
 > **Alternative:** You can also view the records at https://make.powerapps.com → **Tables** → your invoice table → "Active Invoices" view.
 
@@ -259,7 +259,7 @@ Layer 3: Table Permissions
     "What CRUD operations can this role perform? On which records?"
 ```
 
-All three layers must be configured for the Web API to work. A missing layer — site setting off, no web role, or no table permission — returns **403 Forbidden**. A request for a column that isn't in the allow-list, or a malformed OData query, returns **400 Bad Request** instead. Keep that distinction in mind when you debug in Part 4.
+All three layers must be configured for the Web API to work. A missing layer (site setting off, no web role, or no table permission) returns **403 Forbidden**. A request for a column that isn't in the allow-list, or a malformed OData query, returns **400 Bad Request** instead. Keep that distinction in mind when you debug in Part 4.
 
 ### Concept: permission scopes
 
@@ -303,7 +303,7 @@ name: Webapi/cr_invoice/fields
 value: "cr_invoiceid,cr_ponumber,cr_amount,cr_description,cr_status,cr_submissiondate,cr_duedate,_cr_submittedby_value,_cr_suppliercompany_value"
 ```
 
-> **Important:** Always list fields explicitly. Never use `*` — it exposes every column, including system fields that should remain private.
+> **Important:** Always list fields explicitly. Never use `*`. It exposes every column, including system fields that should remain private.
 
 > **Note on lookup fields:** In the API response, lookup fields are returned with `_` prefix and `_value` suffix. For example, the `cr_submittedby` lookup becomes `_cr_submittedby_value` in API responses and must be listed that way in the fields setting.
 
@@ -331,13 +331,13 @@ authenticatedusersrole: true
 
 Claude Code generates these files as part of the Web API integration. Pick the path that fits how you want to pace the next two labs:
 
-**Option A — generate code and permissions together (recommended for a continuous flow).** Run `/integrate-webapi` now. It generates both the typed API service layer *and* the permission YAML files, so the app makes live `/_api/` calls as soon as you deploy — and Part 4 below tests through the app UI. Lab 03 then becomes a guided review of what was generated. This is the path the rest of this lab assumes.
+**Option A: generate code and permissions together (recommended for a continuous flow).** Run `/integrate-webapi` now. It generates both the typed API service layer *and* the permission YAML files, so the app makes live `/_api/` calls as soon as you deploy, and Part 4 below tests through the app UI. Lab 03 then becomes a guided review of what was generated. This is the path the rest of this lab assumes.
 
 ```
 /integrate-webapi
 ```
 
-**Option B — generate only the permission files now.** Ask your AI coding CLI for just the YAML. Your app still runs on mock data until Lab 03 wires it to live data, so in Part 4 you verify permissions with direct `/_api/` calls in the browser console rather than through the app UI.
+**Option B: generate only the permission files now.** Ask your AI coding CLI for just the YAML. Your app still runs on mock data until Lab 03 wires it to live data, so in Part 4 you verify permissions with direct `/_api/` calls in the browser console rather than through the app UI.
 
 ```
 Set up the Web API permissions for the supplier invoice portal. Create the site 
@@ -410,13 +410,13 @@ PAC CLI uploads both the compiled site and the `.powerpages-site/` YAML files (p
 
 Open your deployed site URL in a browser and sign in with a test account. Now open DevTools (press **F12**) and keep two tabs visible while you test:
 
-- **Console tab** — shows JavaScript errors from the app. It should stay clean; red messages mean something is wrong.
-- **Network tab** — filter by **Fetch/XHR** to watch API calls to `/_api/*`. Successful calls return **200 OK** with a JSON response body.
+- **Console tab**: shows JavaScript errors from the app. It should stay clean; red messages mean something is wrong.
+- **Network tab**: filter by **Fetch/XHR** to watch API calls to `/_api/*`. Successful calls return **200 OK** with a JSON response body.
 
 **If you took Option A** (ran `/integrate-webapi`), use the app the way a supplier would:
 
-1. Navigate to the Invoice List page — does data load?
-2. Open an individual invoice — does the detail view populate?
+1. Navigate to the Invoice List page. Does data load?
+2. Open an individual invoice. Does the detail view populate?
 3. Try any other page or action wired up in your scaffolded site.
 
 As you navigate, glance at the Network tab. Each `/_api/cr_invoices...` request should be green (200 OK). Select a request and check the **Response** tab to confirm the data looks right.
@@ -432,18 +432,18 @@ A 200 response with a `value` array confirms all three layers are wired correctl
 
 ### Step 4.3: verify contact scoping
 
-Because you re-linked 3-5 invoices to your Contact in Step 2.5, the Invoice List page should show only those records — not all 10. This confirms that Contact-scoped permissions are working: the server is enforcing isolation, not just the UI hiding records.
+Because you re-linked 3-5 invoices to your Contact in Step 2.5, the Invoice List page should show only those records, not all 10. This confirms that Contact-scoped permissions are working: the server is enforcing isolation, not just the UI hiding records.
 
 If time permits, sign in as a different user whose Contact has no invoices linked. The Invoice List page should appear empty. Same query, different identity, different data.
 
-### Step 4.4: if you see an error — use the Error-Paste-and-Fix pattern {#step-44-if-you-see-an-error-use-the-error-paste-and-fix-pattern}
+### Step 4.4: if you see an error, use the Error-Paste-and-Fix pattern {#step-44-if-you-see-an-error-use-the-error-paste-and-fix-pattern}
 
-When something does not work — the list is empty when it shouldn't be, a request returns 403 or 400, the Console shows a red error, the app crashes — **don't debug manually**. Use the **Error-Paste-and-Fix** pattern from your prompt cheat sheet (Pattern 8).
+When something does not work (the list is empty when it shouldn't be, a request returns 403 or 400, the Console shows a red error, the app crashes), **don't debug manually**. Use the **Error-Paste-and-Fix** pattern from your prompt cheat sheet (Pattern 8).
 
 The flow:
 
 1. **Copy the error.** In DevTools Console, select the full red message including the stack trace and copy it. If the failure is a network request, also open the Network tab, select the failed call, go to the **Response** tab, and copy the error body too.
-2. **Paste into your AI coding CLI with context** — say what you were doing, what you expected, and what you saw. Example:
+2. **Paste into your AI coding CLI with context**: say what you were doing, what you expected, and what you saw. Example:
 
    ```
    I just deployed my site and signed in, but the Invoice List page shows no
@@ -468,9 +468,9 @@ The flow:
 
 ## Part 5: configure authentication with `/setup-auth`
 
-So far the deployed site is open: anyone with the URL can browse it, and Lab 02 Step 2.5 relied on the **default Microsoft Entra ID identity provider** that every activated site gets. That default is fine for "sign in once so my Contact exists", but real sites need a deliberate provider mix, role-based UI, claims mapping, and a sign-in page that fits the audience. `/setup-auth` handles all of that — including the legwork in the identity provider's admin center.
+So far the deployed site is open: anyone with the URL can browse it, and Lab 02 Step 2.5 relied on the **default Microsoft Entra ID identity provider** that every activated site gets. That default is fine for "sign in once so my Contact exists", but real sites need a deliberate provider mix, role-based UI, claims mapping, and a sign-in page that fits the audience. `/setup-auth` handles all of that, including the legwork in the identity provider's admin center.
 
-> **Required for this track, not optional.** Part 5 produces the auth service and role helpers (`hasRole`, `RequireAuth`, `RequireRole`) and the session keepalive hook that the later labs assume are present — and the verification checklist below expects them. Complete it before moving to Lab 03.
+> **Required for this track, not optional.** Part 5 produces the auth service and role helpers (`hasRole`, `RequireAuth`, `RequireRole`) and the session keepalive hook that the later labs assume are present; and the verification checklist below expects them. Complete it before moving to Lab 03.
 
 > **Important:** Server-side table permissions (Part 3) are what actually protect your data. The client-side helpers `/setup-auth` generates (`hasRole`, `RequireAuth`, `RequireRole`) only control what the UI *shows*. Keep both layers in mind: server-side enforces access, client-side improves UX.
 
@@ -483,7 +483,7 @@ So far the deployed site is open: anyone with the URL can browse it, and Lab 02 
 | Provider | Best for | Notes |
 |---|---|---|
 | **Microsoft Entra External ID** (recommended for customer-facing sites) | Public sites and customer portals with self-service sign-up | The plugin walks you through tenant creation and user flow setup |
-| **Microsoft Entra ID** | Internal employee portals or B2B partner sites | Power Pages auto-configures the parent tenant — you don't supply tenant info |
+| **Microsoft Entra ID** | Internal employee portals or B2B partner sites | Power Pages auto-configures the parent tenant; you don't supply tenant info |
 | **OpenID Connect** | Standards-based federation with an existing IdP | Generic OIDC; you supply issuer URL and client credentials |
 | **SAML 2.0** / **WS-Federation** | Enterprise SSO against an existing IdP | Generic SAML/WS-Fed; you supply the metadata URL |
 | **Microsoft, Facebook, Google** | Social sign-in for consumer audiences | Useful as a secondary provider alongside Entra External ID |
@@ -502,14 +502,14 @@ In your AI coding CLI:
 The plugin will:
 
 1. Analyze your site (purpose, pages, audience) and **propose** a sensible default provider mix. You accept or override.
-2. Walk you through every prerequisite in each identity provider's admin center — creating tenants, registering apps, creating user flows, and capturing client IDs and redirect URIs.
+2. Walk you through every prerequisite in each identity provider's admin center: creating tenants, registering apps, creating user flows, and capturing client IDs and redirect URIs.
 3. **Validate each value you paste back** into the conversation, and compute the exact redirect URI for your site so the value pasted into the app registration matches the value written into site settings.
 4. Ask three claims-mapping questions per provider:
    - How user profile data should flow from the IdP into the Dataverse contact record (which claims map to which Contact columns)
    - Whether to sync on **every sign-in** or **first sign-in only**
    - Whether to **auto-link external sign-ins to existing contacts by email**
 5. Generate the authentication code under your framework's idioms (React hooks, Vue composables, Angular services, or Astro components).
-6. Write site settings under `.powerpages-site/site-settings/` — one set per provider, plus registration mode, claims mapping, and any optional features.
+6. Write site settings under `.powerpages-site/site-settings/`: one set per provider, plus registration mode, claims mapping, and any optional features.
 
 ### Step 5.3: review the generated artifacts
 
@@ -518,10 +518,10 @@ After the skill finishes, you should see new files in three places. Spend a minu
 **Auth service + utilities (`src/services/auth/` or your framework's equivalent):**
 
 - A typed authentication service exposing `signIn`, `signOut`, `getUser`, and the current session
-- Role-based authorization utilities — typically `hasRole(role)`, a `RequireAuth` wrapper, and a `RequireRole` wrapper keyed by web role
-- A **session keepalive hook** that prevents SPA sessions from silently expiring (a common SPA-on-Power-Pages gotcha). The hook polls a lightweight Power Pages keepalive endpoint on a timer so the session cookie stays fresh while the user is active — it does not extend an idle session indefinitely
+- Role-based authorization utilities: typically `hasRole(role)`, a `RequireAuth` wrapper, and a `RequireRole` wrapper keyed by web role
+- A **session keepalive hook** that prevents SPA sessions from silently expiring (a common SPA-on-Power-Pages gotcha). The hook polls a lightweight Power Pages keepalive endpoint on a timer so the session cookie stays fresh while the user is active. It does not extend an idle session indefinitely
 
-> **Reference only — your output may differ.** The code shown below illustrates what the plugin *typically* generates. The plugin adapts its output to your exact project (variable names, helper structure, comment style, error-handling shape), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece — do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
+> **Reference only: your output may differ.** The code shown below illustrates what the plugin *typically* generates. The plugin adapts its output to your exact project (variable names, helper structure, comment style, error-handling shape), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece. Do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
 
 ```typescript
 import { useAuth } from "@/services/auth";
@@ -552,7 +552,7 @@ function Dashboard() {
 
 For each provider, you should see an enable setting plus its provider-specific tuple of settings. For example, Entra External ID generates settings like:
 
-> **Reference only — your output may differ.** The code shown below illustrates what the plugin *typically* generates. The plugin adapts its output to your exact project (variable names, helper structure, comment style, error-handling shape), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece — do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
+> **Reference only: your output may differ.** The code shown below illustrates what the plugin *typically* generates. The plugin adapts its output to your exact project (variable names, helper structure, comment style, error-handling shape), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece. Do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
 
 ```yaml
 name: Authentication/OpenIdConnect/EntraExternalId/Authority
@@ -573,11 +573,11 @@ value: "true"  # open self-service registration; "false" = invitation-only
 
 ### Step 5.4: enable optional features
 
-When you run `/setup-auth`, the plugin asks whether to turn on these optional features. Pick the ones that fit the audience — you can always re-run the skill later to add them.
+When you run `/setup-auth`, the plugin asks whether to turn on these optional features. Pick the ones that fit the audience. You can always re-run the skill later to add them.
 
 | Feature | What it generates | When to turn it on |
 |---|---|---|
-| **Terms and conditions** | A `/terms` SPA page, a site setting that requires acceptance before sign-in completes, and matching content snippets | Public / regulated sites — gates sign-in behind explicit acceptance |
+| **Terms and conditions** | A `/terms` SPA page, a site setting that requires acceptance before sign-in completes, and matching content snippets | Public / regulated sites: gates sign-in behind explicit acceptance |
 | **User profile page** | A `/user-profile` SPA page where signed-in users edit their Contact record via the Web API | Any site where users have a long-lived profile (most sites) |
 | **Federated sign-out** | Configures the site to also sign the user out at the IdP when they sign out of the site | Shared-device, kiosk, or regulated scenarios |
 
@@ -594,7 +594,7 @@ their Google work account. Use the primary spotlight layout with
 Entra External ID as the spotlighted choice.
 ```
 
-The plugin walks you through the Google app registration, adds the new site settings, and regenerates the `/login` page in the layout you picked — without touching the existing Entra External ID configuration.
+The plugin walks you through the Google app registration, adds the new site settings, and regenerates the `/login` page in the layout you picked, without touching the existing Entra External ID configuration.
 
 ### Step 5.6: deploy and verify
 
@@ -606,14 +606,14 @@ Redeploy the site so the new auth code, site settings, and (if applicable) `/log
 
 Then in an incognito window:
 
-- [ ] Open the deployed site URL — you see the sign-in entry point your layout dictates
+- [ ] Open the deployed site URL: you see the sign-in entry point your layout dictates
 - [ ] Sign in with each configured provider in turn; each one redirects back successfully and lands you signed in
-- [ ] Open DevTools Console — the keepalive hook should fire periodically, no `401` or `Token expired` errors
-- [ ] Open a page wrapped in `RequireRole("Authenticated Users")` while signed out — you are redirected to sign in instead of seeing the page
+- [ ] Open DevTools Console: the keepalive hook should fire periodically, no `401` or `Token expired` errors
+- [ ] Open a page wrapped in `RequireRole("Authenticated Users")` while signed out: you are redirected to sign in instead of seeing the page
 - [ ] If you enabled the user profile feature, open `/user-profile`, change a field, and confirm the Contact record updates in Dataverse
 - [ ] If you enabled federated sign-out, click sign-out and confirm a follow-up navigation to the IdP also signs you out there
 
-If any provider's redirect fails, the most common cause is a mismatch between the **Redirect URI** registered in the IdP and the value the plugin wrote into site settings. Re-run `/setup-auth` — the plugin will re-validate both sides.
+If any provider's redirect fails, the most common cause is a mismatch between the **Redirect URI** registered in the IdP and the value the plugin wrote into site settings. Re-run `/setup-auth`. The plugin will re-validate both sides.
 
 ---
 
@@ -634,7 +634,7 @@ You have completed this lab when:
 - [ ] `/setup-auth` ran successfully and produced the auth service, `hasRole` / `RequireAuth` / `RequireRole` utilities, the session keepalive hook, and (if you configured more than one provider) a `/login` page
 - [ ] Site settings for each configured identity provider exist under `.powerpages-site/site-settings/` (provider authority, client ID, claims mapping, registration mode)
 - [ ] You can sign in to the deployed site with each configured provider in an incognito window
-- [ ] Optional: run `/audit-permissions` and review the HTML report it generates — it cross-checks your YAML against the deployed site and flags any over- or under-permissive grants. A complete end-to-end security review (code + dependencies + headers + WAF + permissions + deployed-site scan) is the focus of [Lab 09: Security Review](../integrate/09-security-review.md) after the integration phase
+- [ ] Optional: run `/audit-permissions` and review the HTML report it generates. It cross-checks your YAML against the deployed site and flags any over- or under-permissive grants. A complete end-to-end security review (code + dependencies + headers + WAF + permissions + deployed-site scan) is the focus of [Lab 09: Security Review](../integrate/09-security-review.md) after the integration phase
 
 ---
 
@@ -643,12 +643,12 @@ You have completed this lab when:
 | Problem | Solution |
 |---------|----------|
 | `/setup-datamodel` fails with 403 | You need System Administrator or System Customizer role on the Dataverse environment. Contact your admin. |
-| Publisher prefix is unexpected (e.g., `new_` instead of `cr_`) | The prefix comes from your environment's Default Solution publisher. Check in make.powerapps.com > Solutions > Default Solution > Publisher. The prefix works fine — just note it for API calls. |
+| Publisher prefix is unexpected (e.g., `new_` instead of `cr_`) | The prefix comes from your environment's Default Solution publisher. Check in make.powerapps.com > Solutions > Default Solution > Publisher. The prefix works fine. Just note it for API calls. |
 | `/_api/cr_invoices` returns 403 Forbidden | All three layers must be configured: (1) site setting `Webapi/cr_invoice/enabled = true`, (2) web role exists, (3) table permission linked to role. Redeploy after fixing. |
 | `/_api/cr_invoices` returns empty `{"value":[]}` | Data exists but permissions do not match. Check: Is the scope Contact? Does the logged-in user's Contact record match the `cr_submittedby` on the invoices? |
 | Specific field returns 400 error | The field is not in the allowed list. Add it to `Webapi/cr_invoice/fields` in the site setting YAML. Remember lookup fields need the `_` prefix and `_value` suffix. |
 | `pac pages upload-code-site` fails | Run `pac auth list` to verify auth is active. Try `pac org who` to confirm the right environment. Re-authenticate if needed. |
-| Sign-in redirects to the IdP but errors back with "redirect URI mismatch" | The IdP app registration's redirect URI differs from what the plugin wrote into site settings. Re-run `/setup-auth` — the plugin will recompute the redirect URI from the activated site URL and validate both sides. |
+| Sign-in redirects to the IdP but errors back with "redirect URI mismatch" | The IdP app registration's redirect URI differs from what the plugin wrote into site settings. Re-run `/setup-auth`. The plugin will recompute the redirect URI from the activated site URL and validate both sides. |
 | SPA silently logs the user out mid-session | The session keepalive hook isn't wired up. Confirm the auth service generated by `/setup-auth` is imported and called in the app shell; re-run the skill if the hook is missing. |
 | `RequireRole("X")` always returns false even when the user is in role X | Web role name in code doesn't match the role's exact name in `.powerpages-site/web-roles/` (case-sensitive). Confirm spelling. |
 
@@ -679,14 +679,14 @@ If Dataverse table creation fails via API, create the table manually:
 
 ## Key takeaways
 
-- Reuse standard Dataverse tables (Account, Contact) instead of creating custom ones when possible — Power Pages auth is tied to Contact
+- Reuse standard Dataverse tables (Account, Contact) instead of creating custom ones when possible. Power Pages auth is tied to Contact
 - The three-layer security model (Site Settings + Web Roles + Table Permissions) must all be configured for the Web API to work
 - Contact-scoped permissions ensure data isolation: each supplier sees only their own invoices
-- Always list API fields explicitly — never use `*`
+- Always list API fields explicitly: never use `*`
 - Lookup fields have different names in API responses: `cr_submittedby` becomes `_cr_submittedby_value`
 - Dependency order matters for data insertion: parent records (Account) before child records (Contact, Invoice)
-- `/setup-auth` configures the identity layer end-to-end — it walks the IdP admin center, validates redirect URIs, generates the auth service + role helpers (`hasRole`, `RequireAuth`, `RequireRole`), and writes provider-specific site settings under `.powerpages-site/site-settings/`
-- Re-running `/setup-auth` lets you add a new identity provider without overwriting existing ones — start with one provider, add others incrementally
+- `/setup-auth` configures the identity layer end-to-end: it walks the IdP admin center, validates redirect URIs, generates the auth service + role helpers (`hasRole`, `RequireAuth`, `RequireRole`), and writes provider-specific site settings under `.powerpages-site/site-settings/`
+- Re-running `/setup-auth` lets you add a new identity provider without overwriting existing ones: start with one provider, add others incrementally
 - Client-side authorization (`RequireAuth`, `RequireRole`, `hasRole`) is for UX only; server-side table permissions are what actually enforce access
 
 ## What's next

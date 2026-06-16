@@ -18,7 +18,7 @@ Before scaffolding, a quick orientation to the platform you're building on.
 
 ### What is a Power Pages SPA site?
 
-A **single-page application (SPA) site in Microsoft Power Pages** is a modern site type built with standard web frameworks (React, Angular, Vue, or Astro) and deployed to the Power Pages platform. Instead of writing Liquid templates in the portal management app, you write front-end code in your local editor, work directly against the Microsoft Dataverse data model through the Power Pages Web API, and deploy using PAC CLI. See the official docs: [Create and deploy a single-page application in Power Pages](https://learn.microsoft.com/power-pages/configure/create-code-sites).
+A **single-page application (SPA) site in Microsoft Power Pages** is a modern site type built with standard web frameworks (React, Angular, Vue, or Astro) and deployed to the Power Pages platform. Instead of writing Liquid templates in the portal management app, you write front-end code in your local editor, integrate backend data through the Power Pages Web API, server logic, and cloud flows, and deploy using PAC CLI. See the official docs: [Create and deploy a single-page application in Power Pages](https://learn.microsoft.com/power-pages/configure/create-code-sites).
 
 ### Architecture
 
@@ -26,7 +26,7 @@ A **single-page application (SPA) site in Microsoft Power Pages** is a modern si
 flowchart TD
     Browser["Browser (React SPA)"]
     CDN["Power Pages CDN<br/>serves static HTML/CSS/JS"]
-    Gateway["/_api/* — unified runtime gateway"]
+    Gateway["/_api/*: unified runtime gateway"]
     OData["OData CRUD<br/>/_api/{tableSet}"]
     SL["Server logic<br/>/_api/serverlogics/&lt;name&gt;"]
     CF["Cloud flows<br/>/_api/cloudflow/v1.0/trigger/&lt;flowId&gt;"]
@@ -45,9 +45,9 @@ flowchart TD
 ```
 
 - The SPA runs entirely in the browser as static HTML, CSS, and JavaScript
-- All backend access goes through `/_api/*` — a single CSRF-protected, session-authenticated gateway that fans out to four runtime surfaces (OData CRUD on Dataverse, sandboxed server-logic functions, Power Automate cloud flows, and generative AI APIs)
+- All backend access goes through `/_api/*`: a single CSRF-protected, session-authenticated gateway that fans out to four runtime surfaces (OData CRUD on Dataverse, sandboxed server-logic functions, Power Automate cloud flows, and generative AI APIs)
 - Authentication uses server-side session cookies managed by Power Pages
-- The site is deployed as compiled static files — no server-side rendering
+- The site is deployed as compiled static files, no server-side rendering
 
 ### SPA vs traditional Liquid
 
@@ -57,7 +57,7 @@ flowchart TD
 | **Development** | Portal Management App or local IDE + Liquid | Local IDE with standard web tooling |
 | **Framework** | Proprietary Liquid syntax | React, Angular, Vue, or Astro |
 | **Deployment** | Sync via portal management | `pac pages upload-code-site` |
-| **Data access** | Liquid entities + Web API | Web API only (`/_api/`) |
+| **Data access** | Liquid entities + Web API | Web API, server logic, and cloud flows (all via `/_api/`) |
 | **Customization** | Constrained by Liquid capabilities | Full framework flexibility |
 | **Power BI embedded** | Supported via `{% powerbi %}` Liquid tag | Not supported |
 | **Developer experience** | Portal-specific skills needed | Standard frontend skills transfer |
@@ -67,9 +67,9 @@ flowchart TD
 Power Pages SPA sites support four frameworks: **React** (built with Vite), **Angular** (Angular CLI), **Vue** (Vite), and **Astro** in static mode.
 
 **Constraints:**
-- No server-side rendering (SSR) — Next.js, Nuxt, Remix, and SvelteKit are not supported
+- No server-side rendering (SSR): Next.js, Nuxt, Remix, and SvelteKit are not supported
 - The compiled output must be static HTML/CSS/JS
-- All data access happens through the Power Pages Web API at runtime
+- All backend access happens through the platform's `/_api/` runtime gateway (Web API (OData CRUD), server logic, and cloud flows), not a server you run yourself
 
 ### Tech stack used in this Lab
 
@@ -79,9 +79,9 @@ This lab uses **React + TypeScript + Tailwind CSS + Vite**, following **Microsof
 
 ## Prerequisites
 
-- [Setup Guide](../setup-guide.md) tools installed and verified (Node.js, PAC CLI, Azure CLI, AI coding CLI, Power Pages plugin)
+- [Build phase setup](00-setup.md) completed and verified (Node.js, PAC CLI, Azure CLI, AI coding CLI, Power Pages plugin)
 - [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md) open in a tab for reference
-- Familiarity with the ACE framework (Action / Context / Examples) — see the [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md); this lab's prompt uses ACE structure with a Jobs-To-Be-Done framing of the requirements
+- Familiarity with the ACE framework (Action / Context / Examples): see the [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md); this lab's prompt uses ACE structure with a Jobs-To-Be-Done framing of the requirements
 
 ## Learning objectives
 
@@ -113,7 +113,7 @@ claude            # Claude Code
 copilot           # GitHub Copilot CLI
 ```
 
-Quick verification — confirm the Power Pages plugin is available:
+Quick verification, confirm the Power Pages plugin is available:
 
 ```
 /help
@@ -125,7 +125,7 @@ You should see `/create-site` listed among the available skills.
 
 ## Step 2: run `/create-site`
 
-Type `/create-site` in your AI coding CLI, then paste the following prompt. It uses the **ACE structure** (Action / Context / Examples) for the prompt skeleton, with a **Jobs-To-Be-Done (JTBD)** framing of the requirements: the functional jobs sit in the Context, so the generated architecture follows the user goals rather than a fixed page list. The two work together — ACE keeps the prompt well-organized, JTBD keeps it focused on outcomes.
+Type `/create-site` in your AI coding CLI, then paste the following prompt. It uses the **ACE structure** (Action / Context / Examples) for the prompt skeleton, with a **Jobs-To-Be-Done (JTBD)** framing of the requirements: the functional jobs sit in the Context, so the generated architecture follows the user goals rather than a fixed page list. The two work together: ACE keeps the prompt well-organized, JTBD keeps it focused on outcomes.
 
 ```
 [ACTION]
@@ -175,7 +175,7 @@ Layout & navigation constraints:
 
 Your AI coding CLI will analyze your prompt and present an implementation plan. Before approving, verify:
 
-- [ ] All five functional jobs map to pages — Landing (public), Dashboard, Submit Invoice, Invoice List, Invoice Detail — each with a sensible route (e.g. `/`, `/dashboard`, `/invoices/new`, `/invoices`, `/invoices/:id`)
+- [ ] All five functional jobs map to pages (Landing (public), Dashboard, Submit Invoice, Invoice List, Invoice Detail) each with a sensible route (e.g. `/`, `/dashboard`, `/invoices/new`, `/invoices`, `/invoices/:id`)
 - [ ] Framework is React + Vite + TypeScript
 - [ ] Tailwind CSS is included
 - [ ] Mock data is mentioned (10 invoices)
@@ -254,7 +254,7 @@ Open your browser to `http://localhost:5173` (Vite's default port).
 **3. Submit Invoice** (route: `/invoices/new`)
 - [ ] Form with PO Number, Amount, and Due Date fields (Description optional)
 - [ ] Submit and Cancel buttons
-- [ ] Try submitting — expect a success toast or redirect
+- [ ] Try submitting. Expect a success toast or redirect
 
 **4. Invoice List** (route: `/invoices`)
 - [ ] All 10 invoices displayed in a table
@@ -267,7 +267,7 @@ Open your browser to `http://localhost:5173` (Vite's default port).
 - [ ] Details card with PO#, Amount, Description, Dates, Company
 - [ ] Status timeline showing progression
 
-> **Expected:** All pages render with Fluent Design styling (Segoe UI font, a Fluent primary blue, card-based layouts with subtle shadows). Data is mock data — Lab 03 connects the portal to live Dataverse.
+> **Expected:** All pages render with Fluent Design styling (Segoe UI font, a Fluent primary blue, card-based layouts with subtle shadows). Data is mock data. Lab 03 connects the portal to live Dataverse.
 
 ---
 
@@ -275,7 +275,7 @@ Open your browser to `http://localhost:5173` (Vite's default port).
 
 Open the project in your code editor and explore the structure.
 
-> **Reference only — your output may differ.** The structure and snippets below illustrate what the plugin *typically* generates. The plugin adapts its output to your exact prompt (you may get more or fewer pages, different component names, alternative folder names, additional helpers), so your project may look different in small ways. Use these samples to understand the **concept** and **why** the project is organized this way, not as line-for-line targets. If your scaffold differs meaningfully, ask your AI coding CLI to explain the layout before renaming files.
+> **Reference only. Your output may differ.** The structure and snippets below illustrate what the plugin *typically* generates. The plugin adapts its output to your exact prompt (you may get more or fewer pages, different component names, alternative folder names, additional helpers), so your project may look different in small ways. Use these samples to understand the **concept** and **why** the project is organized this way, not as line-for-line targets. If your scaffold differs meaningfully, ask your AI coding CLI to explain the layout before renaming files.
 
 ### Project structure
 
@@ -316,7 +316,7 @@ supplier-invoice-portal/
 
 All linked to mock user "Nancy Anderson (sample)" at "Adventure Works (sample)".
 
-**powerpages.config.json**: This tells PAC CLI how to upload your site. Three fields are required — `siteName`, `compiledPath`, and `defaultLandingPage`:
+**powerpages.config.json**: This tells PAC CLI how to upload your site. Three fields are required (`siteName`, `compiledPath`, and `defaultLandingPage`):
 ```json
 {
   "$schema": "https://www.schemastore.org/powerpages.config.json",
@@ -329,9 +329,9 @@ Later labs add an optional `bundleFilePatterns` field here to clean up stale bun
 
 **CLAUDE.md**: Review the project context Claude created. This file will help your AI coding CLI maintain consistency in future sessions.
 
-### The `docs/` folder — your design-decisions audit trail
+### The `docs/` folder: your design-decisions audit trail
 
-As you run plugin skills across the next labs, each one saves a self-contained HTML artifact into `docs/` — the plan it proposed before making changes, the ER diagram it drew up, or the security audit it produced. By the end of the track you will typically have:
+As you run plugin skills across the next labs, each one saves a self-contained HTML artifact into `docs/`: the plan it proposed before making changes, the ER diagram it drew up, or the security audit it produced. By the end of the track you will typically have:
 
 | File | Written by | What it captures |
 |------|------------|------------------|
@@ -339,9 +339,9 @@ As you run plugin skills across the next labs, each one saves a self-contained H
 | `permissions-plan.html` | `/integrate-webapi` | Table-permission matrix (scope, CRUD, web roles) |
 | `permissions-audit.html` | `/audit-permissions` | Security findings grouped by severity |
 | `cloud-flow-plan.html` | `/add-cloud-flow` | Flow registration plan with web roles and trigger |
-| *other plan files* | `/add-server-logic`, `/add-ai-webapi` | Same pattern — each skill's plan step writes its artifact here |
+| *other plan files* | `/add-server-logic`, `/add-ai-webapi` | Same pattern: each skill's plan step writes its artifact here |
 
-Each file is a stand-alone report with diagrams, tables, and the rationale the agent used. Open any of them in a browser to replay the agent's thinking. This folder is your durable record of the design choices AI made on your behalf — useful for code review, onboarding a teammate onto the project, or auditing the site after the fact.
+Each file is a stand-alone report with diagrams, tables, and the rationale the agent used. Open any of them in a browser to replay the agent's thinking. This folder is your durable record of the design choices AI made on your behalf: useful for code review, onboarding a teammate onto the project, or auditing the site after the fact.
 
 ---
 
@@ -392,10 +392,10 @@ If generation fails completely or takes too long, ask your AI coding CLI to **st
 ## Key takeaways
 
 - `/create-site` generates a complete, working React SPA from a natural language prompt
-- The ACE-structured, JTBD-framed prompt produced all 5 pages with correct styling and mock data — the functional jobs in the Context mapped cleanly onto pages
+- The ACE-structured, JTBD-framed prompt produced all 5 pages with correct styling and mock data: the functional jobs in the Context mapped cleanly onto pages
 - The project structure separates pages, components, data, and types cleanly
 - `powerpages.config.json` is the bridge between your local project and Power Pages deployment
-- The site currently uses mock data — the next labs replace it with live Dataverse data
+- The site currently uses mock data. The next labs replace it with live Dataverse data
 
 ## What's next
 

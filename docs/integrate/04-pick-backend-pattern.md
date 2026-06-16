@@ -8,14 +8,16 @@ title: "Lab 04: Plan the Service Layer with /integrate-backend"
 
 ## What you will build
 
-A reviewed, sequenced integration plan for your prototype — every feature in the Supplier Invoice portal classified into Web API, Server Logic, Cloud Flow, or AI API — and the foundation artifacts kicked off by the orchestrator before you dive into the deep-dive labs (05, 06, 07, 08).
+A reviewed, sequenced integration plan for your prototype (every feature in the Supplier Invoice portal classified into Web API, Server Logic, Cloud Flow, or AI API) and the foundation artifacts kicked off by the orchestrator before you dive into the deep-dive labs (05, 06, 07, 08).
 
 ## Prerequisites
 
 - Completed [Lab 03: Connect to Live Data via Web API](../build/03-web-api-integration.md) (typed Web API service layer in `src/services/`, working CRUD on the deployed site)
 - Working portal deployed (`.powerpages-site/` folder exists, deploy succeeded at least once)
 - `/integrate-backend` available in your AI coding CLI session
-- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions` — the orchestrator uses Microsoft Entra ID-scoped tokens that work without one.
+- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`. The orchestrator uses Microsoft Entra ID-scoped tokens that work without one.
+
+> **No new tools for the Integrate phase.** Labs 04–08 run on the same tooling you installed in the Build phase. The only optional add-on is a static-analysis tool for [Lab 09](./09-security-review.md). See [Integrate phase setup](00-setup.md).
 
 ## Learning objectives
 
@@ -50,7 +52,7 @@ In your AI coding CLI session:
 
 The skill will:
 
-1. Scan your prototype — React components, mock data, business rules, comments — to identify every feature that needs a service layer
+1. Scan your prototype (React components, mock data, business rules, comments) to identify every feature that needs a service layer
 2. Classify each feature into Web API (standard CRUD), Server Logic (server-side validation and external APIs), Cloud Flow (approval and notification workflows), or AI API (summarization and grounded search)
 3. Propose a sequenced execution plan that respects dependencies (e.g., the Web API foundation runs before any Server Logic that calls it)
 4. Open the plan in your browser for review
@@ -66,9 +68,9 @@ The plan that opens in your browser should show:
 - [ ] The list of underlying skills the orchestrator will invoke and in what order
 - [ ] Any prerequisites flagged for your attention (missing site settings, table permissions, environment variables)
 
-If something is misclassified — for example, the duplicate-PO check showing under Web API instead of Server Logic — request a change in the plan UI and describe the correction (e.g., *"this rule must be tamper-proof, so it belongs in Server Logic with validate-and-execute"*). The orchestrator will reclassify and redraw the plan. Otherwise approve.
+If something is misclassified (for example, the duplicate-PO check showing under Web API instead of Server Logic), request a change in the plan UI and describe the correction (e.g., *"this rule must be tamper-proof, so it belongs in Server Logic with validate-and-execute"*). The orchestrator will reclassify and redraw the plan. Otherwise approve.
 
-> **Reference only — your plan may differ.** The exact section names, layout, and skills the orchestrator chooses depend on what is in your repo. The orchestrator adapts to your prototype, so do not rewrite your plan to match this lab line-for-line. Use these notes to understand the **shape** of a healthy plan; if anything in yours looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
+> **Reference only: your plan may differ.** The exact section names, layout, and skills the orchestrator chooses depend on what is in your repo. The orchestrator adapts to your prototype, so do not rewrite your plan to match this lab line-for-line. Use these notes to understand the **shape** of a healthy plan; if anything in yours looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
 
 ---
 
@@ -84,7 +86,7 @@ The orchestrator runs `/integrate-webapi` first if your project does not already
 
 ### Step 2.2: server logic items
 
-For each feature classified as Server Logic, the orchestrator invokes `/add-server-logic`. It generates the sandbox JavaScript, the `.serverlogic.yml` metadata, the table-permission updates, and the React wiring — then pauses for review before deploying. Lab 05 walks through this in detail.
+For each feature classified as Server Logic, the orchestrator invokes `/add-server-logic`. It generates the sandbox JavaScript, the `.serverlogic.yml` metadata, the table-permission updates, and the React wiring, then pauses for review before deploying. Lab 05 walks through this in detail.
 
 ### Step 2.3: cloud flow items
 
@@ -100,20 +102,20 @@ For each summarization or grounded-search feature, the orchestrator invokes `/ad
 
 ## Part 3: verify the plan output
 
-After the orchestrator completes — or after you pause partway through — confirm the artifacts landed:
+After the orchestrator completes, or after you pause partway through, confirm the artifacts landed:
 
 - [ ] `src/services/webApi.ts`, `src/services/<entity>Service.ts`, and `src/types/entities.ts` exist (Web API foundation)
 - [ ] One folder under `.powerpages-site/server-logic/<name>/` for each Server Logic item in the plan, each containing a `.js` and a `.serverlogic.yml`
 - [ ] One file under `.powerpages-site/cloud-flow-consumer/<name>.cloudflowconsumer.yml` for each Cloud Flow item
-- [ ] React UI now calls the new services / endpoints / flows — no remaining mock-data imports for any feature in the plan
+- [ ] React UI now calls the new services / endpoints / flows: no remaining mock-data imports for any feature in the plan
 - [ ] The orchestrator's plan/state file is committed to your repo so you (or a teammate) can resume later
 - [ ] The site has been deployed since the last orchestrator step (Server Logic and Cloud Flow endpoints only become reachable after deploy)
 
-If any item is missing, run `/integrate-backend` again — the orchestrator detects partial state and offers to continue.
+If any item is missing, run `/integrate-backend` again. The orchestrator detects partial state and offers to continue.
 
 ---
 
-## Part 4: reference — the four patterns and the decision matrix
+## Part 4: reference, the four patterns and the decision matrix
 
 Use this section when you want to override the orchestrator's classification, run a single skill manually, or understand *why* a feature landed in one pattern rather than another.
 
@@ -217,12 +219,12 @@ Use this when you are not sure which pattern fits, or when reviewing a misclassi
 | Validating business rules only in React, then writing via Web API | DevTools can skip the validation. Attackers or careless users hit the database unchecked. | Move validation into server logic that also performs the write (validate-and-execute pattern). |
 | Calling external APIs (Stripe, SendGrid, etc.) with the API key in a React component | Every visitor can read the key from the bundle. | Server logic reads the key from a site setting backed by an environment variable (optionally Azure Key Vault). |
 | Building an approval UI from scratch | Weeks of work to replicate what Power Automate ships. | Cloud flow with the Approvals connector; portal triggers the flow; Approvals center handles the UX. |
-| Dropping an Azure OpenAI SDK call in the browser | Key leakage, prompt injection from URL params, no governance | Use Data Summarization / Search Summary APIs — Microsoft-managed gateway, prompts live as site settings. |
+| Dropping an Azure OpenAI SDK call in the browser | Key leakage, prompt injection from URL params, no governance | Use Data Summarization / Search Summary APIs: Microsoft-managed gateway, prompts live as site settings. |
 | Server logic that only returns `{ valid: true/false }` | The client can skip the POST and write directly via Web API, bypassing the rule. | Make the server logic do both: validate **and** perform the Dataverse write in one call. |
 
 ### Common confusion
 
-**"Cloud flow vs. server logic — they both run on the server?"**
+**"Cloud flow vs. server logic, they both run on the server?"**
 
 Yes, but the runtimes are very different. Cloud flows are built in a visual designer by connecting pre-built steps. Server logic is JavaScript in your repo. Cloud flows have virtually no time limit and can run for hours. Server logic must finish within 120 seconds (configurable up to 240).
 
@@ -240,10 +242,10 @@ Wrap Azure OpenAI in server logic. Put your API key in a site setting backed by 
 
 | Error | What you see | Cause | Fix |
 |-------|--------------|-------|-----|
-| Plan classifies a security-critical check as Web API | "Validate PO uniqueness" listed under Web API | Prototype only validates in React, so the orchestrator infers a client-side rule | In the plan UI, request a change: "this rule must be tamper-proof — reclassify as Server Logic (validate-and-execute)" |
+| Plan classifies a security-critical check as Web API | "Validate PO uniqueness" listed under Web API | Prototype only validates in React, so the orchestrator infers a client-side rule | In the plan UI, request a change: "this rule must be tamper-proof. Reclassify as Server Logic (validate-and-execute)" |
 | Orchestrator skips a feature you expected | The feature is missing from the plan entirely | The feature is not surfaced in any prototype component, mock data, or comment the orchestrator can read | Add a placeholder component or a clear intent comment, then re-run `/integrate-backend` |
 | Resume restarts from the top | After Ctrl-C, the orchestrator begins from scratch | The plan/state file was deleted or never written | Re-run `/integrate-backend` once the prerequisites (PAC, Azure auth, deployed `.powerpages-site/`) are healthy; verify the plan/state file is present and committed |
-| One sub-skill fails midway | The orchestrator halts at a specific step with the underlying skill's error | Underlying issue (PAC auth lapsed, table permission missing, deploy failed, etc.) | Fix the underlying issue, re-run `/integrate-backend` — it resumes from the failed step |
+| One sub-skill fails midway | The orchestrator halts at a specific step with the underlying skill's error | Underlying issue (PAC auth lapsed, table permission missing, deploy failed, etc.) | Fix the underlying issue, re-run `/integrate-backend`. It resumes from the failed step |
 | Endpoint returns 404 after orchestrator finishes | `/_api/serverlogics/<name>` or cloud-flow trigger 404s | Site has not been deployed since the orchestrator generated the artifacts | Run `/deploy-site` (or accept the orchestrator's deploy prompt), then retest |
 
 ## Verification
@@ -283,18 +285,18 @@ If `/integrate-backend` will not start, or the plan never opens:
 
 1. Verify `pac auth list` and `az account show` both return active sessions; re-auth if needed
 2. Confirm Labs 01-03 completed: `.powerpages-site/` exists, the site has been deployed, and `src/services/webApi.ts` from Lab 03 is in the repo
-3. Run a single underlying skill manually to isolate where the problem is — `/integrate-webapi`, `/add-server-logic`, `/add-cloud-flow`, or `/add-ai-webapi`. If a single skill works, the issue is in the orchestrator integration, not the skill itself.
+3. Run a single underlying skill manually to isolate where the problem is: `/integrate-webapi`, `/add-server-logic`, `/add-cloud-flow`, or `/add-ai-webapi`. If a single skill works, the issue is in the orchestrator integration, not the skill itself.
 4. If the plan classification looks completely off, the orchestrator may not be reading your prototype correctly. Add explicit intent comments in the React components (e.g., `// Server-side rule: PO numbers must be unique across all suppliers`) and re-run.
 
 ## Key takeaways
 
-- `/integrate-backend` is the meta-skill for backend feature integration — it plans, classifies, and orchestrates the feature-building work from Labs 05-07 from a single prompt
+- `/integrate-backend` is the meta-skill for backend feature integration. It plans, classifies, and orchestrates the feature-building work from Labs 05-07 from a single prompt
 - Four patterns cover almost every Power Pages integration: Web API (browser CRUD), Server Logic (tamper-proof rules and external APIs), Cloud Flow (notifications and approvals), AI API (summarization and grounded search)
 - Pick by asking: "where does the rule need to run?" and "what does it need to reach?"
-- The orchestrator's plan is **persistent, resumable, and editable** — pause whenever you want to learn or customize, and run any single skill manually for fine-grained control
+- The orchestrator's plan is **persistent, resumable, and editable**: pause whenever you want to learn or customize, and run any single skill manually for fine-grained control
 - Validate-and-execute beats validate-only for any browser-bypassable rule
-- The site must be deployed for Server Logic and Cloud Flow endpoints to respond — local development cannot exercise these patterns end-to-end
+- The site must be deployed for Server Logic and Cloud Flow endpoints to respond. Local development cannot exercise these patterns end-to-end
 
 ## What's next
 
-→ [Lab 05: Add Server Logic](./05-add-server-logic.md) — dive deep into the Server Logic pattern, especially when you want to understand or customize what the orchestrator generated.
+→ [Lab 05: Add Server Logic](./05-add-server-logic.md): dive deep into the Server Logic pattern, especially when you want to understand or customize what the orchestrator generated.

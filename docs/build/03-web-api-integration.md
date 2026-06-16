@@ -15,15 +15,15 @@ A portal that reads and writes real Dataverse data through the Power Pages Web A
 - Completed [Lab 02: Set Up Dataverse and Security](./02-dataverse-and-security.md) (Dataverse tables created, sample data inserted, 3-5 invoices re-linked to your Contact, permissions configured, site deployed)
 - Site deployed and accessible at its public URL
 - You have signed in to the deployed site at least once (so your Contact record exists in Dataverse)
-- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions` — the plugin uses Microsoft Entra ID-scoped tokens that don't require one.
+- Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`. The plugin uses Microsoft Entra ID-scoped tokens that don't require one.
 
-> **Before you start — confirm your Lab 02 state.** The live tests in this lab depend on it:
+> **Before you start, confirm your Lab 02 state.** The live tests in this lab depend on it:
 >
 > - [ ] The site is deployed and reachable at its public URL
 > - [ ] You signed in once, and 3-5 invoices have **Submitted By** set to your Contact (Lab 02, Step 2.5)
 > - [ ] `/setup-auth` completed, so sign-in works (Lab 02, Part 5)
 >
-> If you skipped the Contact re-link, the Invoice List will look empty here even though everything else is correct — go back and finish Step 2.5 first.
+> If you skipped the Contact re-link, the Invoice List will look empty here even though everything else is correct. Go back and finish Step 2.5 first.
 
 ## Learning objectives
 
@@ -34,7 +34,7 @@ By the end of this lab you will be able to:
 3. Perform end-to-end CRUD testing through the portal UI: create a real invoice, read live data, verify updates
 4. Diagnose and fix common Web API errors (403, 400, CORS, empty responses)
 
-> **Important:** Out of the box, the Power Pages Web API (`/_api/`) responds only on the deployed site, where the session cookie and anti-forgery token are issued. So this lab tests by deploying and opening the live site URL, not `localhost:5173`. Calling the Web API from localhost *is* possible, but it takes extra setup — Microsoft Entra v1 bearer authentication plus a dev-server proxy — which the labs skip for simplicity. If you want it later, see [Set up local development by enabling Web API calls from localhost](https://learn.microsoft.com/power-pages/configure/create-code-sites#set-up-local-development-by-enabling-web-api-calls-from-localhost-using-microsoft-entra-id-authentication).
+> **Important:** Out of the box, the Power Pages Web API (`/_api/`) responds only on the deployed site, where the session cookie and anti-forgery token are issued. So this lab tests by deploying and opening the live site URL, not `localhost:5173`. Calling the Web API from localhost *is* possible, but it takes extra setup (Microsoft Entra v1 bearer authentication plus a dev-server proxy) which the labs skip for simplicity. If you want it later, see [Set up local development by enabling Web API calls from localhost](https://learn.microsoft.com/power-pages/configure/create-code-sites#set-up-local-development-by-enabling-web-api-calls-from-localhost-using-microsoft-entra-id-authentication).
 
 > **Further reading:** [Power Pages Web API overview](https://learn.microsoft.com/power-pages/configure/web-api-overview) · [Site settings for the Web API](https://learn.microsoft.com/power-pages/configure/web-api-overview#site-settings-for-the-web-api) · [Configure table permissions](https://learn.microsoft.com/power-pages/security/table-permissions) · [CSRF token wrapper for Web API calls](https://learn.microsoft.com/power-pages/configure/web-api-http-requests-handle-errors)
 
@@ -59,11 +59,11 @@ Your AI coding CLI will:
 
 ### Step 1.2: review the generated files
 
-> **Reference only — your output may differ.** The code shown below illustrates what the plugin *typically* generates. The plugin adapts its output to your exact project (variable names, helper placement, imports, comments), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece — do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
+> **Reference only: your output may differ.** The code shown below illustrates what the plugin *typically* generates. The plugin adapts its output to your exact project (variable names, helper placement, imports, comments), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece. Do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
 
 Claude Code creates three key files. Let's examine each one.
 
-#### `src/services/webApi.ts` — the API client
+#### `src/services/webApi.ts`: the API client
 
 This is the foundation layer that handles all HTTP communication with Dataverse.
 
@@ -90,13 +90,13 @@ headers: {
 ```
 
 **Generic CRUD functions:**
-- `get<T>(entitySet, options?)` — Fetch multiple records with OData parameters
-- `getById<T>(entitySet, id)` — Fetch a single record by GUID
-- `create<T>(entitySet, data)` — Create a new record (requires CSRF token)
-- `update<T>(entitySet, id, data)` — Update an existing record (requires CSRF token)
-- `remove(entitySet, id)` — Delete a record (requires CSRF token)
+- `get<T>(entitySet, options?)`: Fetch multiple records with OData parameters
+- `getById<T>(entitySet, id)`: Fetch a single record by GUID
+- `create<T>(entitySet, data)`: Create a new record (requires CSRF token)
+- `update<T>(entitySet, id, data)`: Update an existing record (requires CSRF token)
+- `remove(entitySet, id)`: Delete a record (requires CSRF token)
 
-#### `src/types/entities.ts` — TypeScript interfaces
+#### `src/types/entities.ts`: TypeScript interfaces
 
 Defines the shape of data returned by the API:
 
@@ -119,7 +119,7 @@ export interface Invoice {
 > - Lookup columns in responses: `_cr_submittedby_value` (underscore prefix, `_value` suffix)
 > - The `cr_` prefix comes from your environment's publisher
 
-#### `src/services/invoiceService.ts` — typed CRUD for invoices
+#### `src/services/invoiceService.ts`: typed CRUD for invoices
 
 A convenience layer that wraps the generic API client with invoice-specific types:
 
@@ -151,7 +151,7 @@ You should now have three new files in `src/services/` and `src/types/`. The moc
 
 Claude Code scans every page component and replaces mock data imports with API calls:
 
-**Dashboard.tsx — Before:**
+**Dashboard.tsx (Before):**
 ```typescript
 import { invoices } from '../data/mockInvoices';
 
@@ -160,7 +160,7 @@ const totalInvoices = invoices.length;
 const pendingCount = invoices.filter(i => i.status === 'Under Review').length;
 ```
 
-**Dashboard.tsx — After:**
+**Dashboard.tsx (After):**
 ```typescript
 import { getAll } from '../services/invoiceService';
 
@@ -196,7 +196,7 @@ This prevents the "Cannot read properties of undefined" error that would occur i
 
 ### Step 2.4: mock data files
 
-Claude should delete (or stop importing) the mock data files. Verify that `src/data/mockInvoices.ts` is no longer imported anywhere. The file itself may or may not be deleted — what matters is that no component references it.
+Claude should delete (or stop importing) the mock data files. Verify that `src/data/mockInvoices.ts` is no longer imported anywhere. The file itself may or may not be deleted. What matters is that no component references it.
 
 ---
 
@@ -239,7 +239,7 @@ Open your site's public URL in an **incognito/private browser window** (to avoid
 
 ### Step 3.4: test CREATE
 
-This is the most exciting test — you will create a real record in Dataverse from the portal.
+This is the most exciting test. You will create a real record in Dataverse from the portal.
 
 1. Navigate to **Submit Invoice**
 2. Fill in the form:
@@ -255,7 +255,7 @@ This is the most exciting test — you will create a real record in Dataverse fr
 2. Go to the cr_invoice table
 3. Refresh the view
 4. A new record should appear with auto-generated Invoice Number (e.g., `INV-100011`)
-5. Open the record — all fields should be populated, including the Submitted By lookup
+5. Open the record. All fields should be populated, including the Submitted By lookup
 
 ### Step 3.5: test UPDATE (via Dataverse)
 
@@ -265,11 +265,11 @@ Simulate a finance manager approving the invoice:
 2. Change the **Status** from "Submitted" to "Approved"
 3. Save the record
 4. Back in the portal, navigate to that invoice's detail page
-5. **Refresh the page** — the status badge and timeline should now show "Approved"
+5. **Refresh the page.** The status badge and timeline should now show "Approved"
 
 ### Step 3.5b: test DELETE (expected to fail)
 
-The table permission you configured in Lab 02 grants Read, Create, and Write — but **not** Delete. A supplier shouldn't be able to delete invoices, so this operation should fail. Confirming that it fails is how you prove the permission layer is doing its job.
+The table permission you configured in Lab 02 grants Read, Create, and Write, but **not** Delete. A supplier shouldn't be able to delete invoices, so this operation should fail. Confirming that it fails is how you prove the permission layer is doing its job.
 
 On the deployed site, signed in, open the DevTools Console and try to delete one of your invoices (swap in a real `cr_invoiceid` from the Network tab):
 
@@ -284,7 +284,7 @@ await fetch('/_api/cr_invoices(<your-invoice-guid>)', {
 }).then(r => console.log('Status:', r.status));
 ```
 
-- [ ] The request returns **403 Forbidden** — Delete isn't granted to the Authenticated Users role
+- [ ] The request returns **403 Forbidden**: Delete isn't granted to the Authenticated Users role
 - [ ] The record still exists in make.powerapps.com
 
 This is correct behavior. Deletion happens only through the model-driven app by internal users with higher privileges.
@@ -295,7 +295,7 @@ Open browser DevTools (F12) and go to the **Network** tab. Navigate around the p
 
 - [ ] `/_api/cr_invoices` GET requests when loading invoice list or dashboard
 - [ ] `/_layout/tokenhtml` request for CSRF token (happens before write operations)
-- [ ] POST request when submitting a new invoice — check the `__RequestVerificationToken` header
+- [ ] POST request when submitting a new invoice, check the `__RequestVerificationToken` header
 - [ ] Response payloads contain real Dataverse data with `cr_` prefixed field names
 
 ---
@@ -363,14 +363,14 @@ If you encounter issues during testing, use this reference to diagnose and fix t
 | **403 on GET** | `fetch('/_api/cr_invoices')` returns 403 | Table not enabled for Web API | Verify `Webapi/cr_invoice/enabled` site setting exists and is `"true"`. Redeploy. |
 | **403 on POST** | Creating an invoice returns 403 | Missing CSRF token or wrong header name | Verify `webApi.ts` fetches `/_layout/tokenhtml` and sends the extracted token as the `__RequestVerificationToken` header. |
 | **400 "Field not in allowed list"** | Specific field causes 400 | Field not in the site setting's allowed fields | Add the field to `Webapi/cr_invoice/fields` in the site setting YAML. Use the API name (e.g., `_cr_submittedby_value` for lookups). Redeploy. |
-| **CORS error** | Browser console shows CORS policy error | Calling the Web API from localhost without the local-dev setup | The Web API responds on the deployed Power Pages URL out of the box. Deploy first and test on the live site. (Localhost calls need Entra v1 bearer auth plus a dev-server proxy — out of scope here.) |
+| **CORS error** | Browser console shows CORS policy error | Calling the Web API from localhost without the local-dev setup | The Web API responds on the deployed Power Pages URL out of the box. Deploy first and test on the live site. (Localhost calls need Entra v1 bearer auth plus a dev-server proxy, out of scope here.) |
 | **TypeScript compile error** | "Property does not exist on type" | Field name mismatch between interface and API | Check `entities.ts` uses `cr_` prefixed names from Dataverse. Lookup fields need `_` prefix and `_value` suffix. |
 | **Empty response `{"value":[]}`** | API returns empty array | Permission scope mismatch or no linked data | Verify the logged-in user's Contact record matches the `cr_submittedby` on invoices. Check scope is Contact (not Self or Global). |
 | **500 Internal Server Error** | Server error on API call | Dataverse issue | Check Power Platform admin center for service health. Try the call again in 30 seconds. |
 
 ### Fix web API errors with your AI agent
 
-The error-reference table above handles the single-layer cases. In practice many Web API failures are a mix — the site setting is enabled but a field isn't allow-listed, the role exists but the permission has the wrong scope, the permission is correct but the frontend forgot the CSRF token. **Rather than hand-debug these, paste the error into your AI coding CLI and let it check every layer for you.**
+The error-reference table above handles the single-layer cases. In practice many Web API failures are a mix: the site setting is enabled but a field isn't allow-listed, the role exists but the permission has the wrong scope, the permission is correct but the frontend forgot the CSRF token. **Rather than hand-debug these, paste the error into your AI coding CLI and let it check every layer for you.**
 
 This is the same **Error-Paste-and-Fix** pattern you used in [Lab 02, Step 4.4](./02-dataverse-and-security.md#step-44-if-you-see-an-error-use-the-error-paste-and-fix-pattern) and it appears as **Pattern 8** in the [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md#8-error-paste-and-fix). Use it here whenever you hit a Web API error that the reference table alone does not resolve.
 
@@ -378,12 +378,12 @@ This is the same **Error-Paste-and-Fix** pattern you used in [Lab 02, Step 4.4](
 
 Open DevTools (**F12**) and collect three things:
 
-1. **Console error** — any red text including the stack trace (or "no console error" if none).
-2. **Failed Network request** — in the Network tab (filter **Fetch/XHR**), select the failing `/_api/*` call, then copy:
+1. **Console error**: any red text including the stack trace (or "no console error" if none).
+2. **Failed Network request**: in the Network tab (filter **Fetch/XHR**), select the failing `/_api/*` call, then copy:
    - The request URL and HTTP method (from the **Headers** tab)
    - The HTTP status (e.g. `403 Forbidden`, `400 Bad Request`)
-   - The full **Response** body — this is where Power Pages puts the actual error reason
-3. **What you were doing** — "loading the Invoice List page", "clicking Submit on the new-invoice form", "signed in as [test user]".
+   - The full **Response** body: this is where Power Pages puts the actual error reason
+3. **What you were doing**: "loading the Invoice List page", "clicking Submit on the new-invoice form", "signed in as [test user]".
 
 #### Step 2: paste into your CLI with context
 
@@ -395,7 +395,7 @@ linked to my Contact (I re-linked them in Lab 02, Step 2.5).
 
 Console: no console error.
 
-Network — GET /_api/cr_invoices?$select=cr_invoicenumber,cr_amount,cr_status
+Network: GET /_api/cr_invoices?$select=cr_invoicenumber,cr_amount,cr_status
   Status: 403 Forbidden
   Response:
   {"error":{"code":"0x80048306","message":"Principal user (..) does not have
@@ -412,16 +412,16 @@ src/services/webApi.ts. Find the root cause and fix it.
 
 A Web API failure can live in any of these files. Your agent will read them all in seconds:
 
-- `.powerpages-site/site-settings/` — is `Webapi/cr_invoice/enabled` set to `"true"`? Is the failing field listed in `Webapi/cr_invoice/fields`?
-- `.powerpages-site/web-roles/*.yml` — does the role the user belongs to exist?
-- `.powerpages-site/table-permissions/*.yml` — is there a permission linked to that role, with the right scope (Contact for invoices)?
-- `src/services/webApi.ts` — is the CSRF token fetched and sent as the `__RequestVerificationToken` header for writes?
+- `.powerpages-site/site-settings/`: is `Webapi/cr_invoice/enabled` set to `"true"`? Is the failing field listed in `Webapi/cr_invoice/fields`?
+- `.powerpages-site/web-roles/*.yml`: does the role the user belongs to exist?
+- `.powerpages-site/table-permissions/*.yml`: is there a permission linked to that role, with the right scope (Contact for invoices)?
+- `src/services/webApi.ts`: is the CSRF token fetched and sent as the `__RequestVerificationToken` header for writes?
 
-Review the proposed fix before you approve. If the agent misidentifies the layer, give it the extra context (e.g., "the site setting already has the field — check the fields allowlist" or "I just signed in as a different user").
+Review the proposed fix before you approve. If the agent misidentifies the layer, give it the extra context (e.g., "the site setting already has the field; check the fields allowlist" or "I just signed in as a different user").
 
 #### Step 4: redeploy and re-test
 
-YAML changes only take effect after upload. Run `/deploy-site`, do a hard refresh (**Ctrl+Shift+R**) or switch to an incognito window, and repeat the failing action. If the same error returns, paste the new Network response back to the agent — sometimes the first fix uncovers a second layer.
+YAML changes only take effect after upload. Run `/deploy-site`, do a hard refresh (**Ctrl+Shift+R**) or switch to an incognito window, and repeat the failing action. If the same error returns, paste the new Network response back to the agent. Sometimes the first fix uncovers a second layer.
 
 > **Rule of thumb:** If you're spending more than 2 minutes scanning files by hand, switch to Error-Paste-and-Fix. The agent is faster than you at multi-file diagnosis.
 
@@ -474,14 +474,14 @@ Console errors: [paste any related DevTools Console errors]
 If Web API integration fails and you cannot resolve the issues:
 
 1. Claude Code can revert to mock data: "Revert to mock data imports while I fix the API."
-2. Check the git history — `/create-site` made commits at milestones, so you can revert to a working state.
+2. Check the git history. `/create-site` made commits at milestones, so you can revert to a working state.
 
 ---
 
 ## Key takeaways
 
 - `/integrate-webapi` generates a complete typed service layer: API client, TypeScript interfaces, and table-specific CRUD services
-- CSRF tokens (fetched from `/_layout/tokenhtml`) are required for all write operations (POST, PATCH, DELETE) — the API client handles this automatically
+- CSRF tokens (fetched from `/_layout/tokenhtml`) are required for all write operations (POST, PATCH, DELETE). The API client handles this automatically
 - The Web API responds on the deployed site out of the box; calling it from localhost is possible but needs extra Entra v1 bearer-auth and proxy setup
 - OData parameters ($select, $filter, $orderby, $top) give you powerful server-side querying
 - Contact-scoped permissions ensure data isolation: each supplier sees only their own invoices, even through direct API calls
@@ -489,6 +489,8 @@ If Web API integration fails and you cannot resolve the issues:
 
 ## What's next
 
-→ [Lab 04: Plan the Service Layer with /integrate-backend](../integrate/04-pick-backend-pattern.md)
+That wraps the **Build phase**. The Integrate phase needs no new tools. Your Build-phase setup carries straight through. Skim [Integrate phase setup](../integrate/00-setup.md) for the one-paragraph confirmation (and the optional static-analysis add-on for Lab 09), then start Lab 04.
 
-> **Tip:** If you ran `/integrate-webapi` here but haven't yet configured deliberate sign-in (multi-provider, claims mapping, role-based UI), [Lab 02 Part 5: Configure authentication with /setup-auth](./02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth) is the natural follow-up — the typical plugin workflow runs `/setup-auth` right after `/integrate-webapi`.
+→ [Integrate phase setup](../integrate/00-setup.md) → [Lab 04: Plan the Service Layer with /integrate-backend](../integrate/04-pick-backend-pattern.md)
+
+> **Tip:** If you ran `/integrate-webapi` here but haven't yet configured deliberate sign-in (multi-provider, claims mapping, role-based UI), [Lab 02 Part 5: Configure authentication with /setup-auth](./02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth) is the natural follow-up. The typical plugin workflow runs `/setup-auth` right after `/integrate-webapi`.

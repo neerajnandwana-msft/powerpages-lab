@@ -30,20 +30,21 @@ There is no test runner and no ESLint. `npm run check` (typecheck → style swee
 
 ## Writing style — enforced, non-obvious
 
-Docs follow the **Microsoft Writing Style Guide**. Two equivalent scripts apply the mechanical sweeps (`scripts/ms-learn-style-sweep.mjs` for Node, `.py` for Python — same rules):
+Docs follow the **Microsoft Writing Style Guide**. Two equivalent scripts apply the mechanical sweeps (`scripts/ms-learn-style-sweep.mjs` for Node, `.py` for Python; same rules):
 
 - H2/H3/H4 headings are **sentence case** (H1 / page titles are left as-is).
-- `--` → em dash (`—`); `in order to` → `to`; `utilize` → `use`.
+- `in order to` → `to`; `utilize` → `use`.
+- **Don't use em dashes (`—`).** Use a colon, comma, parentheses, or separate sentences. The sweep no longer produces them; Vale's `Microsoft.Dashes` rule flags any that slip in.
 - Code fences, inline code, and frontmatter are never touched.
 - Brand names and acronyms keep their casing via a `PRESERVE_CASE` list in the scripts (Microsoft, Power, Dataverse, API, SPA, ALM, CSRF, etc.). **If you introduce a new product name or acronym that should not be lowercased in headings, add it to `PRESERVE_CASE` in both scripts _and_ to the Vale vocab at `.vale/styles/config/vocabularies/PowerPages/accept.txt`.**
 
-Run the sweep after bulk doc edits — `npm run style` applies it, `npm run style:check` verifies without writing (and is what the pre-commit hook and `npm run check` use):
+Run the sweep after bulk doc edits. `npm run style` applies it, `npm run style:check` verifies without writing (and is what the pre-commit hook and `npm run check` use):
 
 ```bash
 npm run style          # apply (alias for: node scripts/ms-learn-style-sweep.mjs docs)
 ```
 
-Beyond the mechanical sweep, **Vale** enforces the rest of the Microsoft style (passive voice, wordiness, terminology, spelling) via `npm run lint:prose`. It needs the `vale` binary (`winget install errata-ai.Vale`); first run downloads the Microsoft package with `vale sync`. Vale is tuned to be _complementary_ — `Microsoft.Dashes` and `Microsoft.Headings` are disabled in `.vale.ini` because the mechanical sweep owns dash and heading-case style.
+Beyond the mechanical sweep, **Vale** enforces the rest of the Microsoft style (passive voice, wordiness, terminology, spelling) via `npm run lint:prose`. It needs the `vale` binary (`winget install errata-ai.Vale`); first run downloads the Microsoft package with `vale sync`. Vale is tuned to be _complementary_: `Microsoft.Headings` is disabled in `.vale.ini` because the mechanical sweep owns heading-case style, while `Microsoft.Dashes` is enabled to enforce the no-em-dash rule.
 
 When writing new lab prose by hand, match this style directly rather than relying on the sweep to fix it.
 

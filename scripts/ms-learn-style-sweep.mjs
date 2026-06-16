@@ -1,7 +1,6 @@
 // Apply mechanical Microsoft Writing Style Guide fixes across docs/.
 //
 // Handles the high-volume mechanical sweeps:
-//   - `--` → em dash (outside code blocks and inline code)
 //   - `in order to` → `to` (outside code)
 //   - `utilize` → `use` (outside code)
 //   - H2/H3/H4 headings: Title Case → sentence case, preserving acronyms and proper nouns
@@ -104,16 +103,9 @@ function transformProseLine(line) {
 
   let result = protectedLine;
 
-  // Skip horizontal rules
-  if (result.trim() === '---' || result.trim() === '----') {
-    // do nothing
-  } else {
-    // `--` → em dash, only in clearly prose contexts
-    result = result.replace(/(\S) -- (\S)/g, '$1 — $2');
-    result = result.replace(/(\S) --(\s|$)/g, '$1 —$2');
-    result = result.replace(/(^|\s)-- (\S)/g, '$1— $2');
-    result = result.replace(/(\w)--(\w)/g, '$1—$2');
-  }
+  // Note: em dashes are not used in this content (Microsoft Learn style). The
+  // sweep no longer converts `--` → `—`; Vale's Microsoft.Dashes rule flags any
+  // stray em dash. Use a colon, comma, parentheses, or separate sentences.
 
   // "in order to" → "to" (case-insensitive)
   result = result.replace(/\bin order to\b/gi, 'to');
@@ -173,11 +165,9 @@ function processFile(path, { check = false } = {}) {
     if (headingMatch) {
       const hashes = headingMatch[1];
       const headingText = headingMatch[2];
-      // First sentence-case, then convert any prose `--` to em dash within
-      // the heading text (still skipping inline-code spans).
+      // First sentence-case, then apply the remaining prose word-swaps
+      // (in order to / utilize) within the heading text, skipping inline code.
       let newText = sentenceCaseHeading(headingText);
-      // Apply em-dash conversion to the heading. Inline code is already
-      // protected inside transformProseLine via its own stash mechanism.
       newText = transformProseLine(newText);
       if (newText !== headingText) headingChanges++;
       newLines.push(`${hashes} ${newText}`);

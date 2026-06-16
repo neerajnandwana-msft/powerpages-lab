@@ -1,7 +1,6 @@
 """Apply mechanical Microsoft Writing Style Guide fixes across docs/.
 
 Handles the high-volume mechanical sweeps:
-  - `--` → em dash (outside code blocks and inline code)
   - `in order to` → `to` (outside code)
   - `utilize` → `use` (outside code)
   - H2/H3/H4 headings: Title Case → sentence case, preserving acronyms and proper nouns
@@ -141,30 +140,10 @@ def transform_line_outside_code(line: str) -> str:
 
     protected = re.sub(r"`[^`]*`", stash, line)
 
-    # `--` to em dash
-    # Match `--` only when it's a prose dash, not a CLI flag prefix.
-    # CLI flags look like `--flag-name` (no space before `--`, alphanum after).
-    # We've already protected inline code, so most CLI references are gone.
-    # The remaining `--` in prose typically appears as "word -- word" or
-    # "word--word" or "word -- " at end-of-clause. Replace any `--` not
-    # immediately followed by an alphanumeric flag-style char and not part
-    # of a `---` horizontal rule.
-    # First, leave triple-dash horizontal rules alone (entire line "---").
-    if protected.strip() == "---" or protected.strip() == "----":
-        result = protected
-    else:
-        # Replace `--` with `—` only when it's clearly prose:
-        # - Surrounded by whitespace on both sides: "word -- word"
-        # - At end of clause: "word --"
-        # - Beginning of clause: "-- word"
-        # - Joining words with no spaces: "word--word"
-        # Avoid: `--flag` (CLI flag, no space before, alpha after)
-        # The protected step removed inline code, so `--flag` only remains
-        # if the doc literally uses `--flag` outside code (rare; we accept).
-        result = re.sub(r"(?<=\S) -- (?=\S)", " — ", protected)
-        result = re.sub(r"(?<=\S) --(?=\s|$)", " —", result)
-        result = re.sub(r"(?<=^|\s)-- (?=\S)", "— ", result)
-        result = re.sub(r"(?<=\w)--(?=\w)", "—", result)
+    # Note: em dashes are not used in this content (Microsoft Learn style). The
+    # sweep no longer converts `--` → `—`; Vale's Microsoft.Dashes rule flags any
+    # stray em dash. Use a colon, comma, parentheses, or separate sentences.
+    result = protected
 
     # "in order to" → "to" (case-insensitive)
     result = re.sub(r"\bin order to\b", "to", result, flags=re.IGNORECASE)

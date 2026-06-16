@@ -39,7 +39,7 @@ title: "Lab 0N: Full Title"      # page <title> and H1 source
 ## Headings and prose style (Microsoft Writing Style Guide)
 
 - **H2/H3/H4 are sentence case.** H1 / page titles keep their authored casing.
-- Use em dashes (`—`), not `--`. Prefer "to" over "in order to", "use" over "utilize".
+- Don't use em dashes (`—`). Use a colon, comma, parentheses, or separate sentences. Prefer "to" over "in order to", "use" over "utilize".
 - New product names / acronyms that must keep casing in headings go in `PRESERVE_CASE` in **both** `scripts/ms-learn-style-sweep.{mjs,py}` *and* the Vale vocab at `.vale/styles/config/vocabularies/PowerPages/accept.txt`.
 - Run the mechanical sweep after bulk edits: `npm run style` (apply) or `npm run style:check` (verify only).
 
