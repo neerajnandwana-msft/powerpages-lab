@@ -5,6 +5,8 @@ title: "Agentic Site Authoring: Track Overview"
 slug: /
 ---
 
+import { BookOpen, Hammer, Rocket, Workflow } from 'lucide-react';
+
 # Agentic Site Authoring
 
 <section className="landingHero">
@@ -43,7 +45,7 @@ The whole track follows the Power Pages plugin's skill-led flow, from an empty e
 
 ![Power Pages skill-led user journey: from /create-site through data setup, backend integration, web roles, authentication, security review, and ALM planning to a live Power Pages site](/img/user-journey.png)
 
-You scaffold and activate the site (`/create-site`, `/activate-site`), set up the Dataverse data model (`/setup-datamodel`, `/add-sample-data`), integrate backend capabilities through **Web APIs, server logic, and cloud flows** (`/integrate-backend`), configure web roles and authentication (`/create-webroles`, `/setup-auth`), run a `/security-review`, and plan ALM (`/plan-alm`), uploading your changes with `/deploy-site` at every step.
+You scaffold and activate the site (`/create-site`, `/activate-site`), set up the Dataverse data model (`/setup-datamodel`, `/add-sample-data`), integrate backend capabilities through **Web APIs, server logic, and cloud flows** (`/integrate-backend`), configure web roles and authentication (`/create-webroles`, `/setup-auth`), run a `/security-review`, and plan ALM (`/plan-alm`). Build and Integrate labs use `/deploy-site` for site uploads; the ALM labs shift the same work into solution packaging and Power Platform Pipelines.
 
 ---
 
@@ -53,21 +55,25 @@ You scaffold and activate the site (`/create-site`, `/activate-site`), set up th
 
 <div className="phaseGrid">
   <a className="phaseCard" href="build/00-setup">
+    <Hammer className="phaseCard__icon" aria-hidden="true" />
     <span className="phaseCard__label">Phase 1</span>
     <h3>Build</h3>
     <p>Scaffold the SPA, create Dataverse tables, and connect the site to live data.</p>
   </a>
   <a className="phaseCard" href="integrate/00-setup">
+    <Workflow className="phaseCard__icon" aria-hidden="true" />
     <span className="phaseCard__label">Phase 2</span>
     <h3>Integrate</h3>
     <p>Add server-side logic, automation, AI APIs, performance checks, and security review.</p>
   </a>
   <a className="phaseCard" href="alm/00-setup">
+    <Rocket className="phaseCard__icon" aria-hidden="true" />
     <span className="phaseCard__label">Phase 3</span>
     <h3>ALM</h3>
     <p>Move from source control to managed solution promotion across environments.</p>
   </a>
   <a className="phaseCard" href="reference/prompt-cheat-sheet">
+    <BookOpen className="phaseCard__icon" aria-hidden="true" />
     <span className="phaseCard__label">Reference</span>
     <h3>Prompting and tools</h3>
     <p>Use quick references when you need prompts, setup guidance, or CLI orientation.</p>

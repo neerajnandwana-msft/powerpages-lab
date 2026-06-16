@@ -220,7 +220,7 @@ If the grid looks empty, select the refresh icon or reload the Data workspace. N
 
 The sample data is linked to a mock Contact ("Nancy Anderson (sample)"). In Lab 03 you will test Contact-scoped Web API calls, and those calls only return invoices linked to **your** Contact record. You need to (a) create your Contact by signing in to the deployed site once, then (b) re-link a few sample invoices to it.
 
-> **Why this is needed:** Every activated Power Pages site gets a default Microsoft Entra ID identity provider. When you sign in for the first time, Power Pages either matches an existing Contact by email or creates a new one for you. The sample data was inserted before your Contact existed, so it points to Nancy Anderson (sample) instead.
+> **Why this is needed:** This lab uses Microsoft Entra ID sign-in for the deployed site. When you sign in for the first time, Power Pages either matches an existing Contact by email or creates a new one for you. The sample data was inserted before your Contact existed, so it points to Nancy Anderson (sample) instead.
 >
 > **Carry-forward to Lab 03:** The invoices you re-link here are the only sample rows you should expect to see in the live API tests. If you skip this step, Lab 03 may look "empty" even though the Web API and table permissions are working correctly.
 

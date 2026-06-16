@@ -34,7 +34,7 @@ By the end of this lab you will be able to:
 3. Perform end-to-end CRUD testing through the portal UI: create a real invoice, read live data, verify updates
 4. Diagnose and fix common Web API errors (403, 400, CORS, empty responses)
 
-> **Important:** Out of the box, the Power Pages Web API (`/_api/`) responds only on the deployed site, where the session cookie and anti-forgery token are issued. So this lab tests by deploying and opening the live site URL, not `localhost:5173`. Calling the Web API from localhost *is* possible, but it takes extra setup (Microsoft Entra v1 bearer authentication plus a dev-server proxy) which the labs skip for simplicity. If you want it later, see [Set up local development by enabling Web API calls from localhost](https://learn.microsoft.com/power-pages/configure/create-code-sites#set-up-local-development-by-enabling-web-api-calls-from-localhost-using-microsoft-entra-id-authentication).
+> **Important:** Test Web API calls on the deployed site, not `localhost:5173`. The deployed site issues the session cookie and anti-forgery token that `/_api/` calls need. Localhost Web API calls are possible, but they require extra Microsoft Entra ID authentication and a dev-server proxy, which this lab skips for simplicity. If you want it later, see [Set up local development by enabling Web API calls from localhost](https://learn.microsoft.com/power-pages/configure/create-code-sites#set-up-local-development-by-enabling-web-api-calls-from-localhost-using-microsoft-entra-id-authentication).
 
 > **Further reading:** [Power Pages Web API overview](https://learn.microsoft.com/power-pages/configure/web-api-overview) · [Site settings for the Web API](https://learn.microsoft.com/power-pages/configure/web-api-overview#site-settings-for-the-web-api) · [Configure table permissions](https://learn.microsoft.com/power-pages/security/table-permissions) · [CSRF token wrapper for Web API calls](https://learn.microsoft.com/power-pages/configure/web-api-http-requests-handle-errors)
 
@@ -287,7 +287,7 @@ await fetch('/_api/cr_invoices(<your-invoice-guid>)', {
 - [ ] The request returns **403 Forbidden**: Delete isn't granted to the Authenticated Users role
 - [ ] The record still exists in make.powerapps.com
 
-This is correct behavior. Deletion happens only through the model-driven app by internal users with higher privileges.
+This is correct behavior. Suppliers cannot delete invoices through the portal because the table permission does not grant Delete. Admins or internal users may still delete records through Dataverse or a model-driven app if their security roles allow it.
 
 ### Step 3.6: inspect network traffic
 

@@ -24,7 +24,7 @@ Before scaffolding, a quick orientation to the platform you're building on.
 
 ### What is a Power Pages SPA site?
 
-A **single-page application (SPA) site in Microsoft Power Pages** is a modern site type built with standard web frameworks (React, Angular, Vue, or Astro) and deployed to the Power Pages platform. Instead of writing Liquid templates in the portal management app, you write front-end code in your local editor, integrate backend data through the Power Pages Web API, server logic, and cloud flows, and deploy using PAC CLI. See the official docs: [Create and deploy a single-page application in Power Pages](https://learn.microsoft.com/power-pages/configure/create-code-sites).
+A **single-page application (SPA) site in Microsoft Power Pages** is a modern site type built with standard web frameworks (React, Angular, Vue, or Astro) and deployed to the Power Pages platform. Instead of writing Liquid templates in the portal management app, you write front-end code in your local editor, then deploy the compiled site to Power Pages. Later labs add live data through the Power Pages Web API, server logic, cloud flows, and AI APIs. See the official docs: [Create and deploy a single-page application in Power Pages](https://learn.microsoft.com/power-pages/configure/create-code-sites).
 
 ### Architecture
 
@@ -51,7 +51,7 @@ flowchart TD
 ```
 
 - The SPA runs entirely in the browser as static HTML, CSS, and JavaScript
-- All backend access goes through `/_api/*`: a single CSRF-protected, session-authenticated gateway that fans out to four runtime surfaces (OData CRUD on Dataverse, sandboxed server-logic functions, Power Automate cloud flows, and generative AI APIs)
+- All backend access goes through `/_api/*` after later labs add live integrations. Lab 03 starts with OData CRUD on Dataverse, then Labs 05-07 add server logic, Power Automate cloud flows, and generative AI APIs.
 - Authentication uses server-side session cookies managed by Power Pages
 - The site is deployed as compiled static files, no server-side rendering
 
@@ -92,7 +92,7 @@ By the end of this lab you will be able to:
 3. Review the generated project structure and understand each folder's purpose
 4. Preview the site locally at localhost:5173 with mock data
 
-> **Further reading:** [Create and deploy a single-page application in Power Pages](https://learn.microsoft.com/power-pages/configure/create-code-sites) · [Power Pages plugin for GitHub Copilot CLI and Claude Code (preview)](https://learn.microsoft.com/power-pages/configure/create-code-site-using-claude-code) · [Power Platform CLI introduction](https://learn.microsoft.com/power-platform/developer/cli/introduction)
+> **Further reading:** [Create and deploy a single-page application in Power Pages](https://learn.microsoft.com/power-pages/configure/create-code-sites) · [Power Pages plugin for GitHub Copilot CLI and Claude Code](https://learn.microsoft.com/power-pages/configure/create-code-site-using-claude-code) · [Power Platform CLI introduction](https://learn.microsoft.com/power-platform/developer/cli/introduction)
 
 ---
 

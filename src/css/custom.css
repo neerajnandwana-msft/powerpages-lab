@@ -141,6 +141,16 @@
   margin: 0.35rem 0 0.5rem;
 }
 
+.phaseCard__icon {
+  background: rgba(116, 39, 116, 0.09);
+  border-radius: 0.85rem;
+  color: var(--ifm-color-primary);
+  height: 2.6rem;
+  margin-bottom: 1rem;
+  padding: 0.55rem;
+  width: 2.6rem;
+}
+
 .phaseCard p {
   margin-bottom: 0;
 }
@@ -169,6 +179,68 @@
   margin-bottom: 0;
 }
 
+.phaseRootHero {
+  align-items: flex-start;
+  background:
+    radial-gradient(circle at top left, rgba(116, 39, 116, 0.14), transparent 26rem),
+    linear-gradient(135deg, rgba(116, 39, 116, 0.08), rgba(116, 39, 116, 0.02));
+  border: 1px solid rgba(116, 39, 116, 0.14);
+  border-radius: 1.25rem;
+  display: flex;
+  gap: 1.25rem;
+  margin: 1rem 0 2rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.phaseRootHero h2 {
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+  line-height: 1.08;
+  margin-bottom: 0.85rem;
+}
+
+.phaseRootHero p:last-child {
+  font-size: 1.08rem;
+  margin-bottom: 0;
+  max-width: 52rem;
+}
+
+.phaseRootHero__icon {
+  background: rgba(116, 39, 116, 0.1);
+  border-radius: 1rem;
+  color: var(--ifm-color-primary);
+  flex: 0 0 auto;
+  height: 3.5rem;
+  padding: 0.75rem;
+  width: 3.5rem;
+}
+
+.rootCardGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 1.5rem 0 2rem;
+}
+
+.rootCard {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 1rem;
+  padding: 1.15rem;
+}
+
+.rootCard h3 {
+  margin: 0.4rem 0 0.5rem;
+}
+
+.rootCard p {
+  margin-bottom: 0;
+}
+
+.rootCard__icon {
+  color: var(--ifm-color-primary);
+  height: 1.85rem;
+  width: 1.85rem;
+}
+
 [data-theme='dark'] .landingHero {
   background:
     radial-gradient(circle at top right, rgba(182, 108, 182, 0.24), transparent 32rem),
@@ -180,12 +252,25 @@
   box-shadow: 0 0.85rem 2rem rgba(0, 0, 0, 0.32);
 }
 
+[data-theme='dark'] .phaseRootHero {
+  background:
+    radial-gradient(circle at top left, rgba(182, 108, 182, 0.2), transparent 26rem),
+    linear-gradient(135deg, rgba(182, 108, 182, 0.11), rgba(182, 108, 182, 0.03));
+  border-color: rgba(182, 108, 182, 0.2);
+}
+
 @media (max-width: 768px) {
-  .phaseGrid {
+  .phaseGrid,
+  .rootCardGrid {
     grid-template-columns: 1fr;
   }
 
-  .landingHero {
+  .landingHero,
+  .phaseRootHero {
     border-radius: 1rem;
+  }
+
+  .phaseRootHero {
+    flex-direction: column;
   }
 }

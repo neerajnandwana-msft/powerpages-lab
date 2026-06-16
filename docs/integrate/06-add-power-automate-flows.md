@@ -350,11 +350,11 @@ Wait for the upload to complete. The flow consumer YAML and the service code bot
 
 ### Step 5.2: confirm the Portal-Runtime URL is populated
 
-After deploy, Power Pages fills in the `flowapiurl` field on the `adx_cloudflowconsumer` record in Dataverse.
+After deploy, Power Pages should populate the Flow API URL value on the cloud flow consumer record in Dataverse.
 
 1. Open make.powerapps.com → **Tables** → search **Cloud flow consumer**
 2. Open the `Invoice Submitted Notification` row
-3. Confirm `Flow API URL` is now populated (not blank)
+3. Confirm **Flow API URL** is now populated (not blank)
 
 If this field is blank after 2-3 minutes, the deploy did not reach the flow consumer record. Redeploy.
 

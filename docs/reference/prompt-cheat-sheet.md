@@ -107,7 +107,7 @@ Format the status values as colored badges:
 Apply this same pattern to all status values in the Invoice table.
 ```
 
-### 4. Chain-of-Thought
+### 4. Chain-of-thought
 
 Ask the AI to reason through a complex problem step by step.
 
@@ -128,7 +128,7 @@ for the cr_invoice table. Are there any security gaps? Is Contact-scoped
 permission the right choice for supplier isolation?
 ```
 
-### 6. Constraint-Based
+### 6. Constraint-based
 
 Add explicit constraints to control the output.
 
@@ -151,7 +151,7 @@ Prompt 2: "Move the metric cards into a 2x2 grid instead of a single row."
 Prompt 3: "Change the 'Total Paid' card to show a currency-formatted sum."
 ```
 
-### 8. Error-Paste-and-Fix
+### 8. Error-paste-and-fix
 
 Paste the full error with context for targeted fixes.
 
@@ -164,7 +164,7 @@ TypeError: Cannot read properties of undefined (reading 'map')
 The invoices state is undefined on first render before the API call completes.
 ```
 
-### 9. Screenshot-Based
+### 9. Screenshot-based
 
 Share a screenshot to communicate visual issues.
 

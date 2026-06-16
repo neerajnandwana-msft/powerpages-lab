@@ -185,7 +185,7 @@ The installer automatically:
 
 After installation, restart GitHub Copilot CLI or Claude Code CLI to access the plugin's skills as slash commands in your agent session.
 
-For more on what the plugin provides and how to keep it current, see [Power Pages plugin for GitHub Copilot CLI and Claude Code (preview)](https://learn.microsoft.com/en-us/power-pages/configure/create-code-site-using-claude-code).
+For more on what the plugin provides and how to keep it current, see [Power Pages plugin for GitHub Copilot CLI and Claude Code](https://learn.microsoft.com/en-us/power-pages/configure/create-code-site-using-claude-code).
 
 ---
 

@@ -18,11 +18,11 @@ Put the portal source in a GitHub repository with a protective `.gitignore` and 
 - `gh` (GitHub CLI) installed and authenticated (`gh auth status`). This is the one new tool the ALM phase adds; install and sign in now via [ALM phase setup](00-setup.md) if you skipped it earlier
 - Portal directory accessible on disk (the folder where you ran `/create-site`)
 
-> **Before you start.** You're putting the *existing* portal directory under source control: the folder with `package.json` and `.powerpages-site/`. You do **not** need to re-deploy: the site already live in your environment from Lab 08 stays as it is, and the same source files and configuration on disk are all this lab needs.
+> **Before you start.** You're putting the *existing* portal directory under source control: the folder with `package.json` and `.powerpages-site/`. You do **not** need to redeploy. The site that is already live in your environment from Lab 08 stays as it is, and the same source files and configuration on disk are all this lab needs.
 
 ## Why ALM matters
 
-The portal you built through the previous labs ends with a one-shot `/deploy-site` to a single environment. That works for a demo. It breaks the moment a teammate joins.
+So far, you have deployed directly to one integration environment with `/deploy-site`. That works for a solo lab run. It breaks the moment a teammate joins.
 
 Imagine three things happen this week:
 

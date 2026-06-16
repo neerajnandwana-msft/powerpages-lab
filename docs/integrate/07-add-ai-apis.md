@@ -377,19 +377,11 @@ if (error instanceof SearchSummaryDisabledError) {
 }
 ```
 
-### Step 4.7: citation URL rewriting
+### Step 4.7: citation links
 
-The Search Summary API returns citation URLs pointing at `/page-not-found/?id=<guid>` (the default knowledge article landing page). Our SPA site doesn't have that route. Verify the generated code rewrites the URLs to the SPA routes:
+If the generated AI response includes citation links, verify that each link opens a route your SPA actually supports. Do not assume a fixed citation URL shape. If a link points to a placeholder or default route, update the generated mapping code to use the route pattern from your app, such as `/invoices/:id` for invoice detail records.
 
-```typescript
-function rewriteCitationUrl(rawUrl: string): string {
-  const match = rawUrl.match(/id=([a-f0-9-]+)/i);
-  if (!match) return rawUrl;
-  return `/invoices/${match[1]}`;
-}
-```
-
-Without this, clicking a citation drops the user on a 404.
+Without this check, a citation can send users to a route that exists in a different template but not in your SPA.
 
 ### Step 4.8: deploy and test
 
@@ -455,7 +447,7 @@ Re-run `/integrate-webapi` in AI-read-only mode to rebuild Layer 1/2 cleanly rat
 | 400 code `90041006` | Error occurred while summarizing the content | Generic summarization failure (bad prompt, content edge case, transient model error) | Inspect the prompt YAML, verify content length, retry once; if persistent, simplify the prompt |
 | 403 | Forbidden | Layer 1/2 (column casing, table permission, expand target) | Re-run `/integrate-webapi` AI-read-only |
 | Summary is empty or truncated | Content fits but summary is bad | Prompt is too vague or the model got too little context | Improve the prompt in the `Summarization/prompt/<id>` YAML. Use block literal `value: \|` for multi-line prompts |
-| Citations drop the user on `/page-not-found` | Citation URL rewriting not wired | The `extractKnowledgeArticleId` rewrite step is missing | Add the rewrite helper to the search page, redeploy |
+| Citations open an unsupported route | Citation mapping does not match your SPA routes | The generated link handling assumes a route your app does not have | Update the mapping to your route pattern, redeploy |
 | Summary returns placeholders like `[\"...\"]` | JSON-encoded string array rendered raw | List-summary prompts return JSON-encoded summaries | Use `normalizeSummaryString` helper in the service layer. The plugin adds this automatically |
 
 ---
@@ -467,7 +459,7 @@ You have completed this lab when:
 - [ ] `src/services/aiSummaryService.ts` exports `fetchDataSummary` and `fetchSearchSummary`
 - [ ] Invoice Detail renders a Copilot card with grounded summary
 - [ ] `/search` page renders and returns an AI summary with citations
-- [ ] Citation links route to invoice detail pages (not `/page-not-found`)
+- [ ] Citation links open valid SPA routes, such as invoice detail pages
 - [ ] `.powerpages-site/site-settings/Summarization-Data-Enable.sitesetting.yml` exists
 - [ ] `.powerpages-site/site-settings/Summarization-prompt-invoice_summary.sitesetting.yml` exists with a block-literal prompt
 - [ ] Site Search (preview) toggle in maker studio is on

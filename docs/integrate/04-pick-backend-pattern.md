@@ -108,7 +108,7 @@ After the orchestrator completes, or after you pause partway through, confirm th
 - [ ] One folder under `.powerpages-site/server-logic/<name>/` for each Server Logic item in the plan, each containing a `.js` and a `.serverlogic.yml`
 - [ ] One file under `.powerpages-site/cloud-flow-consumer/<name>.cloudflowconsumer.yml` for each Cloud Flow item
 - [ ] React UI now calls the new services / endpoints / flows: no remaining mock-data imports for any feature in the plan
-- [ ] The orchestrator's plan/state file is committed to your repo so you (or a teammate) can resume later
+- [ ] Any plan or state artifact produced by the orchestrator is saved with the repo so you (or a teammate) can resume later
 - [ ] The site has been deployed since the last orchestrator step (Server Logic and Cloud Flow endpoints only become reachable after deploy)
 
 If any item is missing, run `/integrate-backend` again. The orchestrator detects partial state and offers to continue.

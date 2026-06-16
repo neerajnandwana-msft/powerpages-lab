@@ -286,7 +286,7 @@ After Lab 13 puts a site in prod, schedule a monthly run of `/scan-site` against
 
 | Problem | Cause | Fix |
 |---|---|---|
-| `/security-review` says "opengrep not installed" and offers a manual review | The static-analysis tool isn't on PATH | Install opengrep. On Windows, `winget install opengrep`; on macOS, `brew install opengrep`. Re-run the skill. |
+| `/security-review` says "opengrep not installed" and offers a manual review | The static-analysis tool isn't on PATH | Continue with the manual review, or install opengrep from the release binaries linked in [Integrate phase setup](00-setup.md). Re-run the skill after installation. |
 | `/scan-site` returns "site unreachable" | Integration env URL isn't accessible from your machine, or the site isn't activated | Confirm the URL opens in a browser. If the site was reactivated to a new subdomain, the plugin's cached URL may be stale. Re-run `/activate-site` first |
 | `/manage-firewall` reports "WAF not available in this region" | Your integration env is in a region where WAF is not offered, or the env is not a production-eligible tier | Skip the WAF section. Re-run `/manage-firewall` against production after Lab 13's promotion. |
 | `/audit-permissions` says "deployed permissions out of sync with YAML" | Someone changed permissions directly in the maker portal | Either accept the maker-portal state (re-export and unpack), or redeploy from the committed YAML, pick one source of truth |

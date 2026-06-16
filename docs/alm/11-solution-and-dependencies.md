@@ -51,7 +51,7 @@ A **Dataverse solution** packages all of those components together as a unit. On
 - Roll back a Dataverse change with `git revert`
 - Hand the repo to a teammate who can recreate the portal end-to-end
 
-> **Managed vs unmanaged, you'll meet both.** A solution exports in one of two forms, for two different jobs. **Unmanaged** is the editable development form: its components are human-readable XML you can unpack, diff, and commit. That's what this lab uses for source control (`pac solution unpack ... --packagetype Unmanaged`). **Managed** is the sealed, versioned form built for promotion *into* other environments: you don't edit it, you import it as a unit. Labs 13 and 14 export and promote the **managed** solution to integration, pre-prod, and prod. Same components, two packaging modes: keep the distinction in mind, because it decides which command you reach for.
+> **Managed vs unmanaged, you'll meet both.** A solution exports in one of two forms, for two different jobs. **Unmanaged** is the editable development form: its components are human-readable XML you can unpack, diff, and commit. That's what this lab uses for source control (`pac solution unpack ... --packagetype Unmanaged`). **Managed** is the sealed, versioned form built for promotion *into* other environments: you don't edit it, you import it as a unit. Lab 13 exports and promotes the **managed** solution to integration, pre-prod, and prod. Same components, two packaging modes: keep the distinction in mind, because it decides which command you reach for.
 
 > **Two directories, two purposes.** Your repo will end up with both `.powerpages-site/` (created by Lab 01's `/create-site`) and `src/solution/` (created by this lab). They have different jobs:
 >
@@ -60,7 +60,7 @@ A **Dataverse solution** packages all of those components together as a unit. On
 >
 > There's overlap on web roles, table permissions, and site settings. Both directories list them. The solution is the source of truth for cross-environment portability; `.powerpages-site/` is the source of truth for the local site upload. Re-running `/setup-solution` after maker-portal changes keeps them aligned.
 >
-> **Carry-forward:** Labs 12-14 assume both directories stay in the repo. `src/solution/` is what PR reviewers and CI/Pipelines package; `.powerpages-site/` is what local plugin skills and direct site upload continue to read.
+> **Carry-forward:** Labs 12-13 assume both directories stay in the repo. `src/solution/` is what PR reviewers and CI/Pipelines package; `.powerpages-site/` is what local plugin skills and direct site upload continue to read.
 
 ---
 
