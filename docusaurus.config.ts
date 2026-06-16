@@ -74,15 +74,33 @@ const config: Config = {
         },
         {
           href: 'https://github.com/neerajnandwana-msft/powerpages-lab',
-          label: 'GitHub',
           position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
         },
       ],
     },
     footer: {
       style: 'dark',
-      copyright: `Copyright © ${new Date().getFullYear()} Neeraj Nandwana — Agentic Site Authoring lab track.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Neeraj Nandwana: Agentic Site Authoring lab track.`,
     },
+    image: 'img/user-journey.png',
+    metadata: [
+      {
+        name: 'description',
+        content:
+          'A self-paced lab track for building Microsoft Power Pages SPA sites with AI-assisted development and ALM practices.',
+      },
+      {
+        property: 'og:title',
+        content: 'Power Pages Agentic Site Authoring lab guide',
+      },
+      {
+        property: 'og:description',
+        content:
+          'Build a Power Pages SPA site, connect it to Dataverse, secure it, and promote it across environments.',
+      },
+    ],
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.oneDark,

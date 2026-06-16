@@ -375,4 +375,4 @@ In every other case, prefer `/deploy-pipeline`. The audit trail, approval gates,
 
 ## Next step
 
-You've reached the end of the lab track. To keep learning, see the resources list and optional next steps in the [track overview](../intro.md).
+You've reached the end of the lab track. To turn the lab output into a team practice, see [After the lab](/reference/after-the-lab).

@@ -7,7 +7,17 @@ slug: /
 
 # Agentic Site Authoring
 
-A self-paced lab track for building Microsoft Power Pages SPA sites with Claude Code and GitHub Copilot CLI, then taking them through a real ALM lifecycle: source control, branching, and multi-environment promotion via Microsoft Power Platform Pipelines.
+<section className="landingHero">
+  <p className="landingEyebrow">Self-paced Power Pages lab track</p>
+  <h2>Build a production-ready SPA site with AI-assisted development</h2>
+  <p>
+    Learn how to create a Microsoft Power Pages single-page application (SPA) site with Claude Code and GitHub Copilot CLI, connect it to Dataverse, secure it, and promote it through a real ALM lifecycle.
+  </p>
+  <div className="landingActions">
+    <a className="button button--primary button--lg" href="build/00-setup">Start with setup</a>
+    <a className="button button--secondary button--lg" href="#lab-track">View the lab track</a>
+  </div>
+</section>
 
 ---
 
@@ -29,7 +39,7 @@ A complete **Supplier Invoice Submission Portal** (a 5-page React SPA connected 
 
 ## The end-to-end journey
 
-The whole track follows the Power Pages plugin's skill-led flow, from an empty environment to a live, production-ready site. Every lab maps to one or more of these skills:
+The whole track follows the Power Pages plugin's skill-led flow, from an empty environment to a live, production-ready site. Every lab maps to one or more of the plugin skills documented on Microsoft Learn:
 
 ![Power Pages skill-led user journey: from /create-site through data setup, backend integration, web roles, authentication, security review, and ALM planning to a live Power Pages site](/img/user-journey.png)
 
@@ -40,6 +50,29 @@ You scaffold and activate the site (`/create-site`, `/activate-site`), set up th
 ## Lab track
 
 13 self-paced labs grouped into three phases. Each lab is self-contained with its own prerequisites, hands-on steps, verification, and pointer to the next lab.
+
+<div className="phaseGrid">
+  <a className="phaseCard" href="build/00-setup">
+    <span className="phaseCard__label">Phase 1</span>
+    <h3>Build</h3>
+    <p>Scaffold the SPA, create Dataverse tables, and connect the site to live data.</p>
+  </a>
+  <a className="phaseCard" href="integrate/00-setup">
+    <span className="phaseCard__label">Phase 2</span>
+    <h3>Integrate</h3>
+    <p>Add server-side logic, automation, AI APIs, performance checks, and security review.</p>
+  </a>
+  <a className="phaseCard" href="alm/00-setup">
+    <span className="phaseCard__label">Phase 3</span>
+    <h3>ALM</h3>
+    <p>Move from source control to managed solution promotion across environments.</p>
+  </a>
+  <a className="phaseCard" href="reference/prompt-cheat-sheet">
+    <span className="phaseCard__label">Reference</span>
+    <h3>Prompting and tools</h3>
+    <p>Use quick references when you need prompts, setup guidance, or CLI orientation.</p>
+  </a>
+</div>
 
 ### Build: scaffold and connect to data
 
@@ -87,7 +120,15 @@ This track is one cumulative use case, not a set of disconnected samples. Each l
 
 ## Before Lab 01
 
-**Start here:** complete the **[Build phase setup](build/00-setup)**. It installs and authenticates the Build-phase tools (Node.js, PAC CLI, Azure CLI, an AI coding CLI, and the Power Pages plugin), then hands you to Lab 01. You don't need GitHub CLI or opengrep yet; those come with the [Integrate](integrate/00-setup) and [ALM](alm/00-setup) phases, each of which opens with its own short setup page.
+<div className="nextStepCallout">
+  <h3>Start here</h3>
+  <p>
+    Complete the <a href="build/00-setup">Build phase setup</a>. It installs and authenticates the Build-phase tools (Node.js, PAC CLI, Azure CLI, an AI coding CLI, and the Power Pages plugin), then hands you to Lab 01.
+  </p>
+  <p>
+    You don't need GitHub CLI or opengrep yet. Those come with the <a href="integrate/00-setup">Integrate</a> and <a href="alm/00-setup">ALM</a> setup pages.
+  </p>
+</div>
 
 Want the big picture of what gets installed when before you dive in? See the [Setup Guide overview](setup-guide).
 
@@ -100,55 +141,4 @@ These reference docs sit outside the lab sequence. Read them when you need them.
 - [Setup Guide](setup-guide), cross-phase overview: what gets installed in each phase and when (the per-phase setup pages have the actual steps)
 - [Prompt Cheat Sheet](reference/prompt-cheat-sheet): ACE framework, prompt patterns, design tokens, AI coding CLI commands
 - [AI Coding CLI Orientation](reference/ai-coding-cli-orientation): Claude Code and GitHub Copilot CLI: slash commands, context management, plugins
-
----
-
-## Where to go next (after Lab 13)
-
-Once you've completed the track, here's how to take what you built into your own org.
-
-### Optional homework
-
-1. **Ask your Power Platform admin to set up Pipelines.** Give them the pointer from Lab 13. Once the host env and pipeline definition exist, you can promote managed solutions as shown in the demo.
-2. **Add a second feature end-to-end.** Pick something real your team needs. Branch, build, PR, merge to integration, promote weekly to pre-prod, manual approval to prod.
-3. **Write up your team's branching convention.** The labs showed trunk-based with `feature/`, `fix/`, `hotfix/`. Adapt it to whatever fits your org and put it in your repo's `CONTRIBUTING.md`.
-4. **Add `.github/CODEOWNERS` to your repo.** Pair with branch protection so PRs auto-request the right reviewers. Suggested layout: `/src/solution/ @data-modeling-team`, `*.md @docs`.
-
-### Production hardening checklist
-
-- **Treat prod as never-write-from-laptop.** Promote to prod only through Power Platform Pipelines with approval, never a direct `pac auth create` + deploy against the prod env. Document this in your team's runbook.
-- **Scope the deployment identity down.** For production promotion, use System Customizer plus the specific Power Pages roles the imports need, rather than System Administrator.
-- **Idempotency / failed deploy recovery:** solution imports are mostly idempotent; re-running the deploy after a transient failure usually succeeds. For partial-import states, fix the root cause and re-run rather than manually patching the env.
-- **`/security-review` before each prod promotion:** run the full Lab 09 review (or just `/audit-permissions` if you're short on time) against the integration env before the weekly Pipelines promotion. The consolidated HTML report catches code-, dependency-, header-, WAF-, and permission-level regressions in one pass.
-- **`/scan-site` on a schedule against production:** set up a monthly run of the deployed-site scan as ongoing monitoring. New CVEs and edge-case header drift land between releases; this is how you find them before the next release does.
-
-### Cost considerations
-
-- **Power Platform Pipelines:** requires Premium licenses for users who trigger pipeline runs. Stage definitions and host environment storage are included.
-- **Additional Power Platform environments:** each Dev / Integration / Pre-prod / Prod env consumes capacity. Trial and developer envs are free for non-production use; production-tier envs require licensing.
-
-The full pricing detail is at [Power Platform licensing](https://learn.microsoft.com/power-platform/admin/pricing-billing-skus).
-
-### Official documentation
-
-- **Power Pages docs:** https://learn.microsoft.com/power-pages
-- **Power Pages SPA sites:** https://learn.microsoft.com/power-pages/configure/create-code-sites
-- **Power Pages plugin for GitHub Copilot CLI and Claude Code (preview):** https://learn.microsoft.com/power-pages/configure/create-code-site-using-claude-code
-- **Power Platform ALM basics:** https://learn.microsoft.com/power-platform/alm/basics-alm
-- **Power Platform pipelines:** https://learn.microsoft.com/power-platform/alm/pipelines
-- **Power Pages pipelines:** https://learn.microsoft.com/power-pages/configure/power-pages-pipelines
-- **PAC CLI `solution` reference:** https://learn.microsoft.com/power-platform/developer/cli/reference/solution
-- **PAC CLI `pages` reference:** https://learn.microsoft.com/power-platform/developer/cli/reference/pages
-- **Environment variables for site settings:** https://learn.microsoft.com/power-pages/configure/environment-variables-for-site-settings
-
-### Community
-
-- **Power Pages Community Forum:** https://powerusers.microsoft.com/t5/Power-Pages-Community/ct-p/PowerPagesCommunity
-- **Power Pages Ideas portal:** https://ideas.powerpages.microsoft.com/
-- **Power Apps / Power Platform GitHub samples:** https://github.com/microsoft/PowerApps-Samples
-
-### Tips and best practices
-
-For prompting patterns and AI-assisted-development habits that keep paying off long after the lab track, see the official guidance:
-
-- **[Tips and best practices for the Power Pages plugin](https://learn.microsoft.com/power-pages/configure/create-code-site-using-claude-code#tips-and-best-practices)**
+- [After the lab](reference/after-the-lab): production hardening, operating cadence, cost considerations, and continued-learning resources
