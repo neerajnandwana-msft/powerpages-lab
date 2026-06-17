@@ -13,7 +13,7 @@ import { BookOpen, Hammer, Rocket, Workflow } from 'lucide-react';
   <p className="landingEyebrow">Self-paced Power Pages lab track</p>
   <h2>Build a production-ready SPA site with AI-assisted development</h2>
   <p>
-    Learn how to create a Microsoft Power Pages single-page application (SPA) site with Claude Code and GitHub Copilot CLI, connect it to Dataverse, secure it, and promote it through a real ALM lifecycle.
+    Learn how to create a Microsoft Power Pages single-page application (SPA) site with Claude Code and GitHub Copilot CLI, connect it to Dataverse, secure it, and promote it through a real application lifecycle management (ALM) workflow.
   </p>
   <div className="landingActions">
     <a className="button button--primary button--lg" href="build/00-setup">Start with setup</a>
@@ -51,7 +51,7 @@ You scaffold and activate the site (`/create-site`, `/activate-site`), set up th
 
 ## Lab track
 
-13 self-paced labs grouped into three phases. Each lab is self-contained with its own prerequisites, hands-on steps, verification, and pointer to the next lab.
+13 hands-on labs across three phases, each phase preceded by a short setup step. Plan roughly 8 to 12 hours total, spread across as many sessions as you like. Each lab is self-contained with its own prerequisites, hands-on steps, verification, and pointer to the next lab.
 
 <div className="phaseGrid">
   <a className="phaseCard" href="build/00-setup">
@@ -136,7 +136,7 @@ This track is one cumulative use case, not a set of disconnected samples. Each l
   </p>
 </div>
 
-Want the big picture of what gets installed when before you dive in? See the [Setup Guide overview](setup-guide).
+Optional: for a one-screen map of what installs in each phase, skim the [Setup Guide](setup-guide). Otherwise, go straight to [Build phase setup](build/00-setup).
 
 ---
 

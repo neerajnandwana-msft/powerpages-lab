@@ -8,7 +8,9 @@ title: "Lab 03: Connect the SPA to live Dataverse data"
 
 ## Goal
 
-Connect the portal to real Dataverse records through the Power Pages Web API with typed services, CSRF handling, and end-to-end CRUD validation.
+Connect the portal to real Dataverse records through the Power Pages Web API with typed services, CSRF (cross-site request forgery) handling, and end-to-end CRUD validation.
+
+**Estimated time:** about 30-45 minutes.
 
 ## State you carry forward
 
@@ -61,7 +63,7 @@ Your AI coding CLI will:
 
 > **Reference only: your output may differ.** The code shown below illustrates what the plugin *typically* generates. The plugin adapts its output to your exact project (variable names, helper placement, imports, comments), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece. Do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
 
-Claude Code creates three key files. Let's examine each one.
+Your AI coding CLI creates three key files. Let's examine each one.
 
 #### `src/services/webApi.ts`: the API client
 
@@ -141,15 +143,15 @@ The entity set name for OData is `cr_invoices` (plural of the table logical name
 
 ### Progress checkpoint
 
-You should now have three new files in `src/services/` and `src/types/`. The mock data files should still exist at this point (Claude replaces references next).
+You should now have three new files in `src/services/` and `src/types/`. The mock data files should still exist at this point (your AI coding CLI replaces references next).
 
 ---
 
-## Part 2: review the Mock-to-Live replacement
+## Part 2: review the mock-to-live replacement
 
-### Step 2.1: what Claude changes
+### Step 2.1: what your AI coding CLI changes
 
-Claude Code scans every page component and replaces mock data imports with API calls:
+Your AI coding CLI scans every page component and replaces mock data imports with API calls:
 
 **Dashboard.tsx (Before):**
 ```typescript
@@ -174,9 +176,9 @@ useEffect(() => {
 }, []);
 ```
 
-### Step 2.2: Pages updated
+### Step 2.2: pages updated
 
-| Page | What Changes |
+| Page | What changes |
 |------|-------------|
 | **Dashboard** | Mock import replaced with `getAll()` call. Metric cards compute from live data. Recent invoices table fetches last 5 with `$top=5&$orderby=createdon desc`. |
 | **Invoice List** | Mock array replaced with API call. Status filter uses `$filter=cr_status eq N`. Search uses `$filter=contains(cr_ponumber,'term')`. |
@@ -185,7 +187,7 @@ useEffect(() => {
 
 ### Step 2.3: loading and error states
 
-Claude adds loading and error handling to each page:
+Your AI coding CLI adds loading and error handling to each page:
 
 ```typescript
 if (loading) return <div>Loading invoices...</div>;
@@ -196,11 +198,11 @@ This prevents the "Cannot read properties of undefined" error that would occur i
 
 ### Step 2.4: mock data files
 
-Claude should delete (or stop importing) the mock data files. Verify that `src/data/mockInvoices.ts` is no longer imported anywhere. The file itself may or may not be deleted. What matters is that no component references it.
+Your AI coding CLI should delete (or stop importing) the mock data files. Verify that `src/data/mockInvoices.ts` is no longer imported anywhere. The file itself may or may not be deleted. What matters is that no component references it.
 
 ---
 
-## Part 3: build, deploy, and End-to-End test
+## Part 3: build, deploy, and end-to-end test
 
 ### Step 3.1: build and deploy
 
@@ -208,7 +210,7 @@ Claude should delete (or stop importing) the mock data files. Verify that `src/d
 npm run build && pac pages upload-code-site --rootPath "."
 ```
 
-Or use Claude Code:
+Or use your AI coding CLI:
 
 ```
 /deploy-site
@@ -300,7 +302,7 @@ Open browser DevTools (F12) and go to the **Network** tab. Navigate around the p
 
 ---
 
-## Part 4: OData query Deep-Dive
+## Part 4: OData query deep dive
 
 The Power Pages Web API supports OData query parameters for filtering, sorting, and selecting data. Here is how they work:
 
@@ -358,7 +360,7 @@ If you encounter issues during testing, use this reference to diagnose and fix t
 
 ### Error reference
 
-| Error | What You See | Cause | Fix |
+| Error | What you see | Cause | Fix |
 |-------|-------------|-------|-----|
 | **403 on GET** | `fetch('/_api/cr_invoices')` returns 403 | Table not enabled for Web API | Verify `Webapi/cr_invoice/enabled` site setting exists and is `"true"`. Redeploy. |
 | **403 on POST** | Creating an invoice returns 403 | Missing CSRF token or wrong header name | Verify `webApi.ts` fetches `/_layout/tokenhtml` and sends the extracted token as the `__RequestVerificationToken` header. |
@@ -395,7 +397,7 @@ linked to my Contact (I re-linked them in Lab 02, Step 2.5).
 
 Console: no console error.
 
-Network: GET /_api/cr_invoices?$select=cr_invoicenumber,cr_amount,cr_status
+Network: GET /_api/cr_invoices?$select=cr_ponumber,cr_amount,cr_status
   Status: 403 Forbidden
   Response:
   {"error":{"code":"0x80048306","message":"Principal user (..) does not have
@@ -473,7 +475,7 @@ Console errors: [paste any related DevTools Console errors]
 
 If Web API integration fails and you cannot resolve the issues:
 
-1. Claude Code can revert to mock data: "Revert to mock data imports while I fix the API."
+1. Your AI coding CLI can revert to mock data: "Revert to mock data imports while I fix the API."
 2. Check the git history. `/create-site` made commits at milestones, so you can revert to a working state.
 
 ---
@@ -493,4 +495,4 @@ That wraps the **Build phase**. The Integrate phase needs no new tools. Your Bui
 
 → [Integrate phase setup](../integrate/00-setup.md) → [Lab 04: Plan the service layer](../integrate/04-pick-backend-pattern.md)
 
-> **Tip:** If you ran `/integrate-webapi` here but haven't yet configured deliberate sign-in (multi-provider, claims mapping, role-based UI), [Lab 02 Part 5: Configure authentication with /setup-auth](./02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth) is the natural follow-up. The typical plugin workflow runs `/setup-auth` right after `/integrate-webapi`.
+> **Tip:** If you deferred [Lab 02 Part 5: Configure authentication with /setup-auth](./02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth) (deliberate sign-in: multi-provider, claims mapping, role-based UI), complete it before starting the Integrate phase. The typical plugin workflow runs `/setup-auth` right after `/integrate-webapi`.

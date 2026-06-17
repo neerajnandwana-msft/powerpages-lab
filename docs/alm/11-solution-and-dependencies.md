@@ -10,6 +10,8 @@ title: "Lab 11: Package the solution and dependencies"
 
 Package the SPA site and Dataverse dependencies into a solution that can be reviewed, versioned, and promoted across environments.
 
+**Estimated time:** about 30-45 minutes.
+
 ## State you carry forward
 
 - Completed [Lab 10: Put the site under source control](./10-source-control.md): portal directory is a Git repo on GitHub
@@ -149,7 +151,7 @@ This is the highest-leverage step in the lab. The plugin shows a table like:
 | Setting | Classification | Why |
 |---|---|---|
 | `Webapi/cr_invoice/enabled` | Same-everywhere | Must be true in every env |
-| `Search/Enabled` | Env-specific | Off in dev, on in prod, etc. |
+| `Search/Enabled` (env variable `cr_searchenabled`) | Env-specific | Off in dev, on in prod, etc. |
 | `Authentication/OpenIdConnect/EntraExternalId/ClientId` | Env-specific | Different app registration per env |
 | `Authentication/OpenIdConnect/EntraExternalId/ClientSecret` | Secret | Credential, proposed for Key Vault |
 | `Mpn/PartnerId` | Same-everywhere | Identical across envs |

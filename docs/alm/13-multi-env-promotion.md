@@ -10,9 +10,12 @@ title: "Lab 13: Promote across environments"
 
 Promote the managed solution through integration, pre-prod, and production with Power Platform Pipelines and deployment diagnostics.
 
+**Estimated time:** about 45-60 minutes.
+
 ## State you carry forward
 
 - Completed [Lab 11: Package the solution and dependencies](./11-solution-and-dependencies.md) (`/plan-alm` ran, `/setup-solution` authored the solution, env-variable wiring is in place)
+- Completed [Lab 12: Adopt branching and developer workflows](./12-branching-and-workflows.md): branching workflow practiced; `main` is always deployable to the integration environment and is the source stage the pipeline promotes from
 - Your integration environment is deployed and up to date. It's the source stage the pipeline promotes from
 - Pre-prod and prod target environments exist (or your admin can provision them)
 - Tenant-level permission to install the Pipelines app in a host environment, OR an existing pipelines host you can use

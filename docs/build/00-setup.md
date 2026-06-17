@@ -49,114 +49,19 @@ If you cannot see the environment, it does not have a Dataverse database, you la
 
 ## Step 2: install required software
 
-Install each tool below. After installing, run the verification command to confirm it is working.
+Install the five tools below, then confirm them all at once in Step 5. You need at least one AI coding CLI (last row); install both if you have licenses for both.
 
-### 2.1 Node.js (v18 or later)
+| Tool | Why you need it | Install |
+|------|-----------------|---------|
+| Node.js (v18 or later) | Runs the dev server and builds the React project | [nodejs.org](https://nodejs.org/) (LTS installer; keep "Add to PATH" checked) |
+| git | Used by the AI coding CLI for milestone commits during site generation | [git-scm.com/downloads](https://git-scm.com/downloads) (accept defaults) |
+| PAC CLI (v2.6.3 or later) | Deploys your site and manages Dataverse connections | `dotnet tool install --global Microsoft.PowerApps.CLI.Tool` (needs the [.NET SDK](https://dotnet.microsoft.com/download)) |
+| Azure CLI | Gets the Microsoft Entra ID tokens your AI coding CLI uses to call Dataverse, Power Platform, and Power Automate APIs | [Install Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), then restart your terminal |
+| AI coding CLI (pick one or both) | Runs the plugin skills as slash commands | **GitHub Copilot CLI:** `npm install -g @github/copilot` (needs Node 22+; [other install methods](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli)). **Claude Code CLI:** follow [claude.ai/code](https://claude.ai/code) |
 
-Node.js runs the development server and builds the React project.
+> **PAC CLI must be version 2.6.3 or later.** Server logic (Lab 05) requires it. If you already have PAC CLI, update with `dotnet tool update --global Microsoft.PowerApps.CLI.Tool`.
 
-- **Download:** [https://nodejs.org/](https://nodejs.org/) (use the LTS version)
-- **Install:** Run the installer, accept defaults, ensure "Add to PATH" is checked
-- **Verify:**
-
-```bash
-node --version
-```
-
-**Expected output:** `v18.x.x` or higher (e.g., `v20.11.0`)
-
-### 2.2 git
-
-Git is used by Claude Code and GitHub Copilot CLI for milestone commits during site generation.
-
-- **Download:** [https://git-scm.com/downloads](https://git-scm.com/downloads)
-- **Install:** Run the installer, accept defaults
-- **Verify:**
-
-```bash
-git --version
-```
-
-**Expected output:** `git version 2.x.x` or higher
-
-### 2.3 Power Platform CLI (PAC CLI), v2.6.3 or later
-
-PAC CLI deploys your site to Power Pages and manages Dataverse connections. Version 2.6.3 or later is required for server logic support (used in Lab 05).
-
-- **Install:**
-
-```bash
-dotnet tool install --global Microsoft.PowerApps.CLI.Tool
-```
-
-If you don't have .NET SDK, download it first from [https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download)
-
-- **Update (if already installed):**
-
-```bash
-dotnet tool update --global Microsoft.PowerApps.CLI.Tool
-```
-
-- **Verify:**
-
-```bash
-pac help
-```
-
-**Expected output:** PAC CLI help text listing available commands, with the version shown in the header (e.g., `Microsoft PowerPlatform CLI 2.6.3+...`). Confirm the version is `2.6.3` or higher. If the version is lower, run the update command above.
-
-> **Important:** Even if you already have PAC CLI installed, make sure you're on **version 2.6.3 or later**. Server logic support was added recently and requires this version. Lab 05 uses server logic, so an older version will block you. Run the update command above to get the latest.
-
-### 2.4 Azure CLI
-
-Azure CLI authenticates your session with the Microsoft Entra ID tenant that hosts your Power Platform environment.
-
-> **Why this matters:** Your AI coding CLI (Claude Code or GitHub Copilot CLI) uses `az` to obtain Microsoft Entra ID access tokens when running plugin skills that call Dataverse, Power Platform, and Power Automate APIs: `/setup-datamodel`, `/add-sample-data`, `/add-cloud-flow`, and `/add-ai-webapi`, among others. Without a working `az` install and an active sign-in, these skills fail with auth errors. Sign in once with `az login --allow-no-subscriptions` before starting Lab 01. The `--allow-no-subscriptions` flag lets the CLI sign in to your tenant whether or not your account has an Azure subscription. The plugin only needs Microsoft Entra ID-scoped tokens, never a subscription ([Azure CLI reference](https://learn.microsoft.com/cli/azure/reference-index#az-login)). After that one login, every follow-up `az` command runs normally; you don't repeat the flag.
-
-- **Download:** [https://learn.microsoft.com/cli/azure/install-azure-cli](https://learn.microsoft.com/cli/azure/install-azure-cli)
-- **Install:** Run the installer, restart your terminal after installation
-- **Verify:**
-
-```bash
-az --version
-```
-
-**Expected output:** `azure-cli` version number and component list
-
-### 2.5 AI coding tool: GitHub Copilot CLI or Claude Code CLI
-
-You need at least one of the following AI coding tools. Both are fully supported in this lab track, pick the one you have a license for, or install both.
-
-**Option A: GitHub Copilot CLI**
-
-Requires an active GitHub Copilot subscription and Node.js 22+ (for the npm install method).
-
-- **Install (npm):**
-
-```bash
-npm install -g @github/copilot
-```
-
-Other install methods (Homebrew, WinGet, install script) are listed at [https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli)
-
-- **Verify:**
-
-```bash
-copilot -h
-```
-
-**Expected output:** Copilot CLI help text with available commands
-
-**Option B: Claude Code CLI**
-
-- **Install:** Follow instructions at [https://claude.ai/code](https://claude.ai/code)
-- **Verify:**
-
-```bash
-claude --version
-```
-
-**Expected output:** Claude Code version number
+> **Sign in to Azure once before Lab 01:** run `az login --allow-no-subscriptions`. The flag lets you authenticate whether or not your account has an Azure subscription; the plugin only needs Microsoft Entra ID-scoped tokens, never a subscription ([Azure CLI reference](https://learn.microsoft.com/cli/azure/reference-index#az-login)). Follow-up `az` commands don't need the flag.
 
 ---
 
@@ -178,7 +83,7 @@ curl -fsSL https://raw.githubusercontent.com/microsoft/power-platform-skills/mai
 
 The installer automatically:
 
-- Checks for PAC CLI and installs it if it's missing (skipped if you already installed it in Step 2.3)
+- Checks for PAC CLI and installs it if it's missing (skipped if you already installed it in Step 2)
 - Detects available tools (GitHub Copilot CLI, Claude Code CLI)
 - Registers the plugin marketplace and installs all listed plugins
 - Enables autoupdate so plugins stay current
@@ -251,7 +156,7 @@ If all commands produce the expected output, you are ready for **Lab 01**.
 | `node` is not recognized                        | Install Node.js from nodejs.org, restart your terminal, verify it was added to PATH                                                                                                                                                                                           |
 | `pac` is not recognized                         | Run `dotnet tool install --global Microsoft.PowerApps.CLI.Tool`, restart terminal. If `dotnet` is not found, install .NET SDK first.                                                                                                                                          |
 | `pac help` shows version below 2.6.3            | Run `dotnet tool update --global Microsoft.PowerApps.CLI.Tool` to get the latest version. Restart terminal after updating.                                                                                                                                                    |
-| `az` is not recognized                          | Install Azure CLI from the install link in Step 2.4, restart terminal                                                                                                                                                                                                                       |
+| `az` is not recognized                          | Install Azure CLI from the install link in Step 2, restart terminal                                                                                                                                                                                                                       |
 | `az account show` returns empty or says "Please run 'az login'" | Sign in with `az login --allow-no-subscriptions`. The flag lets you authenticate whether or not your account has an Azure subscription. The plugin only needs Microsoft Entra ID-scoped tokens for Dataverse and Power Platform. |
 | `pac auth create` fails                         | Verify the instance URL is correct (not the site URL). Try `pac auth clear` then `pac auth create` again.                                                                                                                                                                     |
 | `pac org who` shows wrong environment           | Run `pac auth list` to see all profiles. Switch with `pac auth select --index <N>`.                                                                                                                                                                                           |

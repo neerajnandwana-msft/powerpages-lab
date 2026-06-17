@@ -10,6 +10,8 @@ title: "Lab 05: Add server logic"
 
 Add a server-side validate-and-execute endpoint that prevents duplicate purchase orders while creating invoices securely.
 
+**Estimated time:** about 45-60 minutes.
+
 ## State you carry forward
 
 - Completed [Lab 04: Plan the service layer](./04-pick-backend-pattern.md)
@@ -38,7 +40,7 @@ The scenario: your Submit Invoice form currently lets a supplier submit the same
 
 ---
 
-## When to use Server-Side business logic
+## When to use server-side business logic
 
 Before diving into the lab scenario, here's the broader picture of where server logic earns its place. Each row below describes a class of problem where running on the server, not the browser, is the right call.
 
@@ -65,7 +67,7 @@ Before diving into the lab scenario, here's the broader picture of where server 
 
 ---
 
-## Part 1: sandbox constraints and the Validate-and-Execute pattern
+## Part 1: sandbox constraints and the validate-and-execute pattern
 
 ### What server logic can do
 
@@ -92,7 +94,7 @@ Available SDK objects inside the sandbox:
 | Execution timeout | Default 120 seconds, configurable up to 240 seconds via `ServerLogic/TimeoutInSeconds` site setting. Anything longer must move to a cloud flow. |
 | ECMAScript 2023 only | Recent stage-3 proposals may not be available |
 
-### The Validate-and-Execute pattern
+### The validate-and-execute pattern
 
 ```mermaid
 flowchart LR
@@ -135,7 +137,9 @@ One server round-trip. The validation and the write are atomic. The client has n
 
 ## Part 2: run /add-server-logic and review the output
 
-### Step 2.1: describe the intent to Claude Code
+> **Already ran `/integrate-backend`?** If the orchestrator in Lab 04 already generated your duplicate-PO server logic, use the rest of this lab to review and customize that generated code instead of running `/add-server-logic` again. A second run creates a duplicate endpoint.
+
+### Step 2.1: describe the intent to your AI coding CLI
 
 In your AI coding CLI session:
 
@@ -150,7 +154,7 @@ the supplier. The supplier must not be able to work around the check
 through the browser console or by refreshing the page.
 ```
 
-Claude Code runs the 11-phase workflow from the skill. It will:
+Your AI coding CLI runs the 11-phase workflow from the skill. It will:
 
 1. Verify the site is deployed (needs `.powerpages-site` folder from Lab 01)
 2. Ask clarifying questions if anything is ambiguous
@@ -252,7 +256,7 @@ id: <generated-uuid>
 name: validate-and-create-invoice
 ```
 
-**3. Table permissions update (if not already covering Create):** Claude Code may add Create to the cr_invoice table permission or leave it if Lab 02 already covered it. Verify in `.powerpages-site/table-permissions/`.
+**3. Table permissions update (if not already covering Create):** your AI coding CLI may add Create to the cr_invoice table permission or leave it if Lab 02 already covered it. Verify in `.powerpages-site/table-permissions/`.
 
 **4. Frontend changes**, see Part 3.
 
@@ -260,7 +264,7 @@ name: validate-and-create-invoice
 
 ## Part 3: wire the endpoint into submit invoice
 
-Claude Code updates `src/pages/SubmitInvoice.tsx` (or equivalent) to call the new endpoint instead of the direct Web API POST. The change should look like:
+Your AI coding CLI updates `src/pages/SubmitInvoice.tsx` (or equivalent) to call the new endpoint instead of the direct Web API POST. The change should look like:
 
 **Before:**
 ```typescript
@@ -316,7 +320,7 @@ Verify:
 
 ### Step 4.1: deploy
 
-Accept Claude Code's offer to deploy, or run manually:
+Accept your AI coding CLI's offer to deploy, or run manually:
 
 ```
 /deploy-site
@@ -379,7 +383,7 @@ Then confirm that the Submit Invoice page still works.
 | 404 on `/_api/serverlogics/<name>` | Endpoint not found | Site not deployed after adding server logic | Run `/deploy-site` |
 | 403 on POST | Forbidden | Missing CSRF token or web role | Ensure `__RequestVerificationToken` header is sent; verify Authenticated Users role is assigned in the YAML |
 | Response `{ status: "error", message: "Cannot read property 'value' of undefined" }` | Dataverse call silently returned nothing | Missing or wrong table permission on cr_invoice | Add Read permission on cr_invoice for the Authenticated Users role, then redeploy |
-| `Expected Guid for primary key 'id'` on deploy | PAC CLI crash | `.serverlogic.yml` missing `id` field | Claude Code uses the deterministic script which generates the GUID. Re-run `/add-server-logic` if you hand-edited |
+| `Expected Guid for primary key 'id'` on deploy | PAC CLI crash | `.serverlogic.yml` missing `id` field | The plugin uses the deterministic script which generates the GUID. Re-run `/add-server-logic` if you hand-edited |
 | Timeout (default 120s, max 240s) | Request hangs, eventually fails | External API call or loop taking too long | Raise `ServerLogic/TimeoutInSeconds` up to 240 if the work is bounded, or move to a cloud flow for anything longer |
 | `Server.Connector.Dataverse.RetrieveMultipleRecords is not a function` | Sandbox error | Used `fetch` instead of the SDK, or imported something | Server logic has no `fetch`: use `Server.Connector.HttpClient` for external calls and `Server.Connector.Dataverse` for Dataverse |
 
@@ -397,7 +401,7 @@ You have completed this lab when:
 
 ### Generic debug prompt
 
-If anything fails and you're not sure where to start, paste this into Claude Code:
+If anything fails and you're not sure where to start, paste this into your AI coding CLI:
 
 ```
 My duplicate-PO check isn't working. When I submit an invoice, I see 

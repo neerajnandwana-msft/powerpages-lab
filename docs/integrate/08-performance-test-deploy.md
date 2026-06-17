@@ -10,6 +10,8 @@ title: "Lab 08: Improve performance, test, and deploy"
 
 Prepare the integrated portal for ALM by improving bundle performance, running deployed-site tests, and deploying to the integration environment.
 
+**Estimated time:** about 45-60 minutes.
+
 ## State you carry forward
 
 - Completed [Lab 07: Add generative AI APIs](./07-add-ai-apis.md) (the portal now has Web API, server logic, cloud flows, and two AI features)
@@ -66,7 +68,7 @@ connection. Check how large the app is when it ships to users, and
 tell me the single most impactful change I can make to speed it up.
 ```
 
-### Step 1.2: Route-Level Code splitting with React.lazy
+### Step 1.2: route-level code splitting with React.lazy
 
 Ask your AI coding CLI to apply the change. Either of these prompts works. Use whichever matches your style:
 
@@ -244,7 +246,7 @@ when I type in the search box. I think the page redraws every row
 unnecessarily. Make the list feel responsive.
 ```
 
-Two gotchas to verify after Claude is done:
+Two gotchas to verify after your AI coding CLI is done:
 
 - `onClick` must be stable across renders. Wrap it with `useCallback` in the parent or it defeats the memo.
 - Don't memoize tiny components: the comparison can cost more than the re-render you saved. Rows with computed cells, status badges, and money formatting are worth it.
@@ -281,7 +283,7 @@ Open DevTools → Network tab → throttle to "Slow 3G" → reload the deployed 
 
 ---
 
-## Part 2: End-to-End testing with /test-site
+## Part 2: end-to-end testing with /test-site
 
 ### Step 2.1: what /test-site does
 
@@ -338,7 +340,7 @@ A clean smoke test looks like:
 9 passed, 0 failed in 16.4s
 ```
 
-### Step 2.4: debugging a failing Step
+### Step 2.4: debugging a failing step
 
 If any step fails, ask your AI coding CLI to investigate:
 
@@ -364,13 +366,13 @@ supplier's invoices. I want to confirm that data isolation between
 suppliers is working.
 ```
 
-This exercises every integration layer built over two days.
+This exercises every integration layer you built in this phase.
 
 ---
 
 ## Part 3: deploy to the integration environment
 
-### Step 3.1: Pre-Deploy checklist
+### Step 3.1: pre-deploy checklist
 
 Before deploying the latest build, confirm:
 

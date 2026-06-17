@@ -10,6 +10,10 @@ title: "Lab 02: Set up Dataverse and security"
 
 Replace mock-only assumptions with a Dataverse backend, sample data, web roles, table permissions, and authentication for the supplier portal.
 
+**Estimated time:** about 60-90 minutes.
+
+This lab has five parts: Parts 1-2 build and seed the data model, Parts 3-4 lock down the Web API, and Part 5 configures real authentication.
+
 ## State you carry forward
 
 - Completed [Lab 01: Scaffold a Power Pages SPA](./01-scaffold-spa-portal.md) (supplier portal scaffolded and running locally)
@@ -113,7 +117,7 @@ Before approving, verify the proposal includes:
 - [ ] Account and Contact tables are referenced (not recreated)
 - [ ] Publisher prefix is noted (typically `cr_` or your environment's default)
 
-If something is missing or wrong, tell Claude before approving:
+If something is missing or wrong, tell your AI coding CLI before approving:
 
 ```
 The proposal looks good, but I need the Status choice to include "Paid" as an option. 
@@ -122,7 +126,7 @@ Also make sure the Submitted By lookup points to Contact, not a custom table.
 
 ### Step 1.4: approve and create
 
-Approve the proposal. Claude Code creates the table and columns via the Dataverse OData API.
+Approve the proposal. Your AI coding CLI creates the table and columns via the Dataverse OData API.
 
 ### Step 1.5: verify the schema in Power Pages Studio
 
@@ -199,7 +203,7 @@ Approve the plan. The agent inserts records in **dependency order**:
 > ```json
 > "cr_submittedby@odata.bind": "/contacts(<contact-guid>)"
 > ```
-> This special `@odata.bind` syntax sets foreign key relationships. In our sample data, the contact GUID points to Nancy Anderson (sample). Claude handles this automatically.
+> This special `@odata.bind` syntax sets foreign key relationships. In our sample data, the contact GUID points to Nancy Anderson (sample). The plugin handles this automatically.
 
 ### Step 2.4: verify sample data in Power Pages Studio
 
@@ -244,7 +248,7 @@ At this point you should have:
 
 This is the most important section for security. Power Pages uses a three-layer security model that controls who can access what data through the Web API.
 
-### Concept: the Three-Layer security model
+### Concept: the three-layer security model
 
 ```
 Layer 1: Site Settings
@@ -265,7 +269,7 @@ All three layers must be configured for the Web API to work. A missing layer (si
 
 Table permissions have a **scope** that controls which records a user can access:
 
-| Scope | What It Means | Example |
+| Scope | What it means | Example |
 |-------|--------------|---------|
 | **Global** | Access all records in the table | Public product catalog |
 | **Self** | Access only the record that IS the user's Contact | User profile page |
@@ -329,7 +333,7 @@ authenticatedusersrole: true
 
 ### Step 3.2: generate permissions configuration
 
-Claude Code generates these files as part of the Web API integration. Pick the path that fits how you want to pace the next two labs:
+Your AI coding CLI generates these files as part of the Web API integration. Pick the path that fits how you want to pace the next two labs:
 
 **Option A: generate code and permissions together (recommended for a continuous flow).** Run `/integrate-webapi` now. It generates both the typed API service layer *and* the permission YAML files, so the app makes live `/_api/` calls as soon as you deploy, and Part 4 below tests through the app UI. Lab 03 then becomes a guided review of what was generated. This is the path the rest of this lab assumes.
 
@@ -348,7 +352,7 @@ Authenticated Users, contact with Self-scoped read, account with Contact-scoped 
 
 ### Step 3.3: review the generated files
 
-After Claude generates the YAML files, verify the `.powerpages-site/` directory contains one YAML file per site setting. The file names use hyphens (file system-safe), but the `name` field inside each file uses slashes (the actual site setting name that Power Pages reads).
+After your AI coding CLI generates the YAML files, verify the `.powerpages-site/` directory contains one YAML file per site setting. The file names use hyphens (file system-safe), but the `name` field inside each file uses slashes (the actual site setting name that Power Pages reads).
 
 **Site Settings** (`site-settings/`):
 
@@ -621,7 +625,7 @@ If any provider's redirect fails, the most common cause is a mismatch between th
 
 You have completed this lab when:
 
-- [ ] `cr_invoice` table exists in make.powerapps.com with all 9 columns
+- [ ] `cr_invoice` table exists in make.powerapps.com with the columns your schema proposal defined (PO Number, Amount, Status, Due Date, Submitted By, Supplier Company at minimum)
 - [ ] 10 sample invoice records are visible in the Dataverse table view
 - [ ] Each invoice record has Submitted By and Supplier Company lookups populated
 - [ ] `.powerpages-site/site-settings/` contains enable and fields settings for cr_invoice, contact, and account

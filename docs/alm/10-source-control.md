@@ -10,6 +10,8 @@ title: "Lab 10: Put the site under source control"
 
 Put the portal source in a GitHub repository with a protective `.gitignore` and optional branch protection on `main`.
 
+**Estimated time:** about 20-30 minutes.
+
 ## State you carry forward
 
 - Completed [Lab 08: Improve performance, test, and deploy](../integrate/08-performance-test-deploy.md) (working portal deployed to your env)
@@ -197,7 +199,7 @@ You should see the supplier-portal source files in GitHub. Spend 30 seconds clic
 
 ---
 
-## Step 5: inspect What's NOT in the repo
+## Step 5: inspect what's not in the repo
 
 Open the GitHub web view and confirm:
 

@@ -10,6 +10,8 @@ title: "Lab 09: Run a security review"
 
 Run the release-readiness security gate and fix findings before the portal enters the ALM phase.
 
+**Estimated time:** about 30-45 minutes.
+
 ## State you carry forward
 
 - Completed [Lab 08: Improve performance, test, and deploy](./08-performance-test-deploy.md): site is built, tested, and deployed to your integration environment
@@ -270,7 +272,7 @@ only the new findings.
 
 The point of running this lab here, before the ALM phase, is that the integration env is the **last place a finding is cheap to fix.** Once a permission YAML or a header value lands in pre-prod via a managed solution, fixing it means another pipeline run. Two follow-ups extend that gate into the ALM phase.
 
-### When you reach Lab 13 (Multi-Environment promotion)
+### When you reach Lab 13 (multi-environment promotion)
 
 `/security-review` with the **Deployed site** goal is a sensible **post-deploy** verification step against pre-prod before the manual approval gate to production. Slot it between `/test-site` (Step 4.3 of Lab 13) and the prod-stage approval. The same report you read in this lab now gates the prod promotion.
 

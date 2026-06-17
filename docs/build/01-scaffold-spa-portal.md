@@ -10,11 +10,21 @@ title: "Lab 01: Scaffold a Power Pages SPA"
 
 Scaffold a complete Supplier Invoice Submission Portal as a React SPA with mock data, five styled pages, and local preview support.
 
+**Estimated time:** about 20-30 minutes.
+
 ## State you carry forward
 
 - [Build phase setup](00-setup.md) completed and verified (Node.js, PAC CLI, Azure CLI, AI coding CLI, Power Pages plugin)
 - [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md) open in a tab for reference
 - Familiarity with the ACE framework (Action / Context / Examples): see the [Prompt Cheat Sheet](../reference/prompt-cheat-sheet.md); this lab's prompt uses ACE structure with a Jobs-To-Be-Done framing of the requirements
+
+> **Before you start, confirm your toolchain.** This lab assumes the [Build phase setup](00-setup.md) is done. Verify:
+>
+> - [ ] Node.js and PAC CLI are installed and on your PATH (`node --version`, `pac --version`)
+> - [ ] The Power Pages plugin is installed in your AI coding CLI
+> - [ ] `/help` (or the plugin's skill list) shows `/create-site`
+>
+> If any of these fail, finish [Build phase setup](00-setup.md) before continuing.
 
 ---
 
@@ -87,7 +97,7 @@ This lab uses **React + TypeScript + Tailwind CSS + Vite**, following **Microsof
 
 By the end of this lab you will be able to:
 
-1. Use Claude Code `/create-site` to generate a complete React + TypeScript + Tailwind CSS portal
+1. Use your AI coding CLI's `/create-site` skill to generate a complete React + TypeScript + Tailwind CSS portal
 2. Define site requirements covering 5 pages with routes, components, and mock data
 3. Review the generated project structure and understand each folder's purpose
 4. Preview the site locally at localhost:5173 with mock data
@@ -210,7 +220,7 @@ Your AI coding CLI will now generate the entire project. Watch the terminal as f
 | `src/types/` | TypeScript interfaces for Invoice, User, etc. |
 | `powerpages.config.json` | Deployment configuration (`siteName`, `compiledPath`, `defaultLandingPage`) |
 | `docs/` | Where the plugin writes design-decision artifacts (plans, audits) as you run later skills |
-| `CLAUDE.md` | Project context for future Claude Code sessions |
+| `CLAUDE.md` | Project context for future AI coding CLI sessions |
 
 ### What is happening
 
@@ -271,7 +281,7 @@ Open your browser to `http://localhost:5173` (Vite's default port).
 
 ---
 
-## Step 6: review the generated Code
+## Step 6: review the generated code
 
 Open the project in your code editor and explore the structure.
 
@@ -327,7 +337,7 @@ All linked to mock user "Nancy Anderson (sample)" at "Adventure Works (sample)".
 ```
 Later labs add an optional `bundleFilePatterns` field here to clean up stale bundles on each deploy (Lab 08). See the [`powerpages.config.json` reference](https://learn.microsoft.com/power-pages/configure/create-code-sites#defining-upload-parameters-with-powerpagesconfigjson).
 
-**CLAUDE.md**: Review the project context Claude created. This file will help your AI coding CLI maintain consistency in future sessions.
+**CLAUDE.md**: Review the project context your AI coding CLI created. This file will help your AI coding CLI maintain consistency in future sessions.
 
 ### The `docs/` folder: your design-decisions audit trail
 

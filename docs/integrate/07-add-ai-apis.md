@@ -10,6 +10,8 @@ title: "Lab 07: Add generative AI APIs"
 
 Add AI-powered invoice summaries and grounded search answers to the supplier portal by using the Power Pages AI APIs.
 
+**Estimated time:** about 45-60 minutes.
+
 ## State you carry forward
 
 - Completed [Lab 06: Add Power Automate flows](./06-add-power-automate-flows.md) (portal has Web API, server logic, and cloud flow integrations working)
@@ -48,7 +50,7 @@ Both APIs are preview features gated by admin governance. The most common failur
 
 We will use the first two today. The Case preset needs an `incident` table and doesn't fit the supplier portal.
 
-### The Three-Level admin hierarchy
+### The three-level admin hierarchy
 
 Every AI call passes through three gates. **Each level overrides the one below it.**
 
@@ -104,6 +106,8 @@ Keep this straight: a **403** is always Layer 1/2 (Web API), never the AI layer;
 
 ## Part 2: data summarization on invoice detail
 
+> **Already ran `/integrate-backend`?** If the orchestrator in Lab 04 already added your AI summary and search features, use the rest of this lab to review and customize the generated code instead of re-running the AI skill.
+
 ### Step 2.1: describe the intent
 
 In your AI coding CLI:
@@ -146,7 +150,7 @@ You will be asked:
 
 Approve the sub-plan. When `/integrate-webapi` completes, control returns to `/add-ai-webapi`.
 
-### Step 2.5: phase 5, service and UI Code
+### Step 2.5: phase 5, service and UI code
 
 > **Reference only: your output may differ.** The code shown below illustrates what the plugin *typically* generates. The plugin adapts its output to your exact project (variable names, helper structure, imports, component shape), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece. Do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
 
@@ -263,9 +267,9 @@ By now you should have:
 
 ---
 
-## Part 3: Mid-Lab checkpoint
+## Part 3: mid-lab checkpoint
 
-Confirm the Invoice summary works for everyone before moving to Search. Raise your hand if any of these are not true:
+Confirm the Invoice summary works for everyone before moving to Search. Before continuing, confirm each of these. If any is not true, stop and resolve it first:
 
 - Invoice Detail shows a Copilot card
 - The summary text references real values from the invoice (not placeholder text)
@@ -290,7 +294,7 @@ Once you have a green response, continue.
 
 Add a page at `/search` with a text input. User types a question like "Which invoices are overdue?" → portal calls `/_api/search/v1.0/summary` → an AI-generated answer renders above the underlying keyword results, with citation links pointing back to the invoice detail pages.
 
-### Step 4.2: Pre-Flight, enable site search (preview)
+### Step 4.2: pre-flight, enable site search (preview)
 
 Search Summary needs a site-level toggle that `/add-ai-webapi` cannot flip for you.
 
@@ -332,7 +336,7 @@ The manifest should show:
 
 Approve. The plugin creates a new page component, extends the service with `fetchSearchSummary`, and adds a route.
 
-### Step 4.6: review the generated Code
+### Step 4.6: review the generated code
 
 > **Reference only: your output may differ.** Same caveat as Step 2.5: the snippets below are illustrative. Your plugin's actual output may differ in variable names, response-shape assumptions, or component structure. Use these to understand the Search Summary pattern, not as line-for-line targets.
 

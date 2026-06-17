@@ -10,6 +10,8 @@ title: "Lab 04: Plan the service layer"
 
 Create a reviewed integration plan that classifies each supplier portal feature into the right backend pattern before you build it.
 
+**Estimated time:** about 20-30 minutes.
+
 ## State you carry forward
 
 - Completed [Lab 03: Connect the SPA to live Dataverse data](../build/03-web-api-integration.md) (typed Web API service layer in `src/services/`, working CRUD on the deployed site)
@@ -121,6 +123,8 @@ Use this section when you want to override the orchestrator's classification, ru
 
 ### The four patterns
 
+> **Note:** Throughout the labs, `cr_invoice` (singular) is the table's logical name used in permissions and metadata, and `cr_invoices` (plural) is the OData entity-set name used in Web API URLs. Both refer to the same table.
+
 #### 1. web API (Lab 03)
 
 You met this in Lab 03. The browser talks to Dataverse directly over OData.
@@ -212,7 +216,7 @@ Use this when you are not sure which pattern fits, or when reviewing a misclassi
 | Does it summarize a Dataverse record into human-readable text? | **AI API (Data Summarization)** |
 | Does it produce a grounded answer from search across your site? | **AI API (Search Summary)** |
 
-### Anti-Patterns
+### Anti-patterns
 
 | Anti-pattern | Why it fails | What to do instead |
 |--------------|--------------|--------------------|

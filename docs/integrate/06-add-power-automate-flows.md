@@ -10,6 +10,8 @@ title: "Lab 06: Add Power Automate flows"
 
 Add a Power Automate cloud flow that sends a Teams notification when a supplier submits an invoice.
 
+**Estimated time:** about 30-45 minutes.
+
 ## State you carry forward
 
 - Completed [Lab 05: Add server logic](./05-add-server-logic.md) (you've seen the CSRF and web role pattern once)
@@ -135,7 +137,7 @@ the portal so it runs when a supplier submits an invoice. Only signed-in
 suppliers should be able to trigger it.
 ```
 
-Claude Code runs the 8-phase workflow from the skill. If `/integrate-backend` already registered this flow in Lab 04, use the rest of this lab to review the generated YAML and client code instead of creating a second consumer for the same flow.
+Your AI coding CLI runs the 8-phase workflow from the skill. If `/integrate-backend` already registered this flow in Lab 04, use the rest of this lab to review the generated YAML and client code instead of creating a second consumer for the same flow.
 
 ### Step 2.2: what the plugin does behind the scenes
 
@@ -165,7 +167,7 @@ Approve. If anything is off, select "Request changes" and describe the fix.
 
 ---
 
-## Part 3: review generated Code and YAML
+## Part 3: review generated code and YAML
 
 > **Reference only: your output may differ.** The YAML and code shown below illustrate what the plugin *typically* generates. The plugin adapts its output to your exact project and flow setup (GUIDs, URLs, helper names, type signatures), so your files may look different in small ways. Use these samples to understand the **concept** and the **why** behind each piece. Do not rewrite your generated files to match line-for-line. If something in your generated code looks meaningfully different, ask your AI coding CLI to explain the choice before changing anything.
 
@@ -258,7 +260,7 @@ The plugin wires one call site automatically. You will add the second one yourse
 
 ### Step 4.1: submit invoice integration (automatic)
 
-Open `src/pages/SubmitInvoice.tsx`. Claude Code has added the call inside the submit handler:
+Open `src/pages/SubmitInvoice.tsx`. Your AI coding CLI has added the call inside the submit handler:
 
 ```typescript
 import { validateAndCreateInvoice } from '../services/serverLogicService';
@@ -338,7 +340,7 @@ Verify:
 
 ---
 
-## Part 5: deploy and test End-to-End
+## Part 5: deploy and test end-to-end
 
 ### Step 5.1: deploy
 

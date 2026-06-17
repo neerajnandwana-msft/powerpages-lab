@@ -10,6 +10,8 @@ title: "Lab 12: Adopt branching and developer workflows"
 
 Practice the feature, rollback, and hotfix workflows that keep the supplier portal repo safe for team development.
 
+**Estimated time:** about 30-45 minutes.
+
 ## State you carry forward
 
 - Completed [Lab 10: Put the site under source control](./10-source-control.md) (Git repo on GitHub)
@@ -73,7 +75,7 @@ The MS guidance is opinionated about how PRs should run:
 
 Lab 10's branch protection requires 1 approval; bump to 2 for a real team and add a CODEOWNERS file so reviewers are assigned automatically.
 
-### Long-Running branches and feature flags
+### Long-running branches and feature flags
 
 The whole strategy assumes branches are short-lived (hours to days). When a feature genuinely needs weeks (a redesign that ships behind a toggle, a phased migration), don't keep the branch alive that long. Merge to `main` early and gate the unfinished feature with a [feature flag](http://martinfowler.com/articles/feature-toggles.html). For a Power Pages SPA, a flag can be as simple as a site setting (`Features/InvoiceRedesign/Enabled`) read at app boot and used to switch the rendered component.
 
@@ -189,7 +191,7 @@ You'll roll back the memo column you just shipped in Workflow A. The exercise is
 
 After the memo column landed in integration, finance reviewers started using it as a free-text status field, bypassing the actual `cr_status` choice column. Stakeholders complained that reports built on `cr_status` no longer match what people see on the portal. The decision is to pull `cr_memo` out of production and design a constrained replacement later.
 
-### Forward-Fix or roll back?
+### Forward-fix or roll back?
 
 Reverting a Dataverse-coupled commit is more destructive than reverting a code-only commit. Decide before you start:
 
@@ -296,7 +298,7 @@ Hotfixes are for **production breakage that cannot wait** for the next weekly pr
 4. Get expedited review (one approver, sometimes the reviewer is the on-call engineer)
 5. Merge: the hotfix lands on `main` just like a `feature/` merge would
 6. To get the hotfix into prod faster than the weekly cadence: **trigger the Pipelines pre-prod → prod stage manually** from the maker portal once the integration deploy is green and you've smoke-tested. The approval flow still runs (Lab 13); a hotfix doesn't skip approval, it skips the *waiting* part of the weekly schedule.
-7. **Forward-port if needed.** In our setup the hotfix branches from `main` and merges back to `main`, so the fix is already on `main`, nothing to forward-port. The forward-port problem only appears once you adopt long-lived release branches (see Part 1, "Releases: Power Platform Pipelines, Not Release Branches"). At that point the fix is made on the release branch first, and you cherry-pick it to `main` so the next release doesn't regress. The MS-recommended mechanic looks like this:
+7. **Forward-port if needed.** In our setup the hotfix branches from `main` and merges back to `main`, so the fix is already on `main`, nothing to forward-port. The forward-port problem only appears once you adopt long-lived release branches (see Part 1, "Releases: Power Platform pipelines, not release branches"). At that point the fix is made on the release branch first, and you cherry-pick it to `main` so the next release doesn't regress. The MS-recommended mechanic looks like this:
 
    ```bash
    git switch main
@@ -309,7 +311,7 @@ Hotfixes are for **production breakage that cannot wait** for the next weekly pr
 
    Cherry-picking (not merging) keeps you in control of *which* commits move back to `main`. Release branches accumulate release-specific commits you don't want on the mainline.
 
-### Hotfix Mini-Exercise
+### Hotfix mini-exercise
 
 Pretend the dashboard heading reads "Suplier Portal" (typo) and is visible to every signed-in user. Walk through:
 
@@ -356,7 +358,7 @@ gitGraph
 
 PR review and the required build check sit between each branch's last commit and the merge into `main`. They're enforced by branch protection (Lab 10) and don't show up as commits in Git history.
 
-### End-to-End deployment flow
+### End-to-end deployment flow
 
 What happens after each merge, deploying to integration and then promoting through Lab 13 (Pipelines to pre-prod and prod):
 
