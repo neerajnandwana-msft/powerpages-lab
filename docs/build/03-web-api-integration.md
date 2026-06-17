@@ -491,6 +491,6 @@ If Web API integration fails and you cannot resolve the issues:
 
 That wraps the **Build phase**. The Integrate phase needs no new tools. Your Build-phase setup carries straight through. Skim [Integrate phase setup](../integrate/00-setup.md) for the one-paragraph confirmation (and the optional static-analysis add-on for Lab 09), then start Lab 04.
 
-→ [Integrate phase setup](../integrate/00-setup.md) → [Lab 04: Plan the service layer with /integrate-backend](../integrate/04-pick-backend-pattern.md)
+→ [Integrate phase setup](../integrate/00-setup.md) → [Lab 04: Plan the service layer](../integrate/04-pick-backend-pattern.md)
 
 > **Tip:** If you ran `/integrate-webapi` here but haven't yet configured deliberate sign-in (multi-provider, claims mapping, role-based UI), [Lab 02 Part 5: Configure authentication with /setup-auth](./02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth) is the natural follow-up. The typical plugin workflow runs `/setup-auth` right after `/integrate-webapi`.

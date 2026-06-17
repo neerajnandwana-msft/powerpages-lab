@@ -51,7 +51,7 @@ import { Bot, PlayCircle, ShieldCheck, Workflow, Zap } from 'lucide-react';
 | # | Lab | Outcome |
 |---|---|---|
 | Setup | [Integrate phase setup](/integrate/00-setup) | Confirmation that Build-phase tools carry forward, plus optional static analysis setup |
-| 04 | [Plan the service layer with `/integrate-backend`](/integrate/04-pick-backend-pattern) | Backend pattern decision matrix |
+| 04 | [Plan the service layer](/integrate/04-pick-backend-pattern) | Backend pattern decision matrix |
 | 05 | [Add server logic](/integrate/05-add-server-logic) | Server-side validation and execution |
 | 06 | [Add Power Automate flows](/integrate/06-add-power-automate-flows) | Teams notification on invoice submit |
 | 07 | [Add generative AI APIs](/integrate/07-add-ai-apis) | AI summary and grounded answer features |

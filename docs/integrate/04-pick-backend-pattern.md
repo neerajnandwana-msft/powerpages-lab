@@ -1,10 +1,10 @@
 ---
 sidebar_position: 1
 sidebar_label: "Lab 04: Plan the service layer"
-title: "Lab 04: Plan the service layer with /integrate-backend"
+title: "Lab 04: Plan the service layer"
 ---
 
-# Lab 04: Plan the service layer with `/integrate-backend`
+# Lab 04: Plan the service layer
 
 ## Goal
 

@@ -92,7 +92,7 @@ You scaffold and activate the site (`/create-site`, `/activate-site`), set up th
 
 | # | Lab | What you'll add |
 |---|-----|------|
-| 04 | [Plan the service layer with `/integrate-backend`](integrate/04-pick-backend-pattern) | Decision matrix: Web API vs Server Logic vs Cloud Flow vs AI API |
+| 04 | [Plan the service layer](integrate/04-pick-backend-pattern) | Decision matrix: Web API vs Server Logic vs Cloud Flow vs AI API |
 | 05 | [Add server logic](integrate/05-add-server-logic) | Tamper-proof validate-and-execute on the server |
 | 06 | [Add Power Automate flows](integrate/06-add-power-automate-flows) | Teams notification on invoice submit |
 | 07 | [Add generative AI APIs](integrate/07-add-ai-apis) | Copilot summary card and grounded search answers |

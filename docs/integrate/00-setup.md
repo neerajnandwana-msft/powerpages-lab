@@ -29,4 +29,4 @@ For the staged, cross-phase view of what gets installed when, see the [Setup Gui
 
 ## What's next
 
-→ [Lab 04: Plan the service layer with /integrate-backend](04-pick-backend-pattern.md)
+→ [Lab 04: Plan the service layer](04-pick-backend-pattern.md)
