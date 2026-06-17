@@ -433,18 +433,6 @@ Take a quick mental snapshot before moving into the ALM labs:
 
 ---
 
-## Troubleshooting
-
-| Problem | Fix |
-|---------|-----|
-| `vite-bundle-visualizer` shows a huge `index` chunk | Route-level splitting not applied: ensure `React.lazy` imports are dynamic (`() => import(...)`), not static |
-| Lazy routes cause a white flash between pages | Add a global `<Suspense fallback>` in `App.tsx`; consider a skeleton screen for the first route |
-| `React.memo` doesn't stop re-renders | `onClick` or other prop is a new reference every render; wrap parent handlers in `useCallback` |
-| `/test-site` can't sign in | Make sure the test account has a pre-existing Contact in Dataverse; first sign-in triggers Contact creation which breaks scripted flows |
-| `/deploy-site` fails with "unauthorized" | `pac auth list`: Active auth may have expired mid-session; run `pac auth create --environment <url>` |
-| Deploy succeeds but site shows stale content | Hard refresh (Ctrl+Shift+R) or use an incognito window to bypass browser cache |
-| Bundle size grew after adding the AI features | Normal: the AI hooks and error types add ~15 KB. If growth is larger, check the visualizer for duplicate dependencies |
-
 ## Verification
 
 You have completed this lab when:
@@ -471,6 +459,18 @@ Output:
 path if a /test-site step failed, and any DevTools Console errors
 if the failure surfaced in the browser]
 ```
+
+## Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| `vite-bundle-visualizer` shows a huge `index` chunk | Route-level splitting not applied: ensure `React.lazy` imports are dynamic (`() => import(...)`), not static |
+| Lazy routes cause a white flash between pages | Add a global `<Suspense fallback>` in `App.tsx`; consider a skeleton screen for the first route |
+| `React.memo` doesn't stop re-renders | `onClick` or other prop is a new reference every render; wrap parent handlers in `useCallback` |
+| `/test-site` can't sign in | Make sure the test account has a pre-existing Contact in Dataverse; first sign-in triggers Contact creation which breaks scripted flows |
+| `/deploy-site` fails with "unauthorized" | `pac auth list`: Active auth may have expired mid-session; run `pac auth create --environment <url>` |
+| Deploy succeeds but site shows stale content | Hard refresh (Ctrl+Shift+R) or use an incognito window to bypass browser cache |
+| Bundle size grew after adding the AI features | Normal: the AI hooks and error types add ~15 KB. If growth is larger, check the visualizer for duplicate dependencies |
 
 ## Fallback
 

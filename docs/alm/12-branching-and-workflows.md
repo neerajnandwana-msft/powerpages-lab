@@ -101,7 +101,7 @@ Further reading: [Microsoft Git branching guidance](https://learn.microsoft.com/
 
 You'll add a `cr_memo` column to the invoice table, expose it in the SPA, and watch the PR show both the React change *and* the XML schema change side-by-side.
 
-### Step 1: branch from main
+### Step 2.1: branch from main
 
 ```bash
 git switch main
@@ -109,13 +109,13 @@ git pull
 git switch -c feature/invoice-memo-column
 ```
 
-### Step 2: make the Dataverse change in dev
+### Step 2.2: make the Dataverse change in dev
 
 1. Open the maker portal (your dev env, your solution)
 2. On `cr_invoice`, add a column: **Display name** "Memo", **Name** `cr_memo`, **Type** "Text", **Max length** 500
 3. Save
 
-### Step 3: refresh the unpacked solution
+### Step 2.3: refresh the unpacked solution
 
 ```bash
 pac solution export --name SupplierPortal --path build --overwrite
@@ -124,7 +124,7 @@ pac solution unpack --zipfile build/SupplierPortal.zip --folder src/solution --p
 
 Quick `git status`: you should see one or two changed files under `src/solution/Entities/cr_invoice/` reflecting the new column.
 
-### Step 4: wire the memo into the SPA
+### Step 2.4: wire the memo into the SPA
 
 Two edits, one in the typed service and one in the list component. Paths assume the React scaffolding from Lab 01. Adjust if you used Vue, Angular, or Astro.
 
@@ -155,7 +155,7 @@ npm run dev
 # Browse the portal, confirm the memo column appears (empty for existing rows -- that's expected)
 ```
 
-### Step 5: commit, push, open the PR
+### Step 2.5: commit, push, open the PR
 
 ```bash
 git add .
@@ -168,7 +168,7 @@ git push -u origin feature/invoice-memo-column
 gh pr create --fill
 ```
 
-### Step 6: review the PR
+### Step 2.6: review the PR
 
 Open the PR in the GitHub web view. You'll see two kinds of changes in the same review:
 
@@ -177,7 +177,7 @@ Open the PR in the GitHub web view. You'll see two kinds of changes in the same 
 
 This is the payoff from Lab 11's unpack pattern. A reviewer sees the full picture of what's shipping in one diff.
 
-### Step 7: merge
+### Step 2.7: merge
 
 Approve the PR (or have a teammate approve it). Merge into `main`. The change is now on `main`, ready to deploy to integration and promote onward.
 
@@ -213,7 +213,7 @@ For our memo exercise the column is empty in integration (just deployed, no real
 
 For `main`, always revert. Never reset.
 
-### Step 1: find the merge commit
+### Step 3.1: find the merge commit
 
 ```bash
 git switch main
@@ -225,7 +225,7 @@ git log --oneline -5
 
 Copy the merge SHA (`d4e5f6` in the example).
 
-### Step 2: branch and revert
+### Step 3.2: branch and revert
 
 ```bash
 git switch -c bugfix/revert-invoice-memo
@@ -238,7 +238,7 @@ The revert produces one new commit that undoes **both** the React/TypeScript edi
 
 > **Squash-merge variant.** GitHub's default for many repos is squash-merge, which produces a single commit on `main` rather than a merge commit. In that case, drop `-m 1` and revert the squashed commit directly: `git revert <commit-sha>`. Look for the squashed commit's hash in `git log --oneline -5`. It'll be a normal commit, not a merge.
 
-### Step 3: verify locally
+### Step 3.3: verify locally
 
 Before opening the PR, confirm the SPA still builds and behaves as expected without the memo column:
 
@@ -250,7 +250,7 @@ npm run dev
 
 If the build fails, the revert touched something the rest of the codebase depends on (e.g., a type imported elsewhere). Fix the dependency on the same branch before pushing. Never push a known-broken revert and "fix forward".
 
-### Step 4: push and open the revert PR
+### Step 3.4: push and open the revert PR
 
 ```bash
 git push -u origin bugfix/revert-invoice-memo
@@ -259,7 +259,7 @@ gh pr create --fill --title "Revert: Add memo column to invoice list"
 
 In the PR body, **link to the original PR** and write one or two sentences on *why* the revert is happening. Reviewers (and the next person reading `git log` six months from now) need this context to avoid re-introducing the same change blindly.
 
-### Step 5: merge
+### Step 3.5: merge
 
 Approve and merge the revert PR. The same two artifacts move as for the original feature merge:
 
@@ -394,6 +394,17 @@ You have completed this lab when:
 - [ ] You can articulate, in one sentence each, when to use `git revert` versus `git reset --hard` (revert: shared branches; reset: local-only branches)
 - [ ] You can name at least one situation where you'd **forward-fix instead of revert** a Dataverse-coupled commit (column removal would drop user-entered data; relationship removal would break a dependent app)
 - [ ] The team's branching rules are written down somewhere your repo's contributors can find them (README, CONTRIBUTING.md, or wiki)
+
+---
+
+## Troubleshooting
+
+| Problem | Cause | Fix |
+|---------|-------|-----|
+| `git revert -m 1 <sha>` fails with "mainline was specified but commit is not a merge" | The PR was squash-merged, so `<sha>` is an ordinary commit, not a merge commit | Drop the `-m 1` flag and run `git revert <sha>` |
+| Push to `main` is rejected ("protected branch hook declined") | Branch protection is working: direct pushes to `main` are blocked | Open a pull request instead: push your branch, then `gh pr create` |
+| `git revert` stops with a conflict | The revert overlaps later edits to the same lines | Resolve the conflicts, `git add` them, then `git revert --continue` |
+| A PR shows "review required" and won't merge | Branch protection requires an approving review | Request a review (or self-approve if your ruleset allows), then merge |
 
 ---
 

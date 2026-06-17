@@ -14,7 +14,7 @@ A quick reference for prompting techniques and design tokens used throughout thi
 
 Structure every prompt with three components for consistently better results.
 
-| Component | What It Does | Example |
+| Component | What it does | Example |
 |-----------|-------------|---------|
 | **Action** | What you want the AI to do. Start with a verb, be specific. | "Create a dashboard page with four metric cards..." |
 | **Context** | Background, constraints, tech stack, design system. | "...using React + TypeScript + Tailwind CSS, following Fluent Design..." |
@@ -76,7 +76,7 @@ The second prompt produces a dramatically better result because the AI knows exa
 
 ## Top 10 prompt patterns for Power Pages
 
-### 1. Zero-Shot
+### 1. Zero-shot
 
 Ask directly without examples. Works for simple, well-defined tasks.
 
@@ -84,7 +84,7 @@ Ask directly without examples. Works for simple, well-defined tasks.
 Add a "Back to Dashboard" button to the Invoice Detail page header.
 ```
 
-### 2. One-Shot
+### 2. One-shot
 
 Provide one example to establish the pattern.
 
@@ -94,7 +94,7 @@ component is structured: it takes a title, value, and color prop and renders a
 rounded card with Tailwind classes. Follow the same pattern for StatusBadge.
 ```
 
-### 3. Few-Shot
+### 3. Few-shot
 
 Provide multiple examples to define a clear pattern.
 
@@ -187,7 +187,7 @@ Step 4: "Show a 'No results' message when filters return empty"
 
 ---
 
-## Common Anti-Patterns
+## Common anti-patterns
 
 Five prompting mistakes to avoid as you work through the labs.
 
@@ -268,7 +268,7 @@ When prompting for UI, naming a mature design system implicitly covers typograph
 
 ### Comparison
 
-| System | Best For | Covers Implicitly | Lab Fit |
+| System | Best for | Covers implicitly | Lab fit |
 |--------|----------|-------------------|---------|
 | **Fluent Design** | Enterprise dashboards, data-heavy apps | Depth, subtle motion, accessibility, Microsoft ecosystem alignment | **Primary**: matches Power Pages context |
 | **Material Design 3** | Most complete "single-name" coverage | Type scale, elevation, motion durations/easing, responsive breakpoints, design tokens | **Secondary**: pair with Fluent for layout/motion completeness |
@@ -279,7 +279,7 @@ When prompting for UI, naming a mature design system implicitly covers typograph
 
 For the Supplier Invoice Portal example used in these labs, lead with **Fluent** (matches Microsoft + Power Pages context); add **Material 3** when you want explicit motion or layout coverage.
 
-### Copy-Paste prompt lines
+### Copy-paste prompt lines
 
 **Fluent Design (Primary, recommended default):**
 
@@ -346,7 +346,7 @@ src/
 
 ### Best practices checklist
 
-| Practice | Prompt Guidance |
+| Practice | Prompt guidance |
 |----------|-----------------|
 | Keep components small | "Split large pages into focused components under the feature folder." |
 | Separate UI from data access | "Put Dataverse Web API calls in `services/`, not directly inside JSX." |
@@ -359,7 +359,7 @@ src/
 | Keep styling consistent | "Use Tailwind utility classes and the design tokens from this cheat sheet." |
 | Make errors visible | "Surface actionable error messages instead of failing silently." |
 
-### Copy-Paste prompt lines
+### Copy-paste prompt lines
 
 ```text
 Structure this React app using feature folders: shared layout/components under `components/`, feature-specific pages/components/services/types under `features/<feature-name>/`, and cross-cutting helpers under `lib/` and `hooks/`.
@@ -396,7 +396,7 @@ Keep the route and visible behavior the same, but:
 
 These work in both Claude Code and GitHub Copilot CLI. The built-in commands (`/help`, `/clear`, …) and every Power Pages plugin skill (`/create-site`, `/deploy-site`, …) are the same in each. The one difference is how you reference a file: Claude Code uses `#file path/to/file`, GitHub Copilot CLI uses `@path/to/file`.
 
-| Command | What It Does |
+| Command | What it does |
 |---------|-------------|
 | `/help` | Show available commands and skills |
 | `/compact` | Compress conversation context to free up space |

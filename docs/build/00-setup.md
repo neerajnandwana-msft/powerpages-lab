@@ -6,13 +6,13 @@ title: "Build phase setup"
 
 # Build phase setup
 
-Complete this section before [Lab 01: Scaffold a Power Pages SPA](01-scaffold-spa-portal.md). It installs and authenticates the tools the Build phase needs, and the same tools carry you through the [Integrate phase](../integrate/00-setup.md) (Labs 04–09). The [ALM phase](../alm/00-setup.md) adds one more tool (GitHub CLI) later. You don't need it yet.
+Complete this section before [Lab 01: Scaffold a Power Pages SPA](01-scaffold-spa-portal.md). It installs and authenticates the tools the Build phase needs, and the same tools carry you through the [Integrate phase](../integrate/00-setup.md) (Labs 04-09). The [ALM phase](../alm/00-setup.md) adds one more tool (GitHub CLI) later. You don't need it yet.
 
 For the staged, cross-phase view of what gets installed when, see the [Setup Guide overview](../setup-guide.md).
 
 **What you need:** Laptop with admin access, charger, and AI coding tools with a license (GitHub Copilot CLI and/or Claude Code CLI).
 
-**What's involved:** five steps: confirm your Dataverse environment, install the tools (Node.js, git, PAC CLI, Azure CLI, an AI coding CLI), install the Power Pages plugin, authenticate, and verify. Plan about 30–45 minutes the first time. If you don't have an environment yet, start the free trial in Step 1 first. It provisions while you install the rest.
+**What's involved:** five steps: confirm your Dataverse environment, install the tools (Node.js, git, PAC CLI, Azure CLI, an AI coding CLI), install the Power Pages plugin, authenticate, and verify. Plan about 30-45 minutes the first time. If you don't have an environment yet, start the free trial in Step 1 first. It provisions while you install the rest.
 
 ---
 
@@ -20,7 +20,7 @@ For the staged, cross-phase view of what gets installed when, see the [Setup Gui
 
 Every lab depends on a Dataverse environment. You must have one provisioned before moving on to the remaining steps. If you don't have one yet, contact your tenant admin right away.
 
-> **No environment? Create a free trial.** If you don't have access to a provisioned environment, you can sign up for a Power Pages trial (includes a Dataverse database) by following the official guide: [Sign up for a Power Pages trial](https://learn.microsoft.com/en-us/power-pages/getting-started/trial-signup). This gives you a fully functional environment for the lab track.
+> **No environment? Create a free trial.** If you don't have access to a provisioned environment, you can sign up for a Power Pages trial (includes a Dataverse database) by following the official guide: [Sign up for a Power Pages trial](https://learn.microsoft.com/power-pages/getting-started/trial-signup). This gives you a fully functional environment for the lab track.
 
 1. Go to [https://admin.powerplatform.microsoft.com/](https://admin.powerplatform.microsoft.com/)
 2. Confirm you can see your environment in the list
@@ -90,7 +90,7 @@ The installer automatically:
 
 After installation, restart GitHub Copilot CLI or Claude Code CLI to access the plugin's skills as slash commands in your agent session.
 
-For more on what the plugin provides and how to keep it current, see [Power Pages plugin for GitHub Copilot CLI and Claude Code](https://learn.microsoft.com/en-us/power-pages/configure/create-code-site-using-claude-code).
+For more on what the plugin provides and how to keep it current, see [Power Pages plugin for GitHub Copilot CLI and Claude Code](https://learn.microsoft.com/power-pages/configure/create-code-site-using-claude-code).
 
 ---
 
@@ -160,7 +160,7 @@ If all commands produce the expected output, you are ready for **Lab 01**.
 | `az account show` returns empty or says "Please run 'az login'" | Sign in with `az login --allow-no-subscriptions`. The flag lets you authenticate whether or not your account has an Azure subscription. The plugin only needs Microsoft Entra ID-scoped tokens for Dataverse and Power Platform. |
 | `pac auth create` fails                         | Verify the instance URL is correct (not the site URL). Try `pac auth clear` then `pac auth create` again.                                                                                                                                                                     |
 | `pac org who` shows wrong environment           | Run `pac auth list` to see all profiles. Switch with `pac auth select --index <N>`.                                                                                                                                                                                           |
-| No Power Pages environment visible              | If you don't have access to a provisioned environment, you can sign up for a Power Pages trial (includes a Dataverse database) by following the official guide: [Sign up for a Power Pages trial](https://learn.microsoft.com/en-us/power-pages/getting-started/trial-signup) |
+| No Power Pages environment visible              | If you don't have access to a provisioned environment, you can sign up for a Power Pages trial (includes a Dataverse database) by following the official guide: [Sign up for a Power Pages trial](https://learn.microsoft.com/power-pages/getting-started/trial-signup) |
 | System Administrator role missing               | Contact your tenant admin to have the System Administrator role assigned to you on the target environment. If using a trial environment (see Step 1), this role is granted automatically.                                                                                     |
 | Corporate proxy or firewall blocks installation | Try installing from a network without corporate proxy, or configure proxy settings: `npm config set proxy http://proxy:port` and `az config set core.proxy=http://proxy:port`                                                                                                 |
 | Laptop does not have admin rights               | Request temporary admin access from IT, or bring a personal laptop with admin access.                                                                                                                                                                                         |
@@ -170,3 +170,5 @@ If all commands produce the expected output, you are ready for **Lab 01**.
 ## What's next
 
 → [Lab 01: Scaffold a Power Pages SPA](01-scaffold-spa-portal.md)
+
+Back to the [Build phase overview](index.md) or the [track overview](../intro.md).

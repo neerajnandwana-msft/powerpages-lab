@@ -470,6 +470,8 @@ The flow:
 
 ---
 
+> **Checkpoint: Parts 1-4 are a complete, secured data layer.** You now have a Dataverse model, sample data, server-enforced table permissions, and a deployed site that reads scoped live data. This is a natural place to pause. Part 5 below is the second half of this lab: it configures real authentication and is required before [Lab 03](./03-web-api-integration.md). Resume here when you have time for it (about 30 minutes).
+
 ## Part 5: configure authentication with `/setup-auth`
 
 So far the deployed site is open: anyone with the URL can browse it, and Lab 02 Step 2.5 relied on the **default Microsoft Entra ID identity provider** that every activated site gets. That default is fine for "sign in once so my Contact exists", but real sites need a deliberate provider mix, role-based UI, claims mapping, and a sign-in page that fits the audience. `/setup-auth` handles all of that, including the legwork in the identity provider's admin center.

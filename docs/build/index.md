@@ -54,6 +54,8 @@ import { CheckCircle2, Database, Hammer, PlayCircle } from 'lucide-react';
 
 By the end of the Build phase, keep these artifacts in place: the deployed Power Pages SPA site, `.powerpages-site/` metadata, Dataverse invoice model, sample data linked to your Contact, table permissions, and typed Web API service layer. The Integrate phase builds on that state.
 
+**Done when:** you sign in to the deployed site and the Invoice List shows only the invoices linked to your Contact, loaded live from Dataverse instead of mock data.
+
 <div className="nextStepCallout">
   <h3>Start the Build phase</h3>
   <p>Begin with <Link to="/build/00-setup">Build phase setup</Link>. After setup passes, continue to Lab 01.</p>

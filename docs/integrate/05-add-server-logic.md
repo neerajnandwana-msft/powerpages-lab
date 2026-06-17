@@ -376,17 +376,6 @@ Then confirm that the Submit Invoice page still works.
 
 ---
 
-## Troubleshooting
-
-| Error | What You See | Cause | Fix |
-|-------|-------------|-------|-----|
-| 404 on `/_api/serverlogics/<name>` | Endpoint not found | Site not deployed after adding server logic | Run `/deploy-site` |
-| 403 on POST | Forbidden | Missing CSRF token or web role | Ensure `__RequestVerificationToken` header is sent; verify Authenticated Users role is assigned in the YAML |
-| Response `{ status: "error", message: "Cannot read property 'value' of undefined" }` | Dataverse call silently returned nothing | Missing or wrong table permission on cr_invoice | Add Read permission on cr_invoice for the Authenticated Users role, then redeploy |
-| `Expected Guid for primary key 'id'` on deploy | PAC CLI crash | `.serverlogic.yml` missing `id` field | The plugin uses the deterministic script which generates the GUID. Re-run `/add-server-logic` if you hand-edited |
-| Timeout (default 120s, max 240s) | Request hangs, eventually fails | External API call or loop taking too long | Raise `ServerLogic/TimeoutInSeconds` up to 240 if the work is bounded, or move to a cloud flow for anything longer |
-| `Server.Connector.Dataverse.RetrieveMultipleRecords is not a function` | Sandbox error | Used `fetch` instead of the SDK, or imported something | Server logic has no `fetch`: use `Server.Connector.HttpClient` for external calls and `Server.Connector.Dataverse` for Dataverse |
-
 ## Verification
 
 You have completed this lab when:
@@ -408,6 +397,17 @@ My duplicate-PO check isn't working. When I submit an invoice, I see
 [paste what you saw, such as the error message, "nothing happens", or 
 "a duplicate was accepted"]. Find the cause and fix it.
 ```
+
+## Troubleshooting
+
+| Error | What you see | Cause | Fix |
+|-------|-------------|-------|-----|
+| 404 on `/_api/serverlogics/<name>` | Endpoint not found | Site not deployed after adding server logic | Run `/deploy-site` |
+| 403 on POST | Forbidden | Missing CSRF token or web role | Ensure `__RequestVerificationToken` header is sent; verify Authenticated Users role is assigned in the YAML |
+| Response `{ status: "error", message: "Cannot read property 'value' of undefined" }` | Dataverse call silently returned nothing | Missing or wrong table permission on cr_invoice | Add Read permission on cr_invoice for the Authenticated Users role, then redeploy |
+| `Expected Guid for primary key 'id'` on deploy | PAC CLI crash | `.serverlogic.yml` missing `id` field | The plugin uses the deterministic script which generates the GUID. Re-run `/add-server-logic` if you hand-edited |
+| Timeout (default 120s, max 240s) | Request hangs, eventually fails | External API call or loop taking too long | Raise `ServerLogic/TimeoutInSeconds` up to 240 if the work is bounded, or move to a cloud flow for anything longer |
+| `Server.Connector.Dataverse.RetrieveMultipleRecords is not a function` | Sandbox error | Used `fetch` instead of the SDK, or imported something | Server logic has no `fetch`: use `Server.Connector.HttpClient` for external calls and `Server.Connector.Dataverse` for Dataverse |
 
 ## Fallback
 

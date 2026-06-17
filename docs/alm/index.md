@@ -60,6 +60,8 @@ import { GitBranch, PackageCheck, PlayCircle, Rocket, ShieldCheck } from 'lucide
 
 By the end of the ALM phase, your portal is source-controlled, packaged as a solution, and ready to promote through governed environments. Use [After the lab](/reference/after-the-lab) to turn the lab result into a team runbook.
 
+**Done when:** a change made on a feature branch flows through a pull request into `main`, then promotes through the pipeline from integration to pre-prod to prod with a manual approval gate.
+
 <div className="nextStepCallout">
   <h3>Start the ALM phase</h3>
   <p>Begin with <Link to="/alm/00-setup">ALM phase setup</Link>. It adds GitHub CLI, then moves you into Lab 10.</p>

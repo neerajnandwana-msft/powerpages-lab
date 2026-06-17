@@ -62,6 +62,8 @@ import { Bot, PlayCircle, ShieldCheck, Workflow, Zap } from 'lucide-react';
 
 By the end of the Integrate phase, your portal has live data, server logic, cloud flow integration, AI features, performance improvements, test coverage, and a release-readiness security review. The ALM phase packages and promotes this state.
 
+**Done when:** on the deployed site, the duplicate-PO rule is enforced server-side, submitting an invoice fires a Teams notification, the AI summary renders on the Invoice Detail page, and your security review shows no critical findings.
+
 <div className="nextStepCallout">
   <h3>Start the Integrate phase</h3>
   <p>Begin with <Link to="/integrate/00-setup">Integrate phase setup</Link>. It confirms your tools and points you to Lab 04.</p>

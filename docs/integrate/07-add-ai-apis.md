@@ -42,7 +42,7 @@ Both APIs are preview features gated by admin governance. The most common failur
 
 ### The three APIs
 
-| API | Endpoint | What It Returns | Body |
+| API | Endpoint | What it returns | Body |
 |-----|----------|----------------|------|
 | **Search Summary** | `POST /_api/search/v1.0/summary` | `{ Summary, Citations }` | `{ userQuery: "..." }` |
 | **Data Summarization** | `POST /_api/summarization/data/v1.0/<entitySet>(<id>)?$select=...&$expand=...` | `{ Summary, Recommendations }` | `{ InstructionIdentifier: "Summarization/prompt/<id>" }` |
@@ -410,6 +410,31 @@ After deployment:
 
 ---
 
+## Verification
+
+You have completed this lab when:
+
+- [ ] `src/services/aiSummaryService.ts` exports `fetchDataSummary` and `fetchSearchSummary`
+- [ ] Invoice Detail renders a Copilot card with grounded summary
+- [ ] `/search` page renders and returns an AI summary with citations
+- [ ] Citation links open valid SPA routes, such as invoice detail pages
+- [ ] `.powerpages-site/site-settings/Summarization-Data-Enable.sitesetting.yml` exists
+- [ ] `.powerpages-site/site-settings/Summarization-prompt-invoice_summary.sitesetting.yml` exists with a block-literal prompt
+- [ ] Site Search (preview) toggle in maker studio is on
+- [ ] Disabled-state card renders correctly when the toggle is temporarily off
+
+### Generic debug prompt
+
+When an AI feature isn't working on the deployed site, or `/add-ai-webapi` fails partway, paste this into your AI coding CLI:
+
+```
+My AI summary isn't working on the deployed site. I'm seeing [paste 
+the error, or describe what you saw, such as "a 400 error", "a card 
+that says AI is turned off", or "the card keeps spinning"]. Find the 
+cause. I don't know whether the problem is in my code, in a site 
+setting, or in an admin configuration.
+```
+
 ## Troubleshooting
 
 ### The admin hierarchy walkthrough
@@ -441,7 +466,7 @@ Re-run `/integrate-webapi` in AI-read-only mode to rebuild Layer 1/2 cleanly rat
 
 ### Common error table
 
-| Error | What You See | Cause | Fix |
+| Error | What you see | Cause | Fix |
 |-------|-------------|-------|-----|
 | 200 + `{ Code: 400, Message: "Gen AI Search is disabled" }` | Search Summary returns an envelope error at HTTP 200 | Admin hierarchy disabled somewhere | Walk tenant → env → site and enable the right layer |
 | 400 code `90041001` | Data Summarization 400 | Same as above for Data Summarization | Same fix |
@@ -455,31 +480,6 @@ Re-run `/integrate-webapi` in AI-read-only mode to rebuild Layer 1/2 cleanly rat
 | Summary returns placeholders like `[\"...\"]` | JSON-encoded string array rendered raw | List-summary prompts return JSON-encoded summaries | Use `normalizeSummaryString` helper in the service layer. The plugin adds this automatically |
 
 ---
-
-## Verification
-
-You have completed this lab when:
-
-- [ ] `src/services/aiSummaryService.ts` exports `fetchDataSummary` and `fetchSearchSummary`
-- [ ] Invoice Detail renders a Copilot card with grounded summary
-- [ ] `/search` page renders and returns an AI summary with citations
-- [ ] Citation links open valid SPA routes, such as invoice detail pages
-- [ ] `.powerpages-site/site-settings/Summarization-Data-Enable.sitesetting.yml` exists
-- [ ] `.powerpages-site/site-settings/Summarization-prompt-invoice_summary.sitesetting.yml` exists with a block-literal prompt
-- [ ] Site Search (preview) toggle in maker studio is on
-- [ ] Disabled-state card renders correctly when the toggle is temporarily off
-
-### Generic debug prompt
-
-When an AI feature isn't working on the deployed site, or `/add-ai-webapi` fails partway, paste this into your AI coding CLI:
-
-```
-My AI summary isn't working on the deployed site. I'm seeing [paste 
-the error, or describe what you saw, such as "a 400 error", "a card 
-that says AI is turned off", or "the card keeps spinning"]. Find the 
-cause. I don't know whether the problem is in my code, in a site 
-setting, or in an admin configuration.
-```
 
 ## Fallback
 

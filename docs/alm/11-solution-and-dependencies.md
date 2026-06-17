@@ -341,20 +341,6 @@ For SPA sites these are out of scope for environment variables. The pragmatic op
 
 ---
 
-## Troubleshooting
-
-| Problem | Fix |
-|---|---|
-| `/plan-alm` says "no PAC CLI session" | Run `pac auth list`. If empty, `pac auth create --environment <dev-url>`. Re-run `/plan-alm`. |
-| `/setup-solution` proposes the wrong publisher prefix | Cancel the proposal, ask the plugin to use the prefix from your existing tables (`/setup-solution Use the cr prefix for the publisher`). The plugin re-reads existing components and re-proposes. |
-| Key Vault provisioning fails with "subscription not found" | The Azure CLI session is signed in without an Azure subscription. Run `az login` (without `--allow-no-subscriptions`) and try again, or decline Key Vault for this run and revisit later. |
-| `/export-solution` says "solution incomplete" | The completeness check found components the plugin authored that aren't in the dev env's solution. Re-run `/setup-solution` (sync mode) to reconcile, then export. |
-| `pac solution export` says "Solution not found" | Confirm spelling matches the solution **Name** (not Display name): `pac solution list` lists everything in the env. |
-| Unpack fails with "invalid zip" | Re-export: partial downloads happen on flaky networks. |
-| Pack fails with "missing component" | Someone deleted a file from `src/solution/` without re-exporting. Either restore from Git or re-export from dev. |
-| `/import-solution` fails on a fresh env with "missing dependency" | Run with staged mode first (`/import-solution ... staged mode`). Staged mode tells you exactly which dependency is missing without leaving the target env half-imported. |
-| `.zip` file accidentally committed | `git rm --cached build/SupplierPortal.zip && git commit -m "Remove zip from tracking"`. Verify `.gitignore` excludes `*.zip` and `build/`. |
-
 ## Verification
 
 You have completed this lab when:
@@ -378,6 +364,20 @@ Here is the output. Resume from where it stopped:
 
 [paste output, including the path to docs/alm-plan.html]
 ```
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `/plan-alm` says "no PAC CLI session" | Run `pac auth list`. If empty, `pac auth create --environment <dev-url>`. Re-run `/plan-alm`. |
+| `/setup-solution` proposes the wrong publisher prefix | Cancel the proposal, ask the plugin to use the prefix from your existing tables (`/setup-solution Use the cr prefix for the publisher`). The plugin re-reads existing components and re-proposes. |
+| Key Vault provisioning fails with "subscription not found" | The Azure CLI session is signed in without an Azure subscription. Run `az login` (without `--allow-no-subscriptions`) and try again, or decline Key Vault for this run and revisit later. |
+| `/export-solution` says "solution incomplete" | The completeness check found components the plugin authored that aren't in the dev env's solution. Re-run `/setup-solution` (sync mode) to reconcile, then export. |
+| `pac solution export` says "Solution not found" | Confirm spelling matches the solution **Name** (not Display name): `pac solution list` lists everything in the env. |
+| Unpack fails with "invalid zip" | Re-export: partial downloads happen on flaky networks. |
+| Pack fails with "missing component" | Someone deleted a file from `src/solution/` without re-exporting. Either restore from Git or re-export from dev. |
+| `/import-solution` fails on a fresh env with "missing dependency" | Run with staged mode first (`/import-solution ... staged mode`). Staged mode tells you exactly which dependency is missing without leaving the target env half-imported. |
+| `.zip` file accidentally committed | `git rm --cached build/SupplierPortal.zip && git commit -m "Remove zip from tracking"`. Verify `.gitignore` excludes `*.zip` and `build/`. |
 
 ## Fallback
 

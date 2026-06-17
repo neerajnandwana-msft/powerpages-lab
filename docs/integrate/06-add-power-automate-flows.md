@@ -350,7 +350,7 @@ Verify:
 
 Wait for the upload to complete. The flow consumer YAML and the service code both ship with this deploy.
 
-### Step 5.2: confirm the Portal-Runtime URL is populated
+### Step 5.2: confirm the portal-runtime URL is populated
 
 After deploy, Power Pages should populate the Flow API URL value on the cloud flow consumer record in Dataverse.
 
@@ -388,19 +388,6 @@ Open DevTools Network tab on Invoice Detail. Select **Re-notify** and watch the 
 
 ---
 
-## Troubleshooting
-
-| Error | What You See | Cause | Fix |
-|-------|-------------|-------|-----|
-| Flow doesn't appear in `/add-cloud-flow` list | Empty results from Flow RP API | Flow uses a different trigger | Only flows with "When Power Pages calls a flow" surface. Rebuild the trigger. |
-| 403 Forbidden on trigger call | Network tab shows 403 | CSRF or web role failure | Verify the token is fetched and sent. Verify Authenticated Users role is in the YAML. |
-| 500 Internal Server Error | Network tab shows 500 | Missing `X-Requested-With` header | Every trigger call must include `X-Requested-With: XMLHttpRequest` |
-| Teams message arrives but fields are blank | Dynamic tokens render as empty strings | Payload not wrapped as `eventData` | Body must be `JSON.stringify({ eventData: JSON.stringify(payload) })`, not flat |
-| Flow returns 404 | Flow in Draft state | Flow not activated | In Power Automate, select Turn on. Confirm the flow shows Active in the list. |
-| Teams connector fails with 401 | Run history shows auth error | Connection under owner expired | Reconnect the Teams connection in Power Automate → Connections |
-| `flowapiurl` blank after deploy | Cloud flow consumer row has no URL | Portal runtime hasn't processed the consumer yet, or YAML is malformed | Wait 2 minutes, redeploy. If still blank, verify `processid` matches `workflowEntityId`. |
-| Every submit sends two Teams messages | Double-fire | Both `/add-server-logic` and `/add-cloud-flow` wired the handler | Ensure only one call site fires per user action, review Submit Invoice imports |
-
 ## Verification
 
 You have completed this lab when:
@@ -427,6 +414,19 @@ Run history link or error: [paste from Power Automate Run history]
 Network request: [paste the /cloudflow/v1.0/trigger/... request]
 Network response: [paste the response body]
 ```
+
+## Troubleshooting
+
+| Error | What you see | Cause | Fix |
+|-------|-------------|-------|-----|
+| Flow doesn't appear in `/add-cloud-flow` list | Empty results from Flow RP API | Flow uses a different trigger | Only flows with "When Power Pages calls a flow" surface. Rebuild the trigger. |
+| 403 Forbidden on trigger call | Network tab shows 403 | CSRF or web role failure | Verify the token is fetched and sent. Verify Authenticated Users role is in the YAML. |
+| 500 Internal Server Error | Network tab shows 500 | Missing `X-Requested-With` header | Every trigger call must include `X-Requested-With: XMLHttpRequest` |
+| Teams message arrives but fields are blank | Dynamic tokens render as empty strings | Payload not wrapped as `eventData` | Body must be `JSON.stringify({ eventData: JSON.stringify(payload) })`, not flat |
+| Flow returns 404 | Flow in Draft state | Flow not activated | In Power Automate, select Turn on. Confirm the flow shows Active in the list. |
+| Teams connector fails with 401 | Run history shows auth error | Connection under owner expired | Reconnect the Teams connection in Power Automate → Connections |
+| `flowapiurl` blank after deploy | Cloud flow consumer row has no URL | Portal runtime hasn't processed the consumer yet, or YAML is malformed | Wait 2 minutes, redeploy. If still blank, verify `processid` matches `workflowEntityId`. |
+| Every submit sends two Teams messages | Double-fire | Both `/add-server-logic` and `/add-cloud-flow` wired the handler | Ensure only one call site fires per user action, review Submit Invoice imports |
 
 ## Fallback
 

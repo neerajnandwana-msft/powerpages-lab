@@ -6,7 +6,7 @@ title: "Integrate phase setup"
 
 # Integrate phase setup
 
-You've wrapped the Build phase (Labs 01–03). The Integrate phase (Labs 04–09) adds server logic, automation, and AI features using skills you already have: **there are no new required tools beyond the Build phase**. If you completed [Build phase setup](../build/00-setup.md), you're ready for [Lab 04](04-pick-backend-pattern.md).
+You've wrapped the Build phase (Labs 01-03). The Integrate phase (Labs 04-09) adds server logic, automation, and AI features using skills you already have: **there are no new required tools beyond the Build phase**. If you completed [Build phase setup](../build/00-setup.md), you're ready for [Lab 04](04-pick-backend-pattern.md).
 
 Keep your PAC CLI and Azure CLI sessions active; re-run `pac auth create` or `az login` if they expire.
 
@@ -30,3 +30,5 @@ For the staged, cross-phase view of what gets installed when, see the [Setup Gui
 ## What's next
 
 → [Lab 04: Plan the service layer](04-pick-backend-pattern.md)
+
+Back to the [Integrate phase overview](index.md) or the [track overview](../intro.md).

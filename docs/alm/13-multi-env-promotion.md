@@ -288,18 +288,6 @@ Each tool does the part it's best at.
 
 ---
 
-## Troubleshooting
-
-| Problem | Fix |
-|---|---|
-| `/ensure-pipelines-host` says "no eligible host" | Your tenant has no platform host and the default env doesn't qualify for app install. Provision a dedicated host env (Power Platform admin center → environments → +New) and re-run the skill. |
-| `/setup-pipeline` fails with "environment already linked" | Target env is bound to a different Pipelines host. Run `/force-link-environment` to reassign. |
-| `/deploy-pipeline` waits indefinitely on "Awaiting approval" | The approval flow on this stage is enabled but the approver hasn't acted. Check Teams / email. If the approver is unavailable, you can reassign the approval through the Power Automate run history. |
-| `/test-site` fails the role-based access check | The role assignments in the target env don't match what the SPA expects. Re-export from dev with the correct web role / table permission state, redeploy. |
-| `/diagnose-deployment` says "no catalog match" | The failure is novel; the plugin prints the raw error and proposes a manual investigation path. Paste the error into a focused prompt for a one-off fix. |
-| Site setting value not surfacing after env variable change | Clear the site cache: in design studio select **Sync**; or sign in to the portal, browse to `/_services/about`, select **Clear cache**; or restart the portal from the admin center. |
-| `/import-solution` staged mode says "ok" but apply fails | The dependency check passes in stage mode but a runtime dependency (e.g. a plug-in trust) fails on apply. Read the apply-mode error, address it, re-run apply. |
-
 ## Verification
 
 You have completed this lab when:
@@ -324,6 +312,18 @@ and propose a fix:
 
 [paste the error]
 ```
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `/ensure-pipelines-host` says "no eligible host" | Your tenant has no platform host and the default env doesn't qualify for app install. Provision a dedicated host env (Power Platform admin center → environments → +New) and re-run the skill. |
+| `/setup-pipeline` fails with "environment already linked" | Target env is bound to a different Pipelines host. Run `/force-link-environment` to reassign. |
+| `/deploy-pipeline` waits indefinitely on "Awaiting approval" | The approval flow on this stage is enabled but the approver hasn't acted. Check Teams / email. If the approver is unavailable, you can reassign the approval through the Power Automate run history. |
+| `/test-site` fails the role-based access check | The role assignments in the target env don't match what the SPA expects. Re-export from dev with the correct web role / table permission state, redeploy. |
+| `/diagnose-deployment` says "no catalog match" | The failure is novel; the plugin prints the raw error and proposes a manual investigation path. Paste the error into a focused prompt for a one-off fix. |
+| Site setting value not surfacing after env variable change | Clear the site cache: in design studio select **Sync**; or sign in to the portal, browse to `/_services/about`, select **Clear cache**; or restart the portal from the admin center. |
+| `/import-solution` staged mode says "ok" but apply fails | The dependency check passes in stage mode but a runtime dependency (e.g. a plug-in trust) fails on apply. Read the apply-mode error, address it, re-run apply. |
 
 ## Fallback
 
@@ -378,4 +378,6 @@ In every other case, prefer `/deploy-pipeline`. The audit trail, approval gates,
 
 ## Next step
 
-You've reached the end of the lab track. To turn the lab output into a team practice, see [After the lab](/reference/after-the-lab).
+You've reached the end of the lab track. Look back at the arc: you scaffolded a React SPA (Lab 01), connected it to a secured Dataverse model with live Web API data (Labs 02-03), layered on server logic, automation, and AI features (Labs 04-08), reviewed it for security (Lab 09), and brought it under source control, solution packaging, and governed multi-environment promotion (Labs 10-13). You now have a production-ready Power Pages portal and a repeatable ALM pipeline behind it.
+
+To turn the lab output into a team practice, see [After the lab](/reference/after-the-lab).

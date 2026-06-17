@@ -354,6 +354,41 @@ The `cr_status` field is a Dataverse Choice column. The API returns and accepts 
 
 ---
 
+## Verification
+
+You have completed this lab when:
+
+- [ ] `src/services/webApi.ts` exists with CSRF token handling
+- [ ] `src/types/entities.ts` has Invoice interface with correct `cr_` prefixed field names
+- [ ] `src/services/invoiceService.ts` has getAll, getById, create, and update functions
+- [ ] Mock data files are no longer imported by any component
+- [ ] Dashboard shows real Dataverse data (metric cards reflect actual record counts)
+- [ ] Invoice List displays all records from the API
+- [ ] Status filter works correctly (filters via OData `$filter`)
+- [ ] Search works correctly
+- [ ] Submit Invoice creates a real record in Dataverse with auto-generated Invoice Number
+- [ ] New record is visible in make.powerapps.com after submission
+- [ ] Invoice Detail shows correct data for a specific record
+- [ ] Network tab shows `/_api/cr_invoices` calls and `/_layout/tokenhtml` requests
+- [ ] A DELETE against `/_api/cr_invoices(<id>)` returns 403 (suppliers cannot delete invoices, proving the permission layer holds)
+
+### Generic debug prompt
+
+If `/integrate-webapi` or the live API call fails, paste the output back to your AI coding CLI:
+
+```
+I deployed and tested the Web API integration. A call to /_api/<table>
+failed. Diagnose the root cause and propose a fix before applying
+anything.
+
+URL: [paste the full request URL]
+Status: [paste the HTTP status code]
+Response body: [paste the full JSON response]
+Console errors: [paste any related DevTools Console errors]
+```
+
+---
+
 ## Troubleshooting
 
 If you encounter issues during testing, use this reference to diagnose and fix them.
@@ -434,40 +469,6 @@ If you deploy changes but the site still shows old behavior:
 1. Use an incognito/private window
 2. Hard refresh: Ctrl+Shift+R
 3. Clear site data: DevTools > Application > Storage > Clear site data
-
----
-
-## Verification
-
-You have completed this lab when:
-
-- [ ] `src/services/webApi.ts` exists with CSRF token handling
-- [ ] `src/types/entities.ts` has Invoice interface with correct `cr_` prefixed field names
-- [ ] `src/services/invoiceService.ts` has getAll, getById, create, and update functions
-- [ ] Mock data files are no longer imported by any component
-- [ ] Dashboard shows real Dataverse data (metric cards reflect actual record counts)
-- [ ] Invoice List displays all records from the API
-- [ ] Status filter works correctly (filters via OData `$filter`)
-- [ ] Search works correctly
-- [ ] Submit Invoice creates a real record in Dataverse with auto-generated Invoice Number
-- [ ] New record is visible in make.powerapps.com after submission
-- [ ] Invoice Detail shows correct data for a specific record
-- [ ] Network tab shows `/_api/cr_invoices` calls and `/_layout/tokenhtml` requests
-
-### Generic debug prompt
-
-If `/integrate-webapi` or the live API call fails, paste the output back to your AI coding CLI:
-
-```
-I deployed and tested the Web API integration. A call to /_api/<table>
-failed. Diagnose the root cause and propose a fix before applying
-anything.
-
-URL: [paste the full request URL]
-Status: [paste the HTTP status code]
-Response body: [paste the full JSON response]
-Console errors: [paste any related DevTools Console errors]
-```
 
 ---
 

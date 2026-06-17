@@ -17,6 +17,19 @@ Not sure which one you have? Run `claude --version` and `copilot --version` in y
 
 ---
 
+## Key differences at a glance
+
+Both CLIs run the same Power Pages plugin skills: `/create-site`, `/deploy-site`, and the rest are invoked identically. The differences are in how you drive the tool. For permission modes, context management, and session resume, read the section for your tool below.
+
+| | Claude Code | GitHub Copilot CLI |
+|---|---|---|
+| Launch command | `claude` | `copilot` |
+| Reference a file in a prompt | `#file path/to/file` | `@path/to/file` |
+| Project context file (auto-loaded) | `CLAUDE.md` | `AGENTS.md` |
+| Available models | Claude family | Multiple (Claude and GPT families; depends on your account) |
+
+---
+
 ## Claude Code CLI orientation
 
 ### Launching Claude Code
@@ -31,7 +44,7 @@ This starts an interactive Claude Code session. You will see a prompt where you 
 
 ### Key slash commands
 
-| Command | What It Does | When to Use |
+| Command | What it does | When to use |
 |---------|-------------|-------------|
 | `/help` | Shows available commands and installed plugin skills | When you forget a command name |
 | `/status` | Shows current model, account, and environment info | When you want to confirm which model you are on |
@@ -57,7 +70,7 @@ This starts an interactive Claude Code session. You will see a prompt where you 
 
 Claude Code runs in one of several **permission modes** that control how actions are approved. Press **Shift+Tab** to cycle through them. The current mode appears in the status line.
 
-| Mode | What It Does | When to Use |
+| Mode | What it does | When to use |
 |------|--------------|-------------|
 | `default` | Asks you to approve each action before it runs | Safest, use when touching unfamiliar code |
 | `acceptEdits` | Auto-approves file edits; still asks for shell commands | Iterating on edits you trust (refactors, renames) |
@@ -209,7 +222,7 @@ This starts an interactive GitHub Copilot CLI session. You will see a prompt whe
 
 ### Key slash commands
 
-| Command | What It Does | When to Use |
+| Command | What it does | When to use |
 |---------|-------------|-------------|
 | `/help` | Shows available commands | When you forget a command name |
 | `/model` | Opens model picker to check or switch the AI model | When you want a different model for a task |
@@ -244,7 +257,7 @@ This starts an interactive GitHub Copilot CLI session. You will see a prompt whe
 
 Copilot CLI has two modes you can toggle with **Shift+Tab**, shown in the prompt UI:
 
-| Mode | What It Does | When to Use |
+| Mode | What it does | When to use |
 |------|--------------|-------------|
 | Execute (default) | Asks to approve each action before it runs | Safest, use when touching unfamiliar code |
 | Plan | Produces an implementation plan first without editing files; you review and then switch back to Execute to carry it out | Larger multi-step tasks, before you have confidence |

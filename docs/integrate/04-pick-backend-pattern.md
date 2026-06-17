@@ -19,7 +19,7 @@ Create a reviewed integration plan that classifies each supplier portal feature 
 - `/integrate-backend` available in your AI coding CLI session
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`. The orchestrator uses Microsoft Entra ID-scoped tokens that work without one.
 
-> **No new tools for the Integrate phase.** Labs 04–08 run on the same tooling you installed in the Build phase. The only optional add-on is a static-analysis tool for [Lab 09](./09-security-review.md). See [Integrate phase setup](00-setup.md).
+> **No new tools for the Integrate phase.** Labs 04-08 run on the same tooling you installed in the Build phase. The only optional add-on is a static-analysis tool for [Lab 09](./09-security-review.md). See [Integrate phase setup](00-setup.md).
 
 ## Learning objectives
 
@@ -242,16 +242,6 @@ Wrap Azure OpenAI in server logic. Put your API key in a site setting backed by 
 
 ---
 
-## Troubleshooting
-
-| Error | What you see | Cause | Fix |
-|-------|--------------|-------|-----|
-| Plan classifies a security-critical check as Web API | "Validate PO uniqueness" listed under Web API | Prototype only validates in React, so the orchestrator infers a client-side rule | In the plan UI, request a change: "this rule must be tamper-proof. Reclassify as Server Logic (validate-and-execute)" |
-| Orchestrator skips a feature you expected | The feature is missing from the plan entirely | The feature is not surfaced in any prototype component, mock data, or comment the orchestrator can read | Add a placeholder component or a clear intent comment, then re-run `/integrate-backend` |
-| Resume restarts from the top | After Ctrl-C, the orchestrator begins from scratch | The plan/state file was deleted or never written | Re-run `/integrate-backend` once the prerequisites (PAC, Azure auth, deployed `.powerpages-site/`) are healthy; verify the plan/state file is present and committed |
-| One sub-skill fails midway | The orchestrator halts at a specific step with the underlying skill's error | Underlying issue (PAC auth lapsed, table permission missing, deploy failed, etc.) | Fix the underlying issue, re-run `/integrate-backend`. It resumes from the failed step |
-| Endpoint returns 404 after orchestrator finishes | `/_api/serverlogics/<name>` or cloud-flow trigger 404s | Site has not been deployed since the orchestrator generated the artifacts | Run `/deploy-site` (or accept the orchestrator's deploy prompt), then retest |
-
 ## Verification
 
 You have completed this lab when:
@@ -282,6 +272,16 @@ If a sub-skill fails midway, paste this:
 The error was [paste error]. Diagnose, fix the root cause, and resume 
 from the failed step.
 ```
+
+## Troubleshooting
+
+| Error | What you see | Cause | Fix |
+|-------|--------------|-------|-----|
+| Plan classifies a security-critical check as Web API | "Validate PO uniqueness" listed under Web API | Prototype only validates in React, so the orchestrator infers a client-side rule | In the plan UI, request a change: "this rule must be tamper-proof. Reclassify as Server Logic (validate-and-execute)" |
+| Orchestrator skips a feature you expected | The feature is missing from the plan entirely | The feature is not surfaced in any prototype component, mock data, or comment the orchestrator can read | Add a placeholder component or a clear intent comment, then re-run `/integrate-backend` |
+| Resume restarts from the top | After Ctrl-C, the orchestrator begins from scratch | The plan/state file was deleted or never written | Re-run `/integrate-backend` once the prerequisites (PAC, Azure auth, deployed `.powerpages-site/`) are healthy; verify the plan/state file is present and committed |
+| One sub-skill fails midway | The orchestrator halts at a specific step with the underlying skill's error | Underlying issue (PAC auth lapsed, table permission missing, deploy failed, etc.) | Fix the underlying issue, re-run `/integrate-backend`. It resumes from the failed step |
+| Endpoint returns 404 after orchestrator finishes | `/_api/serverlogics/<name>` or cloud-flow trigger 404s | Site has not been deployed since the orchestrator generated the artifacts | Run `/deploy-site` (or accept the orchestrator's deploy prompt), then retest |
 
 ## Fallback
 

@@ -23,7 +23,7 @@ You don't install everything up front. Each phase adds only the tooling its labs
 | Phase | Setup | Install before | Tools |
 | --- | --- | --- | --- |
 | **Build** (start here) | [Build phase setup](build/00-setup.md) | [Lab 01](build/01-scaffold-spa-portal.md) | Dataverse environment, Node.js, git, PAC CLI, Azure CLI, AI coding CLI, Power Pages plugin (plus `pac auth create` and `az login`) |
-| **Integrate** | [Integrate phase setup](integrate/00-setup.md) | [Lab 04](integrate/04-pick-backend-pattern.md) | **No new required tools.** The Build tools carry Labs 04–08. opengrep is *optional* before [Lab 09](integrate/09-security-review.md) and has a no-install fallback. |
+| **Integrate** | [Integrate phase setup](integrate/00-setup.md) | [Lab 04](integrate/04-pick-backend-pattern.md) | **No new required tools.** The Build tools carry Labs 04-08. opengrep is *optional* before [Lab 09](integrate/09-security-review.md) and has a no-install fallback. |
 | **ALM** | [ALM phase setup](alm/00-setup.md) | [Lab 10](alm/10-source-control.md) | GitHub CLI (`gh`) and a GitHub account (plus `gh auth login`) |
 
 Each setup page lists its install steps, a verification checklist, and troubleshooting for just that phase.
