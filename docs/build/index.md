@@ -23,6 +23,8 @@ import { CheckCircle2, Database, Hammer, PlayCircle } from 'lucide-react';
 
 ## What you will do
 
+The Build phase turns an empty environment into a working, secured portal foundation. By the end, you have a deployed SPA, a Dataverse model, Contact-scoped permissions, authentication helpers, and live Web API data ready for the Integrate phase.
+
 <div className="rootCardGrid">
   <div className="rootCard">
     <Hammer className="rootCard__icon" aria-hidden="true" />
@@ -45,16 +47,19 @@ import { CheckCircle2, Database, Hammer, PlayCircle } from 'lucide-react';
 
 | # | Lab | Outcome |
 |---|---|---|
-| Setup | [Build phase setup](/build/00-setup) | Tools installed and authenticated for Labs 01-03 |
+| Setup | [Build phase setup](/build/00-setup) | Tools installed and authenticated for Labs 01-04 |
 | 01 | [Scaffold a Power Pages SPA](/build/01-scaffold-spa-portal) | A working React SPA running locally with mock data |
 | 02 | [Set up Dataverse and security](/build/02-dataverse-and-security) | Real Dataverse tables, sample data, and security layers |
-| 03 | [Connect the SPA to live Dataverse data](/build/03-web-api-integration) | Typed Web API service layer and live CRUD |
+| 03 | [Configure authentication](/build/03-configure-authentication) | Deliberate identity-provider mix, role-based UI, claims mapping |
+| 04 | [Connect the SPA to live Dataverse data](/build/04-web-api-integration) | Typed Web API service layer and live CRUD |
 
 ## State you hand off
 
 By the end of the Build phase, keep these artifacts in place: the deployed Power Pages SPA site, `.powerpages-site/` metadata, Dataverse invoice model, sample data linked to your Contact, table permissions, and typed Web API service layer. The Integrate phase builds on that state.
 
 **Done when:** you sign in to the deployed site and the Invoice List shows only the invoices linked to your Contact, loaded live from Dataverse instead of mock data.
+
+**Next two stops:** complete [Build phase setup](/build/00-setup), then scaffold the portal in [Lab 01](/build/01-scaffold-spa-portal). Do not skip the setup checks: they prevent the most common deployment and authentication failures.
 
 <div className="nextStepCallout">
   <h3>Start the Build phase</h3>

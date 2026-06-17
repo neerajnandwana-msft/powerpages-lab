@@ -111,6 +111,169 @@
   margin-top: 1.5rem;
 }
 
+.wipBanner {
+  background:
+    linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(116, 39, 116, 0.08));
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-left: 6px solid #f59e0b;
+  border-radius: 1rem;
+  box-shadow: 0 0.65rem 1.5rem rgba(116, 39, 116, 0.08);
+  margin: 0.5rem 0 1.25rem;
+  padding: 1rem 1.25rem;
+}
+
+.wipBanner strong {
+  color: #92400e;
+  display: block;
+  font-size: 0.92rem;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.wipBanner p {
+  margin-bottom: 0;
+}
+
+.guideGrid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 1.5rem 0 2rem;
+}
+
+.guideCard {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 1.25rem;
+  color: var(--ifm-font-color-base);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.guideCard--primary {
+  border-color: rgba(116, 39, 116, 0.24);
+}
+
+.guideCard:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0.85rem 2rem rgba(116, 39, 116, 0.12);
+  color: var(--ifm-font-color-base);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.guideCard h3 {
+  margin: 0.35rem 0 0.6rem;
+}
+
+.guideCard p {
+  margin-bottom: 0.75rem;
+}
+
+.guideCard ul {
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+}
+
+.guideCard__icon {
+  background: rgba(116, 39, 116, 0.09);
+  border-radius: 0.85rem;
+  color: var(--ifm-color-primary);
+  height: 2.75rem;
+  margin-bottom: 1rem;
+  padding: 0.55rem;
+  width: 2.75rem;
+}
+
+.guideCard__label {
+  color: var(--ifm-color-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.guideCard__cta {
+  color: var(--ifm-color-primary);
+  font-weight: 700;
+  margin-top: auto;
+}
+
+.powerPlatformGuide {
+  --power-platform-color-primary: #0078d4;
+  --power-platform-color-primary-dark: #005a9e;
+  --power-platform-color-primary-soft: rgba(0, 120, 212, 0.1);
+  --power-platform-color-primary-softer: rgba(0, 120, 212, 0.05);
+  --power-platform-color-secondary: #742774;
+}
+
+.powerPlatformGuide a {
+  color: var(--power-platform-color-primary);
+}
+
+.powerPlatformGuide .landingHero {
+  background:
+    radial-gradient(circle at top right, rgba(0, 120, 212, 0.2), transparent 32rem),
+    linear-gradient(135deg, rgba(0, 120, 212, 0.12), rgba(116, 39, 116, 0.04));
+  border-color: rgba(0, 120, 212, 0.22);
+}
+
+.powerPlatformGuide .landingEyebrow,
+.powerPlatformGuide .phaseCard__label,
+.powerPlatformGuide .guideCard__label,
+.powerPlatformGuide .guideCard__cta {
+  color: var(--power-platform-color-primary);
+}
+
+.powerPlatformGuide .button--primary {
+  --ifm-button-background-color: var(--power-platform-color-primary);
+  --ifm-button-border-color: var(--power-platform-color-primary);
+}
+
+.powerPlatformGuide .button--primary:hover {
+  --ifm-button-background-color: var(--power-platform-color-primary-dark);
+  --ifm-button-border-color: var(--power-platform-color-primary-dark);
+}
+
+.powerPlatformGuide .button--secondary {
+  --ifm-button-color: var(--power-platform-color-primary);
+  --ifm-button-border-color: rgba(0, 120, 212, 0.45);
+}
+
+.powerPlatformGuide .phaseCard__icon,
+.powerPlatformGuide .rootCard__icon,
+.powerPlatformGuide .guideCard__icon {
+  background: var(--power-platform-color-primary-soft);
+  color: var(--power-platform-color-primary);
+}
+
+.powerPlatformGuide .phaseCard:hover,
+.powerPlatformGuide .guideCard:hover {
+  border-color: var(--power-platform-color-primary);
+  box-shadow: 0 0.85rem 2rem rgba(0, 120, 212, 0.14);
+}
+
+.powerPlatformGuide .nextStepCallout {
+  border-left-color: var(--power-platform-color-primary);
+}
+
+.powerPlatformGuide .wipBanner {
+  background:
+    linear-gradient(135deg, rgba(0, 120, 212, 0.14), rgba(0, 120, 212, 0.05));
+  border-color: rgba(0, 120, 212, 0.4);
+  border-left-color: var(--power-platform-color-primary);
+  box-shadow: 0 0.65rem 1.5rem rgba(0, 120, 212, 0.1);
+}
+
+.powerPlatformGuide .wipBanner strong {
+  color: var(--power-platform-color-primary-dark);
+}
+
 .phaseGrid {
   display: grid;
   gap: 1rem;
@@ -252,6 +415,10 @@
   box-shadow: 0 0.85rem 2rem rgba(0, 0, 0, 0.32);
 }
 
+[data-theme='dark'] .guideCard:hover {
+  box-shadow: 0 0.85rem 2rem rgba(0, 0, 0, 0.32);
+}
+
 [data-theme='dark'] .phaseRootHero {
   background:
     radial-gradient(circle at top left, rgba(182, 108, 182, 0.2), transparent 26rem),
@@ -260,6 +427,7 @@
 }
 
 @media (max-width: 768px) {
+  .guideGrid,
   .phaseGrid,
   .rootCardGrid {
     grid-template-columns: 1fr;

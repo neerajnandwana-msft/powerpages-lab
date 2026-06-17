@@ -1,10 +1,10 @@
 ---
 sidebar_position: 3
-sidebar_label: "Lab 06: Add Power Automate flows"
-title: "Lab 06: Add Power Automate flows"
+sidebar_label: "Lab 07: Add Power Automate flows"
+title: "Lab 07: Add Power Automate flows"
 ---
 
-# Lab 06: Add Power Automate flows
+# Lab 07: Add Power Automate flows
 
 ## Goal
 
@@ -14,16 +14,16 @@ Add a Power Automate cloud flow that sends a Teams notification when a supplier 
 
 ## State you carry forward
 
-- Completed [Lab 05: Add server logic](./05-add-server-logic.md) (you've seen the CSRF and web role pattern once)
+- Completed [Lab 06: Add server logic](./06-add-server-logic.md) (you've seen the CSRF and web role pattern once)
 - Access to Power Automate (`make.powerautomate.com`) with permission to create flows in the same environment as your Power Pages site
 - Azure CLI authenticated (`az account show`). `/add-cloud-flow` uses it to call the Flow RP API. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; Microsoft Entra ID-scoped tokens work without one.
-- A Power Platform **solution** to create the flow inside. Only **solution-aware** flows can be attached to a Power Pages site. Flows created outside a solution will not appear in the plugin's flow list. If you don't already have a working solution, create one in `make.powerapps.com` before starting (Solutions > + New solution, pick any publisher, name it `SupplierPortal`). Lab 11 will use the same solution for the unpacked source-control pattern, so use a name you're happy to keep.
+- A Power Platform **solution** to create the flow inside. Only **solution-aware** flows can be attached to a Power Pages site. Flows created outside a solution will not appear in the plugin's flow list. If you don't already have a working solution, create one in `make.powerapps.com` before starting (Solutions > + New solution, pick any publisher, name it `SupplierPortal`). Lab 12 will use the same solution for the unpacked source-control pattern, so use a name you're happy to keep.
 
 Before starting, confirm the portal state you are carrying forward:
 
 - [ ] The site is deployed and `.powerpages-site/` exists locally
 - [ ] The Authenticated Users web role from Lab 02 exists
-- [ ] Lab 05's submit path works, so there is one place to hook the notification after invoice creation succeeds
+- [ ] Lab 06's submit path works, so there is one place to hook the notification after invoice creation succeeds
 - [ ] The cloud flow is created inside the same environment and solution as the site
 
 ## Learning objectives
@@ -137,7 +137,7 @@ the portal so it runs when a supplier submits an invoice. Only signed-in
 suppliers should be able to trigger it.
 ```
 
-Your AI coding CLI runs the 8-phase workflow from the skill. If `/integrate-backend` already registered this flow in Lab 04, use the rest of this lab to review the generated YAML and client code instead of creating a second consumer for the same flow.
+Your AI coding CLI runs the 8-phase workflow from the skill. If `/integrate-backend` already registered this flow in Lab 05, use the rest of this lab to review the generated YAML and client code instead of creating a second consumer for the same flow.
 
 ### Step 2.2: what the plugin does behind the scenes
 
@@ -447,4 +447,4 @@ If the flow does not fire at all:
 
 ## Next step
 
-→ [Lab 07: Add generative AI APIs](./07-add-ai-apis.md)
+→ [Lab 08: Add generative AI APIs](./08-add-ai-apis.md)

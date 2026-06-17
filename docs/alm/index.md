@@ -23,6 +23,8 @@ import { GitBranch, PackageCheck, PlayCircle, Rocket, ShieldCheck } from 'lucide
 
 ## What you will do
 
+The ALM phase turns a successful lab build into a repeatable team workflow. Source control captures the SPA and solution source, pull requests make changes reviewable, and Power Platform Pipelines moves the same managed solution through governed environments.
+
 <div className="rootCardGrid">
   <div className="rootCard">
     <GitBranch className="rootCard__icon" aria-hidden="true" />
@@ -51,10 +53,10 @@ import { GitBranch, PackageCheck, PlayCircle, Rocket, ShieldCheck } from 'lucide
 | # | Lab | Outcome |
 |---|---|---|
 | Setup | [ALM phase setup](/alm/00-setup) | GitHub CLI installed and authenticated |
-| 10 | [Put the site under source control](/alm/10-source-control) | GitHub repo with branch protection |
-| 11 | [Package the solution and dependencies](/alm/11-solution-and-dependencies) | Solution source tree and environment-variable wiring |
-| 12 | [Adopt branching and developer workflows](/alm/12-branching-and-workflows) | Team branching and release workflow |
-| 13 | [Promote across environments](/alm/13-multi-env-promotion) | Pipeline promotion from integration to pre-prod and prod |
+| 11 | [Put the site under source control](/alm/11-source-control) | GitHub repo with branch protection |
+| 12 | [Package the solution and dependencies](/alm/12-solution-and-dependencies) | Solution source tree and environment-variable wiring |
+| 13 | [Adopt branching and developer workflows](/alm/13-branching-and-workflows) | Team branching and release workflow |
+| 14 | [Promote across environments](/alm/14-multi-env-promotion) | Pipeline promotion from integration to pre-prod and prod |
 
 ## State you hand off
 
@@ -62,8 +64,10 @@ By the end of the ALM phase, your portal is source-controlled, packaged as a sol
 
 **Done when:** a change made on a feature branch flows through a pull request into `main`, then promotes through the pipeline from integration to pre-prod to prod with a manual approval gate.
 
+**Next two stops:** complete [ALM phase setup](/alm/00-setup) to add GitHub CLI, then put the existing portal directory under source control in [Lab 11](/alm/11-source-control).
+
 <div className="nextStepCallout">
   <h3>Start the ALM phase</h3>
-  <p>Begin with <Link to="/alm/00-setup">ALM phase setup</Link>. It adds GitHub CLI, then moves you into Lab 10.</p>
+  <p>Begin with <Link to="/alm/00-setup">ALM phase setup</Link>. It adds GitHub CLI, then moves you into Lab 11.</p>
   <p><Link className="button button--primary" to="/alm/00-setup"><PlayCircle size={18} aria-hidden="true" /> Start setup</Link></p>
 </div>

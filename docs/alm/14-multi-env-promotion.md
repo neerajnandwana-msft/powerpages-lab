@@ -1,10 +1,10 @@
 ---
 sidebar_position: 4
-sidebar_label: "Lab 13: Promote across environments"
-title: "Lab 13: Promote across environments"
+sidebar_label: "Lab 14: Promote across environments"
+title: "Lab 14: Promote across environments"
 ---
 
-# Lab 13: Promote across environments
+# Lab 14: Promote across environments
 
 ## Goal
 
@@ -14,8 +14,8 @@ Promote the managed solution through integration, pre-prod, and production with 
 
 ## State you carry forward
 
-- Completed [Lab 11: Package the solution and dependencies](./11-solution-and-dependencies.md) (`/plan-alm` ran, `/setup-solution` authored the solution, env-variable wiring is in place)
-- Completed [Lab 12: Adopt branching and developer workflows](./12-branching-and-workflows.md): branching workflow practiced; `main` is always deployable to the integration environment and is the source stage the pipeline promotes from
+- Completed [Lab 12: Package the solution and dependencies](./12-solution-and-dependencies.md) (`/plan-alm` ran, `/setup-solution` authored the solution, env-variable wiring is in place)
+- Completed [Lab 13: Adopt branching and developer workflows](./13-branching-and-workflows.md): branching workflow practiced; `main` is always deployable to the integration environment and is the source stage the pipeline promotes from
 - Your integration environment is deployed and up to date. It's the source stage the pipeline promotes from
 - Pre-prod and prod target environments exist (or your admin can provision them)
 - Tenant-level permission to install the Pipelines app in a host environment, OR an existing pipelines host you can use
@@ -42,10 +42,10 @@ Deploying to a single environment, your integration env, gets a change live in o
 
 Two things to know up front:
 
-- Pipelines move **managed solutions**, not unmanaged. Recall the distinction from [Lab 11](./11-solution-and-dependencies.md#why-solutions-why-now): unmanaged is the editable form you commit to source control; managed is the sealed form built for promotion. The integration env exports the solution as managed; pipelines imports the managed version into pre-prod and prod.
+- Pipelines move **managed solutions**, not unmanaged. Recall the distinction from [Lab 12](./12-solution-and-dependencies.md#why-solutions-why-now): unmanaged is the editable form you commit to source control; managed is the sealed form built for promotion. The integration env exports the solution as managed; pipelines imports the managed version into pre-prod and prod.
 - Pipelines does **not** auto-activate the site after deploy. A maker has to reactivate the site in the target environment. `/test-site` calls this out and offers to run `/activate-site` for you in sequence.
 
-> **The big picture: two layers.** Before diving in, it helps to know the boundary between the pieces: **Power Platform Pipelines** (this lab) owns managed-solution promotion across environments with approvals; **environment variables** (Lab 11) supply each stage's configuration. [Part 6](#part-6-the-promotion-layers-reference) lays out exactly who owns what. Skim it now if you want the map before the steps.
+> **The big picture: two layers.** Before diving in, it helps to know the boundary between the pieces: **Power Platform Pipelines** (this lab) owns managed-solution promotion across environments with approvals; **environment variables** (Lab 12) supply each stage's configuration. [Part 6](#part-6-the-promotion-layers-reference) lays out exactly who owns what. Skim it now if you want the map before the steps.
 
 > **Further reading:** [Power Platform pipelines](https://learn.microsoft.com/power-platform/alm/pipelines) · [Power Pages pipelines](https://learn.microsoft.com/power-pages/configure/power-pages-pipelines) · [Pipeline deployment settings](https://learn.microsoft.com/power-platform/alm/pipelines-deployment-settings)
 
@@ -53,9 +53,9 @@ Two things to know up front:
 
 ## Part 1: resume `/plan-alm` for the promotion phase
 
-The plan you approved in Lab 11 carries through to this lab. Re-run `/plan-alm` and it picks up where it left off: Phase 1 (Author solution) is complete, Phases 2-5 are pending.
+The plan you approved in Lab 12 carries through to this lab. Re-run `/plan-alm` and it picks up where it left off: Phase 1 (Author solution) is complete, Phases 2-5 are pending.
 
-Before you resume, confirm `docs/alm-plan.html` exists from Lab 11. The pipeline and deployment ledgers are created later in this lab (`docs/alm/pipeline-ledger.json` after `/setup-pipeline`, `docs/alm/deployment-ledger.json` after `/deploy-pipeline`), so they do not need to exist before the first `/plan-alm` resume.
+Before you resume, confirm `docs/alm-plan.html` exists from Lab 12. The pipeline and deployment ledgers are created later in this lab (`docs/alm/pipeline-ledger.json` after `/setup-pipeline`, `docs/alm/deployment-ledger.json` after `/deploy-pipeline`), so they do not need to exist before the first `/plan-alm` resume.
 
 ### Step 1.1: re-run `/plan-alm`
 
@@ -168,7 +168,7 @@ The skill asks which stage to promote and the per-stage env-variable values to a
 4. Poll the pipeline run until it completes; report the result.
 5. Append a row to the deployment ledger (`docs/alm/deployment-ledger.json`) for auditability.
 
-> **Why deploymentSettings.json beats prompting.** In the maker-portal Pipelines UI, an operator is prompted for each env variable value on every run. `/deploy-pipeline` writes a `deploymentSettings.json` so the values are repeatable. Commit `docs/alm/deploymentSettings.json` only when it contains non-secret values. If a deployment settings file contains secrets, keep it in `docs/alm/deploymentSettings.local.json` (gitignored in Lab 10) or move the secret values to Key Vault. Coordinate per-team.
+> **Why deploymentSettings.json beats prompting.** In the maker-portal Pipelines UI, an operator is prompted for each env variable value on every run. `/deploy-pipeline` writes a `deploymentSettings.json` so the values are repeatable. Commit `docs/alm/deploymentSettings.json` only when it contains non-secret values. If a deployment settings file contains secrets, keep it in `docs/alm/deploymentSettings.local.json` (gitignored in Lab 11) or move the secret values to Key Vault. Coordinate per-team.
 
 ### Step 4.2: reactivate the site in pre-prod
 
@@ -257,7 +257,7 @@ The plugin matches the error against its catalog. Common matches:
 | **Stale manifest** | A component was added/removed in the dev env but `/setup-solution` wasn't re-run in sync mode | Re-run `/setup-solution`, re-export, retry deploy |
 | **Missing dependency** | Target env lacks a Dataverse component (table, web role, site-setting type) | Add the missing component to the source solution, re-export, retry |
 | **Host conflict** | Target env is linked to a different Pipelines host | Run `/force-link-environment` to reassign |
-| **Blocked JavaScript** | A site setting or WAF rule on the target blocks an inline script | Resolve via `/manage-headers` or `/manage-firewall` ([Lab 09: Run a security review](../integrate/09-security-review.md)) |
+| **Blocked JavaScript** | A site setting or WAF rule on the target blocks an inline script | Resolve via `/manage-headers` or `/manage-firewall` ([Lab 10: Run a security review](../integrate/10-security-review.md)) |
 | **Expired authentication** | Your PAC CLI or `az` session expired | Re-authenticate (`pac auth create`, `az login --allow-no-subscriptions`) and re-run the deploy |
 
 The plugin proposes a fix and **never applies it without your consent**. Approve the fix, then re-run `/deploy-pipeline` for the failed stage.
@@ -378,6 +378,6 @@ In every other case, prefer `/deploy-pipeline`. The audit trail, approval gates,
 
 ## Next step
 
-You've reached the end of the lab track. Look back at the arc: you scaffolded a React SPA (Lab 01), connected it to a secured Dataverse model with live Web API data (Labs 02-03), layered on server logic, automation, and AI features (Labs 04-08), reviewed it for security (Lab 09), and brought it under source control, solution packaging, and governed multi-environment promotion (Labs 10-13). You now have a production-ready Power Pages portal and a repeatable ALM pipeline behind it.
+You've reached the end of the lab track. Look back at the arc: you scaffolded a React SPA (Lab 01), connected it to a secured Dataverse model with live Web API data (Labs 02-04), layered on server logic, automation, and AI features (Labs 05-09), reviewed it for security (Lab 10), and brought it under source control, solution packaging, and governed multi-environment promotion (Labs 11-14). You now have a production-ready Power Pages portal and a repeatable ALM pipeline behind it.
 
 To turn the lab output into a team practice, see [After the lab](/reference/after-the-lab).

@@ -12,10 +12,11 @@ You finished the guided track. Use this page to turn the lab result into a repea
 
 ## Apply the pattern in your org
 
-1. **Ask your Power Platform admin to confirm the pipeline setup.** Lab 13 shows the Power Platform Pipelines flow. Your org still needs the right host environment, target environments, security roles, and approval process.
-2. **Add a second feature end to end.** Pick something your team actually needs. Branch, build, open a PR, merge to integration, promote to pre-prod, and approve promotion to prod.
-3. **Document your team workflow.** Capture your branch naming, review expectations, rollback path, and promotion cadence in your own `CONTRIBUTING.md` or runbook.
-4. **Add ownership metadata.** Use `.github/CODEOWNERS` or your repo's equivalent review rules so solution files, site code, and docs route to the right reviewers.
+1. **Ask your Power Platform admin to confirm the pipeline setup.** Lab 14 shows the Power Platform Pipelines flow. Your org still needs the right host environment, target environments, security roles, and approval process.
+2. **Use the focused manual ALM guide for rollout.** If your team already has a Power Pages site and wants manual source-control setup, quality gates, CI/CD, and Power Platform Pipelines, follow [Setup reliable ALM Lab](/reliable-alm).
+3. **Add a second feature end to end.** Pick something your team actually needs. Branch, build, open a PR, merge to integration, promote to pre-prod, and approve promotion to prod.
+4. **Document your team workflow.** Capture your branch naming, review expectations, rollback path, and promotion cadence in your own `CONTRIBUTING.md` or runbook.
+5. **Add ownership metadata.** Use `.github/CODEOWNERS` or your repo's equivalent review rules so solution files, site code, and docs route to the right reviewers.
 
 ---
 
@@ -24,10 +25,10 @@ You finished the guided track. Use this page to turn the lab result into a repea
 Use the lab output as a starting point, not as a final production runbook.
 
 - **Promote to prod through Pipelines or an approved release path.** Avoid direct laptop-to-prod deployments unless your team has explicitly approved that break-glass path.
-- **Use the least-privileged deployment identity your org supports.** Lab 13 calls out the roles used during the demo. For production, confirm the exact role assignment with your Power Platform admin.
+- **Use the least-privileged deployment identity your org supports.** Lab 14 calls out the roles used during the demo. For production, confirm the exact role assignment with your Power Platform admin.
 - **Keep solution imports repeatable.** If a deployment fails partway, fix the root cause and re-run the managed-solution promotion rather than manually patching the target environment.
-- **Run `/security-review` before production promotion.** Lab 09 shows how the consolidated review combines code, dependencies, deployed-site checks, headers, firewall posture, table permissions, and auth configuration.
-- **Schedule `/scan-site` against production.** A monthly deployed-site scan helps catch runtime and security drift between releases. See Lab 09 for the deeper security cadence.
+- **Run a release-readiness security review before production promotion.** Include code, dependencies, deployed-site checks, headers, firewall posture, table permissions, and auth configuration.
+- **Schedule deployed-site security scanning against production.** A monthly scan helps catch runtime and security drift between releases.
 
 ---
 
@@ -36,7 +37,7 @@ Use the lab output as a starting point, not as a final production runbook.
 | Cadence | Action |
 |---|---|
 | Every PR | Review code and solution changes. Run the checks your repo supports. |
-| Every release candidate | Deploy to integration, run `/security-review`, and promote to pre-prod. |
+| Every release candidate | Deploy to integration, run release-readiness security checks, and promote to pre-prod. |
 | Before prod | Confirm approvals, environment-variable values, site activation, and smoke-test results. |
 | Monthly | Run `/scan-site` against production and review any new findings. |
 | Quarterly | Review environment strategy, pipeline ownership, licensing, capacity, and runbooks. |
@@ -59,7 +60,6 @@ For the current licensing detail, see [Power Platform licensing](https://learn.m
 
 - [Power Pages documentation](https://learn.microsoft.com/power-pages)
 - [Create and deploy a single-page application in Power Pages](https://learn.microsoft.com/power-pages/configure/create-code-sites)
-- [Power Pages plugin for GitHub Copilot CLI and Claude Code](https://learn.microsoft.com/power-pages/configure/create-code-site-using-claude-code)
 - [Power Platform ALM basics](https://learn.microsoft.com/power-platform/alm/basics-alm)
 - [Power Platform Pipelines](https://learn.microsoft.com/power-platform/alm/pipelines)
 - [Power Pages and Power Platform Pipelines](https://learn.microsoft.com/power-pages/configure/power-pages-pipelines)
@@ -74,4 +74,3 @@ For the current licensing detail, see [Power Platform licensing](https://learn.m
 - [Power Pages Community Forum](https://powerusers.microsoft.com/t5/Power-Pages-Community/ct-p/PowerPagesCommunity)
 - [Power Pages Ideas portal](https://ideas.powerpages.microsoft.com/)
 - [Power Apps and Power Platform GitHub samples](https://github.com/microsoft/PowerApps-Samples)
-- [Tips and best practices for the Power Pages plugin](https://learn.microsoft.com/power-pages/configure/create-code-site-using-claude-code#tips-and-best-practices)

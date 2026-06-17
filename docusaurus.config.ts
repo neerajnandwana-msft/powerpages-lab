@@ -66,6 +66,12 @@ const config: Config = {
           label: 'Agentic Site Authoring Lab guide',
         },
         {
+          type: 'docSidebar',
+          sidebarId: 'reliableAlmSidebar',
+          position: 'left',
+          label: 'Setup reliable ALM Lab',
+        },
+        {
           href: 'pathname:///pdf/lab-guide.pdf',
           label: 'Download PDF',
           position: 'right',

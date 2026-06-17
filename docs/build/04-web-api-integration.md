@@ -1,10 +1,10 @@
 ---
-sidebar_position: 3
-sidebar_label: "Lab 03: Connect to live data"
-title: "Lab 03: Connect the SPA to live Dataverse data"
+sidebar_position: 4
+sidebar_label: "Lab 04: Connect to live data"
+title: "Lab 04: Connect the SPA to live Dataverse data"
 ---
 
-# Lab 03: Connect the SPA to live Dataverse data
+# Lab 04: Connect the SPA to live Dataverse data
 
 ## Goal
 
@@ -15,15 +15,16 @@ Connect the portal to real Dataverse records through the Power Pages Web API wit
 ## State you carry forward
 
 - Completed [Lab 02: Set up Dataverse and security](./02-dataverse-and-security.md) (Dataverse tables created, sample data inserted, 3-5 invoices re-linked to your Contact, permissions configured, site deployed)
+- Completed [Lab 03: Configure authentication](./03-configure-authentication.md) (sign-in works; the `hasRole` / `RequireAuth` / `RequireRole` helpers and session keepalive hook exist)
 - Site deployed and accessible at its public URL
 - You have signed in to the deployed site at least once (so your Contact record exists in Dataverse)
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`. The plugin uses Microsoft Entra ID-scoped tokens that don't require one.
 
-> **Before you start, confirm your Lab 02 state.** The live tests in this lab depend on it:
+> **Before you start, confirm your Lab 02 and Lab 03 state.** The live tests in this lab depend on them:
 >
 > - [ ] The site is deployed and reachable at its public URL
 > - [ ] You signed in once, and 3-5 invoices have **Submitted By** set to your Contact (Lab 02, Step 2.5)
-> - [ ] `/setup-auth` completed, so sign-in works (Lab 02, Part 5)
+> - [ ] `/setup-auth` completed in [Lab 03](./03-configure-authentication.md), so sign-in works
 >
 > If you skipped the Contact re-link, the Invoice List will look empty here even though everything else is correct. Go back and finish Step 2.5 first.
 
@@ -492,8 +493,8 @@ If Web API integration fails and you cannot resolve the issues:
 
 ## Next step
 
-That wraps the **Build phase**. The Integrate phase needs no new tools. Your Build-phase setup carries straight through. Skim [Integrate phase setup](../integrate/00-setup.md) for the one-paragraph confirmation (and the optional static-analysis add-on for Lab 09), then start Lab 04.
+That wraps the **Build phase**. The Integrate phase needs no new tools. Your Build-phase setup carries straight through. Skim [Integrate phase setup](../integrate/00-setup.md) for the one-paragraph confirmation (and the optional static-analysis add-on for Lab 10), then start Lab 05.
 
-→ [Integrate phase setup](../integrate/00-setup.md) → [Lab 04: Plan the service layer](../integrate/04-pick-backend-pattern.md)
+→ [Integrate phase setup](../integrate/00-setup.md) → [Lab 05: Plan the service layer](../integrate/05-pick-backend-pattern.md)
 
-> **Tip:** If you deferred [Lab 02 Part 5: Configure authentication with /setup-auth](./02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth) (deliberate sign-in: multi-provider, claims mapping, role-based UI), complete it before starting the Integrate phase. The typical plugin workflow runs `/setup-auth` right after `/integrate-webapi`.
+> **Tip:** If you deferred [Lab 03: Configure authentication](./03-configure-authentication.md) (deliberate sign-in: multi-provider, claims mapping, role-based UI), complete it before starting the Integrate phase. The typical plugin workflow runs `/setup-auth` right after `/integrate-webapi`.

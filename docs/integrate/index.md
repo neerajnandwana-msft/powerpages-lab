@@ -23,6 +23,8 @@ import { Bot, PlayCircle, ShieldCheck, Workflow, Zap } from 'lucide-react';
 
 ## What you will do
 
+The Integrate phase moves the portal from data-connected to production-shaped. You add the backend patterns that should not live only in the browser: tamper-resistant validation, automation, AI-assisted experiences, deployed-site tests, and a security gate.
+
 <div className="rootCardGrid">
   <div className="rootCard">
     <Workflow className="rootCard__icon" aria-hidden="true" />
@@ -51,12 +53,12 @@ import { Bot, PlayCircle, ShieldCheck, Workflow, Zap } from 'lucide-react';
 | # | Lab | Outcome |
 |---|---|---|
 | Setup | [Integrate phase setup](/integrate/00-setup) | Confirmation that Build-phase tools carry forward, plus optional static analysis setup |
-| 04 | [Plan the service layer](/integrate/04-pick-backend-pattern) | Backend pattern decision matrix |
-| 05 | [Add server logic](/integrate/05-add-server-logic) | Server-side validation and execution |
-| 06 | [Add Power Automate flows](/integrate/06-add-power-automate-flows) | Teams notification on invoice submit |
-| 07 | [Add generative AI APIs](/integrate/07-add-ai-apis) | AI summary and grounded answer features |
-| 08 | [Improve performance, test, and deploy](/integrate/08-performance-test-deploy) | Release-ready deployed integration site |
-| 09 | [Run a security review](/integrate/09-security-review) | Consolidated security findings and fixes |
+| 05 | [Plan the service layer](/integrate/05-pick-backend-pattern) | Backend pattern decision matrix |
+| 06 | [Add server logic](/integrate/06-add-server-logic) | Server-side validation and execution |
+| 07 | [Add Power Automate flows](/integrate/07-add-power-automate-flows) | Teams notification on invoice submit |
+| 08 | [Add generative AI APIs](/integrate/08-add-ai-apis) | AI summary and grounded answer features |
+| 09 | [Improve performance, test, and deploy](/integrate/09-performance-test-deploy) | Release-ready deployed integration site |
+| 10 | [Run a security review](/integrate/10-security-review) | Consolidated security findings and fixes |
 
 ## State you hand off
 
@@ -64,8 +66,10 @@ By the end of the Integrate phase, your portal has live data, server logic, clou
 
 **Done when:** on the deployed site, the duplicate-PO rule is enforced server-side, submitting an invoice fires a Teams notification, the AI summary renders on the Invoice Detail page, and your security review shows no critical findings.
 
+**Next two stops:** confirm the short [Integrate phase setup](/integrate/00-setup), then use [Lab 05](/integrate/05-pick-backend-pattern) to decide which backend pattern each feature needs before you build it.
+
 <div className="nextStepCallout">
   <h3>Start the Integrate phase</h3>
-  <p>Begin with <Link to="/integrate/00-setup">Integrate phase setup</Link>. It confirms your tools and points you to Lab 04.</p>
+  <p>Begin with <Link to="/integrate/00-setup">Integrate phase setup</Link>. It confirms your tools and points you to Lab 05.</p>
   <p><Link className="button button--primary" to="/integrate/00-setup"><PlayCircle size={18} aria-hidden="true" /> Start setup</Link></p>
 </div>

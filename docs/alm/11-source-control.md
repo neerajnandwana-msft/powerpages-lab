@@ -1,10 +1,10 @@
 ---
 sidebar_position: 1
-sidebar_label: "Lab 10: Use source control"
-title: "Lab 10: Put the site under source control"
+sidebar_label: "Lab 11: Use source control"
+title: "Lab 11: Put the site under source control"
 ---
 
-# Lab 10: Put the site under source control
+# Lab 11: Put the site under source control
 
 ## Goal
 
@@ -14,13 +14,13 @@ Put the portal source in a GitHub repository with a protective `.gitignore` and 
 
 ## State you carry forward
 
-- Completed [Lab 08: Improve performance, test, and deploy](../integrate/08-performance-test-deploy.md) (working portal deployed to your env)
-- Completed [Lab 09: Run a security review](../integrate/09-security-review.md) (release-readiness pass against the integration env: any Critical / High findings are fixed or consciously accepted before code lands in source control)
+- Completed [Lab 09: Improve performance, test, and deploy](../integrate/09-performance-test-deploy.md) (working portal deployed to your env)
+- Completed [Lab 10: Run a security review](../integrate/10-security-review.md) (release-readiness pass against the integration env: any Critical / High findings are fixed or consciously accepted before code lands in source control)
 - Git installed and configured (`git --version`)
 - `gh` (GitHub CLI) installed and authenticated (`gh auth status`). This is the one new tool the ALM phase adds; install and sign in now via [ALM phase setup](00-setup.md) if you skipped it earlier
 - Portal directory accessible on disk (the folder where you ran `/create-site`)
 
-> **Before you start.** You're putting the *existing* portal directory under source control: the folder with `package.json` and `.powerpages-site/`. You do **not** need to redeploy. The site that is already live in your environment from Lab 08 stays as it is, and the same source files and configuration on disk are all this lab needs.
+> **Before you start.** You're putting the *existing* portal directory under source control: the folder with `package.json` and `.powerpages-site/`. You do **not** need to redeploy. The site that is already live in your environment from Lab 09 stays as it is, and the same source files and configuration on disk are all this lab needs.
 
 ## Why ALM matters
 
@@ -34,9 +34,9 @@ Imagine three things happen this week:
 
 Each of these is a normal Tuesday in production. ALM is the practice that makes them survivable. The ALM phase solves them with a three-part strategy, one built on top of the next:
 
-1. **Source control** (Labs 10-12): code review and history on GitHub
-2. **Solution packaging** (Lab 11): your Dataverse components captured as reproducible source
-3. **Multi-environment promotion** (Lab 13): Power Platform Pipelines through integration and pre-prod with manual approval gates up to production
+1. **Source control** (Labs 11-13): code review and history on GitHub
+2. **Solution packaging** (Lab 12): your Dataverse components captured as reproducible source
+3. **Multi-environment promotion** (Lab 14): Power Platform Pipelines through integration and pre-prod with manual approval gates up to production
 
 End to end, that pipeline looks like this:
 
@@ -44,8 +44,8 @@ End to end, that pipeline looks like this:
 flowchart LR
     Dev["Dev env<br/>(your laptop)"] -->|git push / PR| GH["GitHub<br/>source of truth"]
     GH -->|"deploy to integration"| Int["Integration env"]
-    Int -->|"Pipelines + approval<br/>(Lab 13)"| Pre["Pre-prod env"]
-    Pre -->|"manual approval<br/>(Lab 13)"| Prod["Production env"]
+    Int -->|"Pipelines + approval<br/>(Lab 14)"| Pre["Pre-prod env"]
+    Pre -->|"manual approval<br/>(Lab 14)"| Prod["Production env"]
 ```
 
 This lab is the first step: putting your portal under source control.
@@ -56,7 +56,7 @@ By the end of this lab you will be able to:
 
 1. Initialize the portal directory as a Git repository with a `.gitignore` that protects secrets and build artifacts
 2. Create a GitHub repository from the command line using `gh repo create`
-3. Apply commit conventions and optional branch protection that pay off in Lab 12
+3. Apply commit conventions and optional branch protection that pay off in Lab 13
 
 > **Further reading:** [Microsoft Power Platform ALM basics](https://learn.microsoft.com/power-platform/alm/basics-alm) · [GitHub CLI `gh` manual](https://cli.github.com/manual/) · [About GitHub branch protection rules](https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches)
 
@@ -90,14 +90,14 @@ An SPA-site repo has files that should never enter source control:
 - **`dist/`**: build output, regenerated on every CI run
 - **`.env`, `.env.local`**: secrets, API keys, local connection details
 - **`.pac/`**: PAC CLI auth profiles (contain refresh tokens)
-- **`build/`**: the staging folder we'll use in Lab 11 for solution zips
+- **`build/`**: the staging folder we'll use in Lab 12 for solution zips
 - **OS junk**: `.DS_Store`, `Thumbs.db`
 
 Files that **are** committed (don't accidentally ignore them):
 
 - `src/`: your SPA source code
 - `.powerpages-site/`: portal configuration YAML (web roles, table permissions, site settings)
-- `src/solution/`: the unpacked Dataverse solution created in Lab 11 (env-specific site settings live here as environment variable references; values are supplied per target env at solution import time)
+- `src/solution/`: the unpacked Dataverse solution created in Lab 12 (env-specific site settings live here as environment variable references; values are supplied per target env at solution import time)
 - `CLAUDE.md` (and `AGENTS.md` if Copilot CLI created one): project context for the AI coding CLI; commit so teammates' AI sessions get the same baseline
 
 Create `.gitignore` at the repo root:
@@ -111,7 +111,7 @@ node_modules/
 dist/
 build/
 
-# Solution zips (we commit unpacked source instead -- see Lab 11)
+# Solution zips (we commit unpacked source instead -- see Lab 12)
 *.zip
 
 # Local environment / secrets
@@ -140,7 +140,7 @@ npm-debug.log*
 EOF
 ```
 
-**Why `*.zip` is here:** Lab 11 will export Dataverse solutions as `.zip`, then immediately unpack them into `src/solution/` for source control. The zip itself is a build artifact: ignore it. This is the **unpack-to-source-control pattern** that's the heart of the ALM phase.
+**Why `*.zip` is here:** Lab 12 will export Dataverse solutions as `.zip`, then immediately unpack them into `src/solution/` for source control. The zip itself is a build artifact: ignore it. This is the **unpack-to-source-control pattern** that's the heart of the ALM phase.
 
 Verify your `.gitignore` works:
 
@@ -225,7 +225,7 @@ git push
 
 ## Step 6: branch protection (optional)
 
-If your GitHub plan supports it, turn on branch protection for `main` now. It pays off in Lab 12.
+If your GitHub plan supports it, turn on branch protection for `main` now. It pays off in Lab 13.
 
 The simplest path is the GitHub web UI:
 
@@ -235,9 +235,9 @@ The simplest path is the GitHub web UI:
 4. Enable **Require a pull request before merging** with at least 1 approval
 5. Save
 
-This says: nobody can push directly to `main`; every change has to go through a PR with at least one approval. Lab 12 exercises this in the feature-development workflow.
+This says: nobody can push directly to `main`; every change has to go through a PR with at least one approval. Lab 13 exercises this in the feature-development workflow.
 
-> **Tip:** if your account is on GitHub Free for personal repos, branch protection requires the repo to be public OR a GitHub Pro / Team / Enterprise plan. If unavailable, skip this step. Lab 12 still works, you'll need to discipline yourself not to push to `main` directly.
+> **Tip:** if your account is on GitHub Free for personal repos, branch protection requires the repo to be public OR a GitHub Pro / Team / Enterprise plan. If unavailable, skip this step. Lab 13 still works, you'll need to discipline yourself not to push to `main` directly.
 
 ---
 
@@ -284,8 +284,8 @@ If `gh` (the GitHub CLI) will not authenticate or `gh repo create` keeps failing
 
 - A good `.gitignore` is your first line of defense against committing secrets and build output
 - `gh repo create --source=. --push` is a one-shot "init repo and ship to GitHub" command
-- Branch protection on `main` makes the workflows in Lab 12 enforceable, not merely suggested
+- Branch protection on `main` makes the workflows in Lab 13 enforceable, not merely suggested
 
 ## Next step
 
-→ [Lab 11: Package the solution and dependencies](./11-solution-and-dependencies.md)
+→ [Lab 12: Package the solution and dependencies](./12-solution-and-dependencies.md)

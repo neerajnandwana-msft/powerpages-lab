@@ -1,10 +1,10 @@
 ---
 sidebar_position: 1
-sidebar_label: "Lab 04: Plan the service layer"
-title: "Lab 04: Plan the service layer"
+sidebar_label: "Lab 05: Plan the service layer"
+title: "Lab 05: Plan the service layer"
 ---
 
-# Lab 04: Plan the service layer
+# Lab 05: Plan the service layer
 
 ## Goal
 
@@ -14,12 +14,12 @@ Create a reviewed integration plan that classifies each supplier portal feature 
 
 ## State you carry forward
 
-- Completed [Lab 03: Connect the SPA to live Dataverse data](../build/03-web-api-integration.md) (typed Web API service layer in `src/services/`, working CRUD on the deployed site)
+- Completed [Lab 04: Connect the SPA to live Dataverse data](../build/04-web-api-integration.md) (typed Web API service layer in `src/services/`, working CRUD on the deployed site)
 - Working portal deployed (`.powerpages-site/` folder exists, deploy succeeded at least once)
 - `/integrate-backend` available in your AI coding CLI session
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`. The orchestrator uses Microsoft Entra ID-scoped tokens that work without one.
 
-> **No new tools for the Integrate phase.** Labs 04-08 run on the same tooling you installed in the Build phase. The only optional add-on is a static-analysis tool for [Lab 09](./09-security-review.md). See [Integrate phase setup](00-setup.md).
+> **No new tools for the Integrate phase.** Labs 05-09 run on the same tooling you installed in the Build phase. The only optional add-on is a static-analysis tool for [Lab 10](./10-security-review.md). See [Integrate phase setup](00-setup.md).
 
 ## Learning objectives
 
@@ -30,9 +30,9 @@ By the end of this lab you will be able to:
 3. Approve, request changes, pause, and resume the plan without losing progress
 4. Map every plan step to the matching deep-dive lab (05/06/07) so you know when to follow the orchestrator and when to drop into a single skill manually
 
-The Web API pattern from Lab 03 covered straightforward CRUD. The Supplier Invoice portal also needs a duplicate-PO check the browser cannot bypass, a Teams notification when invoices are submitted, and a one-paragraph AI summary on the Invoice Detail page. Each of those needs a different backend pattern. Rather than picking by hand and running separate skills, you will run **one** orchestrator that classifies the feature work for Labs 05-07 and drives the underlying skills in the right order. Lab 08 then takes the integrated portal and focuses on performance, testing, and deployment.
+The Web API pattern from Lab 04 covered straightforward CRUD. The Supplier Invoice portal also needs a duplicate-PO check the browser cannot bypass, a Teams notification when invoices are submitted, and a one-paragraph AI summary on the Invoice Detail page. Each of those needs a different backend pattern. Rather than picking by hand and running separate skills, you will run **one** orchestrator that classifies the feature work for Labs 06-08 and drives the underlying skills in the right order. Lab 09 then takes the integrated portal and focuses on performance, testing, and deployment.
 
-> **Important:** `/integrate-backend` is the orchestrator equivalent of working through the feature-building portions of Labs 05-07 yourself. Use it when you want a complete backend plan and end-to-end execution from a single prompt; pause and run Labs 05-07 individually whenever you want to learn or customize a specific pattern. If you let the orchestrator complete a feature, do **not** rerun that deep-dive lab for the same feature unless you intend to edit or replace what it generated.
+> **Important:** `/integrate-backend` is the orchestrator equivalent of working through the feature-building portions of Labs 06-08 yourself. Use it when you want a complete backend plan and end-to-end execution from a single prompt; pause and run Labs 06-08 individually whenever you want to learn or customize a specific pattern. If you let the orchestrator complete a feature, do **not** rerun that deep-dive lab for the same feature unless you intend to edit or replace what it generated.
 
 > **Further reading for each pattern:**
 > - [Power Pages Web API overview](https://learn.microsoft.com/power-pages/configure/web-api-overview)
@@ -80,23 +80,23 @@ If something is misclassified (for example, the duplicate-PO check showing under
 
 After you approve the plan, the orchestrator runs each step in sequence and pauses between them. You can stop anywhere, and resume by running `/integrate-backend` again.
 
-> **Choose one path per feature.** The rest of the integrate phase is written as deep dives. If `/integrate-backend` already generated your duplicate-PO server logic, Lab 05 becomes a review/customization guide for that generated code. If it already registered your cloud flow, Lab 06 becomes a review/customization guide for that consumer. If it already added the AI summary/search features, Lab 07 becomes a review/customization guide. Lab 08 should still be completed after the feature work because it validates, optimizes, tests, and deploys the integrated portal.
+> **Choose one path per feature.** The rest of the integrate phase is written as deep dives. If `/integrate-backend` already generated your duplicate-PO server logic, Lab 06 becomes a review/customization guide for that generated code. If it already registered your cloud flow, Lab 07 becomes a review/customization guide for that consumer. If it already added the AI summary/search features, Lab 08 becomes a review/customization guide. Lab 09 should still be completed after the feature work because it validates, optimizes, tests, and deploys the integrated portal.
 
 ### Step 2.1: web API foundation
 
-The orchestrator runs `/integrate-webapi` first if your project does not already have a typed service layer. If you completed Lab 03 it detects the existing `src/services/webApi.ts`, `src/types/entities.ts`, and `src/services/invoiceService.ts` and skips ahead.
+The orchestrator runs `/integrate-webapi` first if your project does not already have a typed service layer. If you completed Lab 04 it detects the existing `src/services/webApi.ts`, `src/types/entities.ts`, and `src/services/invoiceService.ts` and skips ahead.
 
 ### Step 2.2: server logic items
 
-For each feature classified as Server Logic, the orchestrator invokes `/add-server-logic`. It generates the sandbox JavaScript, the `.serverlogic.yml` metadata, the table-permission updates, and the React wiring, then pauses for review before deploying. Lab 05 walks through this in detail.
+For each feature classified as Server Logic, the orchestrator invokes `/add-server-logic`. It generates the sandbox JavaScript, the `.serverlogic.yml` metadata, the table-permission updates, and the React wiring, then pauses for review before deploying. Lab 06 walks through this in detail.
 
 ### Step 2.3: cloud flow items
 
-For each notification or approval feature, the orchestrator invokes `/add-cloud-flow`, generates the `.cloudflowconsumer.yml` and the React trigger code, and pauses. Lab 06 covers this end-to-end.
+For each notification or approval feature, the orchestrator invokes `/add-cloud-flow`, generates the `.cloudflowconsumer.yml` and the React trigger code, and pauses. Lab 07 covers this end-to-end.
 
 ### Step 2.4: AI API items
 
-For each summarization or grounded-search feature, the orchestrator invokes `/add-ai-webapi` to scaffold the site settings, prompts, and the UI card. Lab 07 covers the AI APIs in depth.
+For each summarization or grounded-search feature, the orchestrator invokes `/add-ai-webapi` to scaffold the site settings, prompts, and the UI card. Lab 08 covers the AI APIs in depth.
 
 > **Stop and resume any time.** The plan is **persistent, resumable, and editable**. Hit Ctrl-C, close the terminal, take a break, review code, run the deployed site, change your mind. Run `/integrate-backend` again and it picks up where you left off. You can also run any underlying skill (`/add-server-logic`, `/add-cloud-flow`, `/add-ai-webapi`) directly to tweak a single feature in isolation without re-running the orchestrator.
 
@@ -125,9 +125,9 @@ Use this section when you want to override the orchestrator's classification, ru
 
 > **Note:** Throughout the labs, `cr_invoice` (singular) is the table's logical name used in permissions and metadata, and `cr_invoices` (plural) is the OData entity-set name used in Web API URLs. Both refer to the same table.
 
-#### 1. web API (Lab 03)
+#### 1. web API (Lab 04)
 
-You met this in Lab 03. The browser talks to Dataverse directly over OData.
+You met this in Lab 04. The browser talks to Dataverse directly over OData.
 
 ```mermaid
 flowchart LR
@@ -142,7 +142,7 @@ flowchart LR
 | Good for | CRUD on Dataverse tables, filtered reads |
 | Bad for | Logic that must not be inspectable, external APIs, async work |
 
-#### 2. server logic (Lab 05)
+#### 2. server logic (Lab 06)
 
 Server-side JavaScript running in the Power Pages sandboxed runtime. The code lives in your repo under `.powerpages-site/server-logic/` and is reachable at `/_api/serverlogics/<name>`.
 
@@ -162,7 +162,7 @@ flowchart LR
 
 **Why it exists:** Some business rules must not run in the browser. A duplicate-invoice check that runs client-side can be skipped with DevTools. Server logic moves that check inside a runtime the user cannot inspect or bypass.
 
-#### 3. cloud flow (Lab 06)
+#### 3. cloud flow (Lab 07)
 
 Power Automate flow with the "When Power Pages calls a flow" trigger. The portal posts to `/_api/cloudflow/v1.0/trigger/<flowId>` with a payload wrapped in `eventData`.
 
@@ -182,7 +182,7 @@ flowchart LR
 
 **Why it exists:** When you need Teams notifications, Outlook emails, approval chains, or cross-system orchestration, you reach for Power Automate. Cloud flows give you that reach without writing integration code.
 
-#### 4. generative AI API (Lab 07)
+#### 4. generative AI API (Lab 08)
 
 Preview APIs built into Power Pages: Search Summary (`/_api/search/v1.0/summary`) and Data Summarization (`/_api/summarization/data/v1.0/`).
 
@@ -288,13 +288,13 @@ from the failed step.
 If `/integrate-backend` will not start, or the plan never opens:
 
 1. Verify `pac auth list` and `az account show` both return active sessions; re-auth if needed
-2. Confirm Labs 01-03 completed: `.powerpages-site/` exists, the site has been deployed, and `src/services/webApi.ts` from Lab 03 is in the repo
+2. Confirm Labs 01-04 completed: `.powerpages-site/` exists, the site has been deployed, and `src/services/webApi.ts` from Lab 04 is in the repo
 3. Run a single underlying skill manually to isolate where the problem is: `/integrate-webapi`, `/add-server-logic`, `/add-cloud-flow`, or `/add-ai-webapi`. If a single skill works, the issue is in the orchestrator integration, not the skill itself.
 4. If the plan classification looks completely off, the orchestrator may not be reading your prototype correctly. Add explicit intent comments in the React components (e.g., `// Server-side rule: PO numbers must be unique across all suppliers`) and re-run.
 
 ## Key takeaways
 
-- `/integrate-backend` is the meta-skill for backend feature integration. It plans, classifies, and orchestrates the feature-building work from Labs 05-07 from a single prompt
+- `/integrate-backend` is the meta-skill for backend feature integration. It plans, classifies, and orchestrates the feature-building work from Labs 06-08 from a single prompt
 - Four patterns cover almost every Power Pages integration: Web API (browser CRUD), Server Logic (tamper-proof rules and external APIs), Cloud Flow (notifications and approvals), AI API (summarization and grounded search)
 - Pick by asking: "where does the rule need to run?" and "what does it need to reach?"
 - The orchestrator's plan is **persistent, resumable, and editable**: pause whenever you want to learn or customize, and run any single skill manually for fine-grained control
@@ -303,4 +303,4 @@ If `/integrate-backend` will not start, or the plan never opens:
 
 ## Next step
 
-→ [Lab 05: Add server logic](./05-add-server-logic.md): dive deep into the Server Logic pattern, especially when you want to understand or customize what the orchestrator generated.
+→ [Lab 06: Add server logic](./06-add-server-logic.md): dive deep into the Server Logic pattern, especially when you want to understand or customize what the orchestrator generated.

@@ -1,10 +1,10 @@
 ---
 sidebar_position: 6
-sidebar_label: "Lab 09: Run a security review"
-title: "Lab 09: Run a security review"
+sidebar_label: "Lab 10: Run a security review"
+title: "Lab 10: Run a security review"
 ---
 
-# Lab 09: Run a security review
+# Lab 10: Run a security review
 
 ## Goal
 
@@ -14,8 +14,8 @@ Run the release-readiness security gate and fix findings before the portal enter
 
 ## State you carry forward
 
-- Completed [Lab 08: Improve performance, test, and deploy](./08-performance-test-deploy.md): site is built, tested, and deployed to your integration environment
-- `/setup-auth` ran in [Lab 02, Part 5](../build/02-dataverse-and-security.md#part-5-configure-authentication-with-setup-auth) so at least one identity provider is configured
+- Completed [Lab 09: Improve performance, test, and deploy](./09-performance-test-deploy.md): site is built, tested, and deployed to your integration environment
+- `/setup-auth` ran in [Lab 03: Configure authentication](../build/03-configure-authentication.md) so at least one identity provider is configured
 - Active PAC CLI session against the integration env (`pac auth list`)
 - For the deployed-site scan, the integration env's portal URL is reachable from your machine
 - For static analysis (optional): [opengrep](https://github.com/opengrep/opengrep) installed. See [Integrate phase setup](00-setup.md) for the install-or-skip details (the plugin offers a manual-review fallback if it's missing)
@@ -172,7 +172,7 @@ available on integration.
 
 The plugin will check WAF eligibility, propose the rule shape, and apply it after you confirm.
 
-> **Important:** WAF is **production-only** in most regions. If your integration env doesn't have WAF, the skill reports the eligibility and offers to apply the rule to the production stage as part of Lab 15's pipeline deployment instead. Don't try to force-enable WAF on a non-eligible environment.
+> **Important:** WAF is **production-only** in most regions. If your integration env doesn't have WAF, the skill reports the eligibility and offers to apply the rule to the production stage as part of Lab 14's pipeline deployment instead. Don't try to force-enable WAF on a non-eligible environment.
 
 ### Step 2.3: fix an `/audit-permissions` finding
 
@@ -256,7 +256,7 @@ findstr /s /n "http://" src\*.ts src\*.tsx
 
 `/scan-site` runs the server-side Power Pages security engine against a live URL. It's slow on large sites (minutes to hours) and finds things only the live runtime knows: TLS configuration, header response on edge nodes, error-response leakage.
 
-A practical cadence is to schedule it monthly against production once the Lab 13 promotion is in place:
+A practical cadence is to schedule it monthly against production once the Lab 14 promotion is in place:
 
 ```
 /scan-site
@@ -272,13 +272,13 @@ only the new findings.
 
 The point of running this lab here, before the ALM phase, is that the integration env is the **last place a finding is cheap to fix.** Once a permission YAML or a header value lands in pre-prod via a managed solution, fixing it means another pipeline run. Two follow-ups extend that gate into the ALM phase.
 
-### When you reach Lab 13 (multi-environment promotion)
+### When you reach Lab 14 (multi-environment promotion)
 
-`/security-review` with the **Deployed site** goal is a sensible **post-deploy** verification step against pre-prod before the manual approval gate to production. Slot it between `/test-site` (Step 4.3 of Lab 13) and the prod-stage approval. The same report you read in this lab now gates the prod promotion.
+`/security-review` with the **Deployed site** goal is a sensible **post-deploy** verification step against pre-prod before the manual approval gate to production. Slot it between `/test-site` (Step 4.3 of Lab 14) and the prod-stage approval. The same report you read in this lab now gates the prod promotion.
 
 ### Schedule `/scan-site` against production
 
-After Lab 13 puts a site in prod, schedule a monthly run of `/scan-site` against the live URL. New CVEs and edge-case header drift land between releases; this is how you find them before the next release does. Set it up as a recurring job so a new finding surfaces between releases.
+After Lab 14 puts a site in prod, schedule a monthly run of `/scan-site` against the live URL. New CVEs and edge-case header drift land between releases; this is how you find them before the next release does. Set it up as a recurring job so a new finding surfaces between releases.
 
 > **Design takeaway:** Security review isn't a one-time pass / fail. It's three loops at three cadences: `/scan-code` per PR, `/security-review` per release, `/scan-site` against production on a schedule. Each loop catches what the others can't.
 
@@ -293,7 +293,7 @@ You have completed this lab when:
 - [ ] You re-ran `/security-review` after applying fixes and confirmed the fixed findings are gone
 - [ ] You can name what each focused skill covers (code, deployed-site, headers, firewall, permissions) and when to run it on its own
 - [ ] `/scan-code` ran cleanly (no Critical / High findings), or any remaining findings are consciously accepted and documented
-- [ ] You understand the WAF-on-production-only constraint and have a plan for when `/manage-firewall` rules will land (during Lab 13 promotion, not now)
+- [ ] You understand the WAF-on-production-only constraint and have a plan for when `/manage-firewall` rules will land (during Lab 14 promotion, not now)
 
 ### Generic debug prompt
 
@@ -312,7 +312,7 @@ with this output. Diagnose and propose a fix:
 |---|---|---|
 | `/security-review` says "opengrep not installed" and offers a manual review | The static-analysis tool isn't on PATH | Continue with the manual review, or install opengrep from the release binaries linked in [Integrate phase setup](00-setup.md). Re-run the skill after installation. |
 | `/scan-site` returns "site unreachable" | Integration env URL isn't accessible from your machine, or the site isn't activated | Confirm the URL opens in a browser. If the site was reactivated to a new subdomain, the plugin's cached URL may be stale. Re-run `/activate-site` first |
-| `/manage-firewall` reports "WAF not available in this region" | Your integration env is in a region where WAF is not offered, or the env is not a production-eligible tier | Skip the WAF section. Re-run `/manage-firewall` against production after Lab 13's promotion. |
+| `/manage-firewall` reports "WAF not available in this region" | Your integration env is in a region where WAF is not offered, or the env is not a production-eligible tier | Skip the WAF section. Re-run `/manage-firewall` against production after Lab 14's promotion. |
 | `/audit-permissions` says "deployed permissions out of sync with YAML" | Someone changed permissions directly in the maker portal | Either accept the maker-portal state (re-export and unpack), or redeploy from the committed YAML, pick one source of truth |
 | The HTML report has a section that's empty | The corresponding focused skill's prerequisite wasn't met | The empty section's header explains which prerequisite was missing (e.g. "opengrep not installed", "site not reachable"). Resolve it and re-run with the same goal |
 | Report says CSP is too weak but `/manage-headers` proposes the same value back | Browser cached the old headers | Hard-refresh (Ctrl+Shift+R) or use an incognito window. Re-run `/manage-headers` after re-deploy. |
@@ -337,6 +337,6 @@ If a focused skill's underlying tool isn't installed (opengrep) and you can't in
 
 ## Next step
 
-That wraps the **Integrate phase**. The ALM phase adds one new tool, **GitHub CLI**, plus a GitHub account. Set those up first ([ALM phase setup](../alm/00-setup.md) takes a few minutes), then start Lab 10.
+That wraps the **Integrate phase**. The ALM phase adds one new tool, **GitHub CLI**, plus a GitHub account. Set those up first ([ALM phase setup](../alm/00-setup.md) takes a few minutes), then start Lab 11.
 
-→ [ALM phase setup](../alm/00-setup.md) (install GitHub CLI) → [Lab 10: Put the site under source control](../alm/10-source-control.md)
+→ [ALM phase setup](../alm/00-setup.md) (install GitHub CLI) → [Lab 11: Put the site under source control](../alm/11-source-control.md)

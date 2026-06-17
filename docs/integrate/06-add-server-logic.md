@@ -1,10 +1,10 @@
 ---
 sidebar_position: 2
-sidebar_label: "Lab 05: Add server logic"
-title: "Lab 05: Add server logic"
+sidebar_label: "Lab 06: Add server logic"
+title: "Lab 06: Add server logic"
 ---
 
-# Lab 05: Add server logic
+# Lab 06: Add server logic
 
 ## Goal
 
@@ -14,15 +14,15 @@ Add a server-side validate-and-execute endpoint that prevents duplicate purchase
 
 ## State you carry forward
 
-- Completed [Lab 04: Plan the service layer](./04-pick-backend-pattern.md)
+- Completed [Lab 05: Plan the service layer](./05-pick-backend-pattern.md)
 - Working portal deployed (`.powerpages-site` folder exists)
 - `/add-server-logic` available in your AI coding CLI session
 - Active PAC CLI and Azure CLI sessions (`pac auth list`, `az account show`). The agent uses PAC CLI to deploy the generated server-logic files and the `az` token for any Dataverse calls it makes while wiring them up. If your Microsoft account has no Azure subscription, sign in once with `az login --allow-no-subscriptions`; the plugin uses Microsoft Entra ID-scoped tokens, which work without one.
 
 > **Before you start, confirm your prior state.** This lab replaces a direct Web API write with a server-logic call, so the Web API layer must already be in place:
 >
-> - [ ] Lab 03's typed service layer exists (`src/services/webApi.ts`, `invoiceService.ts`) and the deployed site reads live data
-> - [ ] If you ran `/integrate-backend` in Lab 04, its Web API step finished: server logic builds on top of that foundation
+> - [ ] Lab 04's typed service layer exists (`src/services/webApi.ts`, `invoiceService.ts`) and the deployed site reads live data
+> - [ ] If you ran `/integrate-backend` in Lab 05, its Web API step finished: server logic builds on top of that foundation
 > - [ ] The `.powerpages-site/` folder exists and the site is deployed
 
 ## Learning objectives
@@ -137,7 +137,7 @@ One server round-trip. The validation and the write are atomic. The client has n
 
 ## Part 2: run /add-server-logic and review the output
 
-> **Already ran `/integrate-backend`?** If the orchestrator in Lab 04 already generated your duplicate-PO server logic, use the rest of this lab to review and customize that generated code instead of running `/add-server-logic` again. A second run creates a duplicate endpoint.
+> **Already ran `/integrate-backend`?** If the orchestrator in Lab 05 already generated your duplicate-PO server logic, use the rest of this lab to review and customize that generated code instead of running `/add-server-logic` again. A second run creates a duplicate endpoint.
 
 ### Step 2.1: describe the intent to your AI coding CLI
 
@@ -305,7 +305,7 @@ const handleSubmit = async (values) => {
 };
 ```
 
-The new service file `src/services/serverLogicService.ts` contains the fetch + CSRF token logic. Depending on how your Lab 03 client is structured, the plugin either imports the existing anti-forgery-token helper from `webApi.ts` or defines an equivalent one in the new service. Either way, the token is fetched from `/_layout/tokenhtml` and sent as `__RequestVerificationToken`. If you see the logic duplicated and would rather share one helper, ask your AI coding CLI to extract it.
+The new service file `src/services/serverLogicService.ts` contains the fetch + CSRF token logic. Depending on how your Lab 04 client is structured, the plugin either imports the existing anti-forgery-token helper from `webApi.ts` or defines an equivalent one in the new service. Either way, the token is fetched from `/_layout/tokenhtml` and sent as `__RequestVerificationToken`. If you see the logic duplicated and would rather share one helper, ask your AI coding CLI to extract it.
 
 Verify:
 
@@ -429,4 +429,4 @@ If `/add-server-logic` fails to deploy:
 
 ## Next step
 
-→ [Lab 06: Add Power Automate flows](./06-add-power-automate-flows.md)
+→ [Lab 07: Add Power Automate flows](./07-add-power-automate-flows.md)

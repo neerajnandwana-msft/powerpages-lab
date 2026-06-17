@@ -1,10 +1,10 @@
 ---
 sidebar_position: 5
-sidebar_label: "Lab 08: Improve, test, deploy"
-title: "Lab 08: Improve performance, test, and deploy"
+sidebar_label: "Lab 09: Improve, test, deploy"
+title: "Lab 09: Improve performance, test, and deploy"
 ---
 
-# Lab 08: Improve performance, test, and deploy
+# Lab 09: Improve performance, test, and deploy
 
 ## Goal
 
@@ -14,13 +14,13 @@ Prepare the integrated portal for ALM by improving bundle performance, running d
 
 ## State you carry forward
 
-- Completed [Lab 07: Add generative AI APIs](./07-add-ai-apis.md) (the portal now has Web API, server logic, cloud flows, and two AI features)
+- Completed [Lab 08: Add generative AI APIs](./08-add-ai-apis.md) (the portal now has Web API, server logic, cloud flows, and two AI features)
 - `npm run build` completes without errors in your project directory
 - Deployed site is reachable and responsive
 
 > **Before you start, confirm your prior state.** The test pass in Part 2 exercises the whole portal, so all the integration features need to be live:
 >
-> - [ ] Server logic (Lab 05), the cloud flow (Lab 06), and both AI features (Lab 07) are deployed and working
+> - [ ] Server logic (Lab 06), the cloud flow (Lab 07), and both AI features (Lab 08) are deployed and working
 > - [ ] The account you'll hand to `/test-site` has **already signed in once**, so its Contact exists in Dataverse. First sign-in creates the Contact and breaks scripted test flows
 > - [ ] `npm run build` succeeds locally
 
@@ -72,7 +72,7 @@ tell me the single most impactful change I can make to speed it up.
 
 Ask your AI coding CLI to apply the change. Either of these prompts works. Use whichever matches your style:
 
-> **Carry-forward from Lab 07:** The sample prompt below includes `Search` because Lab 07 added a search page and route. If your portal does not have that page yet, complete Lab 07 first or remove `Search` from the prompt.
+> **Carry-forward from Lab 08:** The sample prompt below includes `Search` because Lab 08 added a search page and route. If your portal does not have that page yet, complete Lab 08 first or remove `Search` from the prompt.
 
 **Outcome-based (let the agent pick the technique):**
 
@@ -381,7 +381,7 @@ Before deploying the latest build, confirm:
 - [ ] `/test-site` smoke test passed end-to-end
 - [ ] `CLAUDE.md` is up to date. Future sessions will pick it up as context
 
-> **Note:** The ALM labs (starting with Lab 10) introduce source control (`git init`, `gh repo create`) and multi-environment promotion via Power Platform Pipelines. For now, your local project directory is the source of truth. Deploy directly with `/deploy-site` as you have been.
+> **Note:** The ALM labs (starting with Lab 11) introduce source control (`git init`, `gh repo create`) and multi-environment promotion via Power Platform Pipelines. For now, your local project directory is the source of truth. Deploy directly with `/deploy-site` as you have been.
 
 ### Step 3.2: run /deploy-site
 
@@ -428,8 +428,8 @@ If a layer is silent, something is wired wrong. Re-run `/test-site` with the aff
 Take a quick mental snapshot before moving into the ALM labs:
 
 - The integration env has the latest bundle, all features (server logic, cloud flows, AI APIs), and all `.powerpages-site/` permissions configured
-- Lab 10 will turn this directory into a Git repo and push it to GitHub
-- Lab 13 will promote this same build through pre-prod to production via Power Platform Pipelines
+- Lab 11 will turn this directory into a Git repo and push it to GitHub
+- Lab 14 will promote this same build through pre-prod to production via Power Platform Pipelines
 
 ---
 
@@ -489,4 +489,4 @@ If the deploy fails:
 
 ## Next step
 
-→ [Lab 09: Run a security review](./09-security-review.md): the release-readiness security pass against the integration env before the ALM phase begins. After Lab 09, the ALM phase opens with [Lab 10: Put the site under source control](../alm/10-source-control.md).
+→ [Lab 10: Run a security review](./10-security-review.md): the release-readiness security pass against the integration env before the ALM phase begins. After Lab 10, the ALM phase opens with [Lab 11: Put the site under source control](../alm/11-source-control.md).

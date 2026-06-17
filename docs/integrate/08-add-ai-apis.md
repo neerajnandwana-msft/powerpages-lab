@@ -1,10 +1,10 @@
 ---
 sidebar_position: 4
-sidebar_label: "Lab 07: Add AI APIs"
-title: "Lab 07: Add generative AI APIs"
+sidebar_label: "Lab 08: Add AI APIs"
+title: "Lab 08: Add generative AI APIs"
 ---
 
-# Lab 07: Add generative AI APIs
+# Lab 08: Add generative AI APIs
 
 ## Goal
 
@@ -14,8 +14,8 @@ Add AI-powered invoice summaries and grounded search answers to the supplier por
 
 ## State you carry forward
 
-- Completed [Lab 06: Add Power Automate flows](./06-add-power-automate-flows.md) (portal has Web API, server logic, and cloud flow integrations working)
-- The typed service layer from [Lab 03](../build/03-web-api-integration.md) still exists (`src/services/webApi.ts`, entity-specific services, and `src/types/entities.ts`). `/add-ai-webapi` extends that pattern; do not delete or broadly refactor those files before running it.
+- Completed [Lab 07: Add Power Automate flows](./07-add-power-automate-flows.md) (portal has Web API, server logic, and cloud flow integrations working)
+- The typed service layer from [Lab 04](../build/04-web-api-integration.md) still exists (`src/services/webApi.ts`, entity-specific services, and `src/types/entities.ts`). `/add-ai-webapi` extends that pattern; do not delete or broadly refactor those files before running it.
 - Admin has enabled generative AI at the tenant and environment level (verify with your Power Platform admin before starting)
 - For Part 4 (Search Summary) you also need the **site-level** "Site search (preview)" toggle on. The plugin can't flip it; Step 4.2 walks you through it, but confirm you have maker access to the site's **Set up workspace** → **Copilot** settings now, so Part 4 doesn't stall
 - Site deployed via `/deploy-site` at least once (required for AI site settings phase)
@@ -106,7 +106,7 @@ Keep this straight: a **403** is always Layer 1/2 (Web API), never the AI layer;
 
 ## Part 2: data summarization on invoice detail
 
-> **Already ran `/integrate-backend`?** If the orchestrator in Lab 04 already added your AI summary and search features, use the rest of this lab to review and customize the generated code instead of re-running the AI skill.
+> **Already ran `/integrate-backend`?** If the orchestrator in Lab 05 already added your AI summary and search features, use the rest of this lab to review and customize the generated code instead of re-running the AI skill.
 
 ### Step 2.1: describe the intent
 
@@ -501,4 +501,4 @@ If AI calls consistently return `90041001` and the admin hierarchy is known to b
 
 ## Next step
 
-→ [Lab 08: Improve performance, test, and deploy](./08-performance-test-deploy.md)
+→ [Lab 09: Improve performance, test, and deploy](./09-performance-test-deploy.md)

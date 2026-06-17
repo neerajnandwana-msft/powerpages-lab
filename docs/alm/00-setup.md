@@ -6,9 +6,21 @@ title: "ALM phase setup"
 
 # ALM phase setup
 
-You've finished the Integrate phase (through Lab 09). The ALM phase (Labs 10-13) adds source control, branching, and multi-environment promotion. Everything from the [Build phase setup](../build/00-setup.md) still applies. You don't reinstall anything. You only need to add **GitHub CLI** and have a **GitHub account** ready before [Lab 10: Put the site under source control](10-source-control.md).
+You've finished the Integrate phase (through Lab 10). The ALM phase (Labs 11-14) adds source control, branching, and multi-environment promotion. Everything from the [Build phase setup](../build/00-setup.md) still applies. You don't reinstall anything. You only need to add **GitHub CLI** and have a **GitHub account** ready before [Lab 11: Put the site under source control](11-source-control.md).
 
 For the staged, cross-phase view of what gets installed when, see the [Setup Guide overview](../setup-guide.md).
+
+---
+
+## What changes in this phase
+
+Keep the Build and Integrate tools: PAC CLI, Azure CLI, your AI coding CLI, and the Power Pages plugin. The only new tool is **GitHub CLI (`gh`)**.
+
+Before Lab 11, confirm:
+
+- [ ] Your portal folder still contains `package.json`, `src/`, and `.powerpages-site/`
+- [ ] `pac auth list` still points to the environment you used in the Integrate phase
+- [ ] `gh` is installed and authenticated
 
 ---
 
@@ -65,6 +77,6 @@ gh auth status          # Expect: logged in as <your-github-username>
 
 ## What's next
 
-→ [Lab 10: Put the site under source control](10-source-control.md)
+→ [Lab 11: Put the site under source control](11-source-control.md)
 
-Back to the [ALM phase overview](index.md) or the [track overview](../intro.md).
+Back to the [ALM phase overview](index.md) or the [track overview](../agentic-site-authoring.md).

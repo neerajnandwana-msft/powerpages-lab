@@ -28,9 +28,23 @@ Scaffold a complete Supplier Invoice Submission Portal as a React SPA with mock 
 
 ---
 
-## About Power Pages SPA sites
+## Fast path
 
-Before scaffolding, a quick orientation to the platform you're building on.
+If you already understand Power Pages SPA sites, go straight to [Step 1: create a project directory](#step-1-create-a-project-directory). The rest of this section explains why the lab uses a SPA site and what the generated architecture means.
+
+The hands-on flow is simple:
+
+1. Create a project folder.
+2. Run `/create-site` with the supplied ACE prompt.
+3. Review the plan before approving generation.
+4. Preview the generated React app locally.
+5. Review the project structure so later labs make sense.
+
+---
+
+## Optional orientation: why Power Pages SPA sites work this way
+
+Before scaffolding, use this quick orientation to understand the platform you're building on.
 
 ### What is a Power Pages SPA site?
 
@@ -47,10 +61,10 @@ flowchart TD
     SL["Server logic<br/>/_api/serverlogics/&lt;name&gt;"]
     CF["Cloud flows<br/>/_api/cloudflow/v1.0/trigger/&lt;flowId&gt;"]
     AI["Generative AI<br/>/_api/search/v1.0/summary<br/>/_api/summarization/data/v1.0/&lt;entity&gt;(id)"]
-    DV["Dataverse<br/>(Lab 03)"]
-    Sandbox["Sandboxed JS<br/>(Lab 05)"]
-    PA["Power Automate<br/>(Lab 06)"]
-    PPAI["Power Pages AI<br/>(Lab 07)"]
+    DV["Dataverse<br/>(Lab 04)"]
+    Sandbox["Sandboxed JS<br/>(Lab 06)"]
+    PA["Power Automate<br/>(Lab 07)"]
+    PPAI["Power Pages AI<br/>(Lab 08)"]
 
     Browser -->|HTTPS| CDN
     CDN --> Gateway
@@ -61,7 +75,7 @@ flowchart TD
 ```
 
 - The SPA runs entirely in the browser as static HTML, CSS, and JavaScript
-- All backend access goes through `/_api/*` after later labs add live integrations. Lab 03 starts with OData CRUD on Dataverse, then Labs 05-07 add server logic, Power Automate cloud flows, and generative AI APIs.
+- All backend access goes through `/_api/*` after later labs add live integrations. Lab 04 starts with OData CRUD on Dataverse, then Labs 06-08 add server logic, Power Automate cloud flows, and generative AI APIs.
 - Authentication uses server-side session cookies managed by Power Pages
 - The site is deployed as compiled static files, no server-side rendering
 
@@ -87,7 +101,7 @@ Power Pages SPA sites support four frameworks: **React** (built with Vite), **An
 - The compiled output must be static HTML/CSS/JS
 - All backend access happens through the platform's `/_api/` runtime gateway (Web API (OData CRUD), server logic, and cloud flows), not a server you run yourself
 
-### Tech stack used in this Lab
+### Tech stack used in this lab
 
 This lab uses **React + TypeScript + Tailwind CSS + Vite**, following **Microsoft Fluent Design** language. The canonical example is a **Supplier Invoice Submission Portal** with 5 pages.
 
@@ -277,7 +291,7 @@ Open your browser to `http://localhost:5173` (Vite's default port).
 - [ ] Details card with PO#, Amount, Description, Dates, Company
 - [ ] Status timeline showing progression
 
-> **Expected:** All pages render with Fluent Design styling (Segoe UI font, a Fluent primary blue, card-based layouts with subtle shadows). Data is mock data. Lab 03 connects the portal to live Dataverse.
+> **Expected:** All pages render with Fluent Design styling (Segoe UI font, a Fluent primary blue, card-based layouts with subtle shadows). Data is mock data. Lab 04 connects the portal to live Dataverse.
 
 ---
 
@@ -294,7 +308,7 @@ supplier-invoice-portal/
 ├── src/
 │   ├── pages/           # One file per route
 │   ├── components/      # Reusable UI components
-│   ├── data/            # Mock data (replaced in Lab 03)
+│   ├── data/            # Mock data (replaced in Lab 04)
 │   ├── types/           # TypeScript interfaces
 │   └── App.tsx          # Router and layout
 ├── powerpages.config.json   # siteName + compiledPath + defaultLandingPage for PAC CLI
@@ -335,7 +349,7 @@ All linked to mock user "Nancy Anderson (sample)" at "Adventure Works (sample)".
   "defaultLandingPage": "index.html"
 }
 ```
-Later labs add an optional `bundleFilePatterns` field here to clean up stale bundles on each deploy (Lab 08). See the [`powerpages.config.json` reference](https://learn.microsoft.com/power-pages/configure/create-code-sites#defining-upload-parameters-with-powerpagesconfigjson).
+Later labs add an optional `bundleFilePatterns` field here to clean up stale bundles on each deploy (Lab 09). See the [`powerpages.config.json` reference](https://learn.microsoft.com/power-pages/configure/create-code-sites#defining-upload-parameters-with-powerpagesconfigjson).
 
 **CLAUDE.md**: Review the project context your AI coding CLI created. This file will help your AI coding CLI maintain consistency in future sessions.
 

@@ -6,7 +6,7 @@ title: "Build phase setup"
 
 # Build phase setup
 
-Complete this section before [Lab 01: Scaffold a Power Pages SPA](01-scaffold-spa-portal.md). It installs and authenticates the tools the Build phase needs, and the same tools carry you through the [Integrate phase](../integrate/00-setup.md) (Labs 04-09). The [ALM phase](../alm/00-setup.md) adds one more tool (GitHub CLI) later. You don't need it yet.
+Complete this section before [Lab 01: Scaffold a Power Pages SPA](01-scaffold-spa-portal.md). It installs and authenticates the tools the Build phase needs, and the same tools carry you through the [Integrate phase](../integrate/00-setup.md) (Labs 05-10). The [ALM phase](../alm/00-setup.md) adds one more tool (GitHub CLI) later. You don't need it yet.
 
 For the staged, cross-phase view of what gets installed when, see the [Setup Guide overview](../setup-guide.md).
 
@@ -18,9 +18,18 @@ For the staged, cross-phase view of what gets installed when, see the [Setup Gui
 
 ## Step 1: confirm your Dataverse environment
 
-Every lab depends on a Dataverse environment. You must have one provisioned before moving on to the remaining steps. If you don't have one yet, contact your tenant admin right away.
+Every lab depends on a Dataverse environment. Use this quick path to decide what to do before you install the rest of the tools.
 
-> **No environment? Create a free trial.** If you don't have access to a provisioned environment, you can sign up for a Power Pages trial (includes a Dataverse database) by following the official guide: [Sign up for a Power Pages trial](https://learn.microsoft.com/power-pages/getting-started/trial-signup). This gives you a fully functional environment for the lab track.
+| Your situation | What to do |
+|---|---|
+| You can see a Dataverse environment and have System Administrator | Continue with the checks below |
+| You can see the environment but lack System Administrator | Ask your tenant admin to assign the role before Lab 01 |
+| You do not have an environment | Ask your tenant admin for one, or create a Power Pages trial |
+| You are using a trial | Confirm the trial includes a Dataverse database, then continue |
+
+If you don't have access to a provisioned environment, you can sign up for a Power Pages trial by following the official guide: [Sign up for a Power Pages trial](https://learn.microsoft.com/power-pages/getting-started/trial-signup). The trial includes a Dataverse database for the lab track.
+
+### Verify environment access
 
 1. Go to [https://admin.powerplatform.microsoft.com/](https://admin.powerplatform.microsoft.com/)
 2. Confirm you can see your environment in the list
@@ -43,7 +52,11 @@ If the **Create a site** button is missing, disabled, or the dialog fails to loa
 
 If you cannot see the environment, it does not have a Dataverse database, you lack the System Administrator role, or you cannot reach the site creation screen, contact your tenant admin to resolve before starting Lab 01.
 
-> **Allow JavaScript file uploads (do this now to avoid a blocked first deploy).** Many Dataverse environments block `.js` uploads by default, which stops an SPA from deploying. The first `pac pages upload-code-site` (Lab 02) fails with *"Import failed: The attachment is either not a valid type or is too large."* Clear it ahead of time: in the [Power Platform admin center](https://admin.powerplatform.microsoft.com/), select **Manage** → **Environments** → your environment → **Settings** → **Product** → **Privacy + Security**, remove `js` from **Blocked Attachments**, and **Save**. See [Allow JavaScript file uploads](https://learn.microsoft.com/power-pages/configure/create-code-sites#allow-javascript-file-uploads).
+### Allow JavaScript file uploads
+
+Do this now to avoid a blocked first deploy. Many Dataverse environments block `.js` uploads by default, which stops an SPA from deploying. The first `pac pages upload-code-site` in Lab 02 can fail with *"Import failed: The attachment is either not a valid type or is too large."*
+
+In the [Power Platform admin center](https://admin.powerplatform.microsoft.com/), select **Manage** > **Environments** > your environment > **Settings** > **Product** > **Privacy + Security**, remove `js` from **Blocked Attachments**, and **Save**. See [Allow JavaScript file uploads](https://learn.microsoft.com/power-pages/configure/create-code-sites#allow-javascript-file-uploads).
 
 ---
 
@@ -59,7 +72,7 @@ Install the five tools below, then confirm them all at once in Step 5. You need 
 | Azure CLI | Gets the Microsoft Entra ID tokens your AI coding CLI uses to call Dataverse, Power Platform, and Power Automate APIs | [Install Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), then restart your terminal |
 | AI coding CLI (pick one or both) | Runs the plugin skills as slash commands | **GitHub Copilot CLI:** `npm install -g @github/copilot` (needs Node 22+; [other install methods](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli)). **Claude Code CLI:** follow [claude.ai/code](https://claude.ai/code) |
 
-> **PAC CLI must be version 2.6.3 or later.** Server logic (Lab 05) requires it. If you already have PAC CLI, update with `dotnet tool update --global Microsoft.PowerApps.CLI.Tool`.
+> **PAC CLI must be version 2.6.3 or later.** Server logic (Lab 06) requires it. If you already have PAC CLI, update with `dotnet tool update --global Microsoft.PowerApps.CLI.Tool`.
 
 > **Sign in to Azure once before Lab 01:** run `az login --allow-no-subscriptions`. The flag lets you authenticate whether or not your account has an Azure subscription; the plugin only needs Microsoft Entra ID-scoped tokens, never a subscription ([Azure CLI reference](https://learn.microsoft.com/cli/azure/reference-index#az-login)). Follow-up `az` commands don't need the flag.
 
@@ -171,4 +184,4 @@ If all commands produce the expected output, you are ready for **Lab 01**.
 
 → [Lab 01: Scaffold a Power Pages SPA](01-scaffold-spa-portal.md)
 
-Back to the [Build phase overview](index.md) or the [track overview](../intro.md).
+Back to the [Build phase overview](index.md) or the [track overview](../agentic-site-authoring.md).
