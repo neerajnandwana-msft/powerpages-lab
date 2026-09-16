@@ -35,13 +35,23 @@ The whole outer loop is three workflows and one shared action. This lab builds t
 |---|---|---|
 | **Pull request validation** ([Appendix A.1](appendix-a-workflows.md#a1-pr-validation)) | Every pull request | The source lints, type-checks, and passes tests; links resolve; the solution source packs both managed and unmanaged; the solution checker passes; the committed bundle matches what the source builds. |
 | **Continuous integration build** ([Appendix A.2](appendix-a-workflows.md#a2-ci-build)) | Merge to `develop` | The integration branch is always a known-good, downloadable build candidate, so cutting a release is never the first time that state has been packed. |
-| **Release and promotion** ([Appendix A.3](appendix-a-workflows.md#a3-cd-release)) | A version tag on `main` | The release is built once, published as immutable artifacts, and installed in test automatically and in production only after approval. |
+| **Release and promotion** ([Appendix A.3](appendix-a-workflows.md#a3-cd-release)) | A version tag on `main` | The release is built once, published as immutable artifacts, installed in test automatically, and reaches production only through a deliberate release decision. |
 
 ## Step 2: add the validation workflow
 
-Add `.github/workflows/pr-validation.yml` from [Appendix A.1](appendix-a-workflows.md#a1-pr-validation). It is everything that verifies the repository without deploying it.
+Copy [Appendix A.1](appendix-a-workflows.md#a1-pr-validation) into `.github/workflows/pr-validation.yml`. Use the copy button on the code block rather than selecting the text, so the indentation survives: YAML is whitespace-sensitive and a reflowed paste fails to parse.
 
-The workflow has three trigger groups, each running a different set of jobs:
+:::warning Change these three things before you commit
+Every workflow in [Appendix A](appendix-a-workflows.md) is specific to the sample in three ways, and all three appear in this file:
+
+1. The solution name `SupplierInvoicePortal` in every path.
+2. The environment names `dev`, `qa`, and `prod`, if you chose different ones.
+3. The pinned Power Platform CLI version, which must match what your developers run locally.
+
+Secrets and variables come from GitHub environments, so nothing in these files carries a credential.
+:::
+
+The workflow is everything that verifies the repository without deploying it. It has three trigger groups, each running a different set of jobs:
 
 | Trigger | Jobs | Purpose |
 |---|---|---|
@@ -84,13 +94,19 @@ Comparing a freshly built bundle against the committed one only works if an iden
 
 ## Step 5: require the checks
 
-A workflow that runs but does not block is documentation. In the branch ruleset from [Lab 04](04-branching-and-protection.md), mark each change-gate job as a required status check on both `develop` and `main`.
+A workflow that runs but does not block is documentation. Open the ruleset you created in [Lab 04](04-branching-and-protection.md) for each of `develop` and `main`, enable **Require status checks to pass**, and add the five change-gate checks.
 
-Required check names must match the job names exactly. A misnamed required check waits forever for a job that will never report, and the usual response is for someone to remove the requirement.
+:::warning Add the display name, not the job key
+GitHub matches a required check against the job's `name:` value, not the key it is defined under. Add `Lint, type-check, unit tests and links`, not `quality`. Use the **Display name** column in Step 3 for all five.
+
+The safest way to get them right is to open a throwaway pull request first, let the workflow run once, then pick the checks from the suggestions list instead of typing them. A misnamed required check waits forever for a job that will never report, and the usual response is for someone to remove the requirement.
+:::
+
+Do not add `environment-drift` or `analyze` as required checks. They never run on a pull request, so requiring them blocks every merge permanently.
 
 ## Step 6: add dependency and action updates
 
-Add `.github/dependabot.yml` from [Appendix A.5](appendix-a-workflows.md#a5-dependabot). It covers npm packages and GitHub Actions versions.
+Copy [Appendix A.5](appendix-a-workflows.md#a5-dependabot) into `.github/dependabot.yml`. It covers npm packages and GitHub Actions versions.
 
 Pinned action versions are only safe if something proposes the upgrades. Without this, pinning quietly turns into neglect.
 
@@ -99,15 +115,19 @@ Two details in that configuration are worth copying:
 - **Minor and patch updates are grouped.** The SPA bundle is content-hashed into the solution, so every dependency bump requires a sync. Grouping keeps that to one pull request a week rather than one per package.
 - **Major updates arrive individually.** A grouped major bump is all-or-nothing, so a single incompatibility blocks every package in the group and the required bundle re-sync has to cover every change at once.
 
-## Step 7: record the release gate
+The schedule is weekly, so nothing happens immediately. To confirm it is working without waiting, open **Insights** > **Dependency graph** > **Dependabot** and check that both ecosystems are listed with a recent check time.
 
-The outer loop should not start until:
+## Step 7: write down the release gate
+
+Record, in the repository rather than in a chat thread, what must be true before a release is cut. Add it to your `docs/` folder or to the pull request template from [Lab 04](04-branching-and-protection.md):
 
 - The pull request is approved.
 - Every required check passes.
-- The solution checker result is acceptable.
-- Environment values are documented.
+- The solution checker result is acceptable, and any accepted findings are named.
+- Environment values are documented for the target stage.
 - The release owner accepts any known risks.
+
+Name the release owner. A gate with no owner is a list.
 
 ## Checkpoint
 
@@ -115,16 +135,18 @@ You have completed this lab when:
 
 - [ ] `pr-validation.yml` exists and runs on pull requests to `develop` and `main`.
 - [ ] `quality`, `web`, `solution`, `solution-checker`, and `drift` all pass on a clean branch.
-- [ ] Every change-gate job is a required status check on both shared branches.
+- [ ] Every change-gate job is a required status check on both shared branches, added by display name.
 - [ ] A deliberate code change without a sync fails the `drift` job.
 - [ ] The nightly `environment-drift` job runs and reports against the development environment.
-- [ ] `dependabot.yml` exists and has opened at least one update pull request.
+- [ ] `dependabot.yml` is committed and both ecosystems appear under the dependency graph.
+- [ ] The release gate is written down and the release owner is named.
 
 ## Troubleshooting
 
 | Problem | Fix |
 |---|---|
-| A required check never reports | The required check name does not match the job name. Fix the name rather than removing the requirement. |
+| A required check never reports | The required check uses the job key instead of its `name:` display value. Fix the name rather than removing the requirement. |
+| Every merge is blocked and a check is stuck pending | A check that never runs on pull requests, usually `environment-drift` or `analyze`, was added as required. Remove it. |
 | `drift` fails on every run | The build is not reproducible. Remove non-deterministic output from the build, then re-sync once. |
 | `solution-checker` produces noisy findings | Tune the threshold, but keep critical findings blocking. A gate tuned to never fail is not a gate. |
 | The solution job fails to pack | The unpacked source is invalid, often from a hand-edit. Re-sync from the environment. |

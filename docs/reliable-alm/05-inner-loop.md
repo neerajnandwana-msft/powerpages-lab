@@ -39,13 +39,14 @@ A developer does this on their first day and never again:
    pac auth create --environment <your dev environment url>
    ```
 
-4. Import the unmanaged solution built from your branch:
+4. Rebuild the environment from your branch, using the same pack and import pair as [Lab 02](02-environment-strategy.md):
 
    ```bash
-   pac solution import
+   pac solution pack --zipfile ./out/<SolutionName>.zip --folder ./solutions/<SolutionName>/src --packagetype Unmanaged
+   pac solution import --path ./out/<SolutionName>.zip --publish-changes
    ```
 
-5. Enable the pre-push hook:
+5. Enable the pre-push hook, which you add in Step 2:
 
    ```bash
    git config core.hooksPath .githooks
@@ -55,13 +56,43 @@ A developer does this on their first day and never again:
 Joining the workload should cost a branch, an environment, and one automated solution import. Everything else comes from the repository. If a developer's first day takes longer than that, something that belongs in source control is living in someone's environment instead.
 :::
 
-## Step 2: start each piece of work
+## Step 2: add the developer scripts
+
+Before any `npm run` command works, the repository needs the scripts behind them. Add these four files from [Appendix B](appendix-b-scripts.md), which reproduces each one in full:
+
+| File | From | What it gives you |
+|---|---|---|
+| `package.json` | [B.1](appendix-b-scripts.md#b1-package-json) | Every `npm run` command in Step 6 |
+| `.githooks/pre-push` | [B.2](appendix-b-scripts.md#b2-pre-push) | The push block that stops a stale bundle |
+| `scripts/check-solution-drift.mjs` | [B.3](appendix-b-scripts.md#b3-check-solution-drift) | The comparison behind `check:drift` |
+| `scripts/sync-site-components.mjs` | [B.4](appendix-b-scripts.md#b4-sync-site-components) | Adds new site components before the solution is synced |
+
+Three things in `package.json` are specific to the sample and must change for your workload: the solution name `SupplierInvoicePortal` in the `sync:solution` path, the package name, and any dependency you do not use.
+
+Then install and confirm the commands resolve:
+
+```bash
+npm install
+npm run lint
+```
+
+On macOS or Linux, make the hook executable:
+
+```bash
+chmod +x .githooks/pre-push
+```
+
+:::note A site with no build step needs fewer of these
+`check-solution-drift.mjs` and the `build`, `preview`, `check:drift`, and `verify:solution` commands exist to keep a compiled bundle in step with the solution that carries it. If your site is authored entirely in the design studio, skip them and keep the environment and deployment scripts.
+:::
+
+## Step 3: start each piece of work
 
 - Pull the shared feature branch and re-import it, so you start from the team's baseline rather than yesterday's.
 - Create your work branch: `git switch -c dev/<alias>/<topic>`.
 - Load test data if you need it: `npm run seed`.
 
-## Step 3: repeat while you build
+## Step 4: repeat while you build
 
 - Publish your change to your own environment:
 
@@ -75,7 +106,7 @@ Joining the workload should cost a branch, an environment, and one automated sol
 - Run `npm run sync:solution` to put source back in step. It builds the site, uploads it to your environment, then pulls the site components and the solution back into source.
 - Run `npm run test:e2e` to run the same end-to-end suite the pull request will run.
 
-## Step 4: check before you push
+## Step 5: check before you push
 
 - `npm run verify:solution` must report no drift. It rebuilds the site and compares it to the committed solution.
 - `npm run check:links` catches routes that no longer resolve.
@@ -86,9 +117,9 @@ Joining the workload should cost a branch, an environment, and one automated sol
 The compiled site is committed inside the solution, so a code change that skips the sync ships stale code at the next promotion. `npm run sync:solution` does the whole sequence in the right order, and `npm run verify:solution` proves it worked. Wrapping this in a script is what stops the most common Power Pages ALM failure from depending on memory. The source of both is in [Appendix B](appendix-b-scripts.md).
 :::
 
-## Step 5: adopt the command set
+## Step 6: adopt the command set
 
-These are every script a developer needs for day-to-day work. The full `package.json` is in [Appendix B.1](appendix-b-scripts.md#b1-package-json).
+These are every script a developer needs for day-to-day work, all defined in the `package.json` you added in Step 2. The full file is in [Appendix B.1](appendix-b-scripts.md#b1-package-json).
 
 :::note These commands assume a compiled site
 The site here is a single-page application that is compiled and then served by the Power Pages runtime. That is why `dev`, `build`, `sync:solution`, `check:drift`, and `verify:solution` exist at all: they keep a compiled bundle in step with the solution that carries it. A site authored entirely in the design studio has no build step, so it needs neither the build commands nor the bundle drift checks, though it still needs the environment and deployment ones. Take the commands that match your site rather than the whole set.
@@ -110,7 +141,7 @@ The site here is a single-page application that is compiled and then served by t
 | | `npm run test:deployment` | Runs the smoke tests against a deployed site |
 | | `npm run verify:deployment` | Confirms the deployed site serves the build that was shipped |
 
-## Step 6: understand why the commands compose
+## Step 7: understand why the commands compose
 
 The commands compose rather than duplicate. `verify:solution` calls `build` and `check:drift`, and the pull request runs the same `check:drift`.
 
@@ -120,12 +151,12 @@ A developer, the pre-push hook, and continuous integration therefore apply one d
 
 You have completed this lab when:
 
+- [ ] `package.json`, the two scripts, and the pre-push hook are committed.
 - [ ] A developer can go from clone to a working site in their own environment using only the documented commands.
 - [ ] `npm run sync:solution` completes and produces a commit containing both site source and solution changes.
 - [ ] `npm run verify:solution` reports no drift on a clean checkout.
 - [ ] The pre-push hook blocks a push after a deliberate code change made without a sync.
-- [ ] `npm run test:e2e` passes locally against a development environment.
-- [ ] Every developer has the hook enabled.
+- [ ] Every developer has run `git config core.hooksPath .githooks`.
 
 ## Troubleshooting
 

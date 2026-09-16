@@ -40,8 +40,8 @@ The examples use a Power Pages [single-page application (SPA) site](https://lear
 | Lab | If your site is not an SPA |
 |---|---|
 | Setup, 01, 02, 03, 04 | Applies unchanged |
-| 05 Inner loop | Skip `build`, `preview`, `sync:solution`, `check:drift`, and `verify:solution`. Keep the environment, seeding, and deployment commands. |
-| 06 Pull request gates | Skip the `web` and `drift` jobs. Keep `quality`, `solution`, `solution-checker`, and `environment-drift`. |
+| 05 Inner loop | Skip `build`, `preview`, `sync:solution`, `check:drift`, and `verify:solution`, and skip `check-solution-drift.mjs`. Keep the environment, seeding, and deployment commands. |
+| 06 Pull request gates | Skip the `Build and test the SPA` and `Solution matches the SPA build` jobs, and do not add them as required checks. Keep the other three plus `environment-drift`. |
 | 07 Release and promote | Applies unchanged |
 
 ## The approach in brief
@@ -116,16 +116,18 @@ Keeping them separate is what makes the process fast and safe at the same time: 
 
 ## Labs in this guide
 
-| # | Lab | Outcome |
-|---|---|---|
-| Setup | [Reliable ALM setup](00-setup.md) | Tools, repository, service principal, and GitHub secrets and variables are ready |
-| 01 | [Design the ALM blueprint](01-design-alm-blueprint.md) | The five decisions, the two loops, and the rules your team commits to are recorded |
-| 02 | [Set up the environment strategy](02-environment-strategy.md) | Integration, per-developer, test, and production environments exist with the right solution state |
-| 03 | [Set solution boundaries and repository layout](03-solutions-and-repository.md) | Solution count is decided and the repository holds site source and unpacked solutions together |
-| 04 | [Set up branching and branch protection](04-branching-and-protection.md) | `feature/*`, `develop`, `main`, and `hotfix/*` exist with protection rules that cannot be bypassed |
-| 05 | [Work the inner loop](05-inner-loop.md) | A developer can author, preview, validate, sync, and push without memorizing a single `pac` command |
-| 06 | [Gate every pull request](06-pull-request-gates.md) | `pr-validation.yml` blocks a merge that breaks the build, the tests, the solution, or the bundle |
-| 07 | [Build, release, and promote](07-release-and-promote.md) | A tag builds once, publishes immutable artifacts, promotes to test, and reaches production behind approval |
+Budget about **7 to 9 hours** end to end, spread across sessions. Labs 01 and 03 are decisions your team makes together; the rest are hands-on.
+
+| # | Lab | Time | Outcome |
+|---|---|---|---|
+| Setup | [Reliable ALM setup](00-setup.md) | 45-60 min | Tools, repository, service principal, and GitHub secrets and variables are ready |
+| 01 | [Design the ALM blueprint](01-design-alm-blueprint.md) | 30-45 min | The five decisions, the two loops, and the rules your team commits to are recorded |
+| 02 | [Set up the environment strategy](02-environment-strategy.md) | 45-60 min | Integration, per-developer, test, and production environments exist, and the baseline is committed |
+| 03 | [Set solution boundaries and repository layout](03-solutions-and-repository.md) | 45-60 min | Solution count is decided and the repository holds site source and unpacked solutions together |
+| 04 | [Set up branching and branch protection](04-branching-and-protection.md) | 35-50 min | Branches, rulesets, a pull request template, and `CODEOWNERS` are in place |
+| 05 | [Work the inner loop](05-inner-loop.md) | 60-90 min | The developer scripts exist, and one command keeps the site and solution in step |
+| 06 | [Gate every pull request](06-pull-request-gates.md) | 60-90 min | `pr-validation.yml` blocks a merge that breaks the build, the tests, the solution, or the bundle |
+| 07 | [Build, release, and promote](07-release-and-promote.md) | 60-90 min | A tag builds once, publishes immutable artifacts, promotes to test, and reaches production deliberately |
 
 Two appendixes reproduce the automation in full:
 

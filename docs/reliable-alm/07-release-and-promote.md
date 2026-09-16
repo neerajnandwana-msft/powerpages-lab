@@ -25,7 +25,7 @@ This is where the one rule is either kept or quietly broken. Build the artifact 
 
 ## Step 1: keep `develop` releasable
 
-Add `.github/workflows/ci-build.yml` from [Appendix A.2](appendix-a-workflows.md#a2-ci-build). Everything merged to `develop` is built and packed once.
+Copy [Appendix A.2](appendix-a-workflows.md#a2-ci-build) into `.github/workflows/ci-build.yml`, changing the same three things you changed in [Lab 06](06-pull-request-gates.md): the solution name, the environment names, and the pinned CLI version. Everything merged to `develop` is built and packed once.
 
 ![GitHub Actions run graph for ci-build.yml triggered on push, showing a single successful job named Build the code site and pack the solution that ran for 1 minute 8 seconds.](/img/reliable-alm/ci-build-flow.png)
 
@@ -37,7 +37,7 @@ This workflow does not publish a release and does not deploy. Artifacts here are
 
 ## Step 2: add the release and promotion workflow
 
-Add `.github/workflows/cd-release.yml` from [Appendix A.3](appendix-a-workflows.md#a3-cd-release). It is everything that touches a Power Platform environment, in three modes selected on dispatch.
+Copy [Appendix A.3](appendix-a-workflows.md#a3-cd-release) into `.github/workflows/cd-release.yml`, with the same three changes. It is everything that touches a Power Platform environment, in three modes selected on dispatch.
 
 | Mode | What it does |
 |---|---|
@@ -62,7 +62,7 @@ A tag pushed with the default `GITHUB_TOKEN` does not start a new workflow run. 
 
 ## Step 3: add the shared promotion action
 
-Add `.github/actions/promote-solution/action.yml` from [Appendix A.4](appendix-a-workflows.md#a4-promote-solution). Test and production need the same promotion logic, and duplicating it is how the two paths quietly drift apart.
+Copy [Appendix A.4](appendix-a-workflows.md#a4-promote-solution) into `.github/actions/promote-solution/action.yml`. The path matters: a composite action must live at `action.yml` inside its own folder, or the `uses: ./.github/actions/promote-solution` reference fails to resolve. Test and production need the same promotion logic, and duplicating it is how the two paths quietly drift apart.
 
 It is a composite action rather than a reusable workflow for a specific reason: a composite action is not a workflow file, so it keeps the layout at three workflows while each calling job keeps its own `environment:` declaration, which is what scopes the credentials and carries any approval gate.
 
@@ -99,7 +99,11 @@ The release workflow promotes to QA automatically and then stops. Production is 
 | `true` | `promote-prod` runs against the `prod` environment, which pauses for its reviewers | Required reviewers exist on the `prod` environment |
 
 :::warning An unguarded environment does not pause
-Required reviewers on a GitHub environment need a paid plan on a private repository. Without them, `environment: prod` pauses for nobody, so setting `PROD_AUTO_PROMOTE` to `true` would ship to production unattended. That is why the variable exists and why it defaults to off. Turn it on only after you have confirmed the reviewers are actually configured.
+Required reviewers on a GitHub environment are **not** available for private repositories on Free, Pro, or Team. On those plans they exist only on public repositories; for a private repository you need GitHub Enterprise.
+
+Without required reviewers, `environment: prod` pauses for nobody, so setting `PROD_AUTO_PROMOTE` to `true` would ship to production unattended. That is why the variable exists and why it defaults to off.
+
+Before you turn it on, confirm the gate is real: open **Settings** > **Environments** > **prod** and check that **Required reviewers** is present and populated. If the option is not shown, your plan does not offer it and the variable must stay off.
 :::
 
 Until then, production promotion is a deliberate act by a named person: run the workflow again in `promote` mode with the release tag and the `prod` target. That is a weaker control than an approval gate, but it is an honest one, and it is recorded in the run history.
@@ -139,9 +143,18 @@ Run `npm run verify:deployment` to confirm the deployed site serves the build th
 
 ## Step 9: make rollback routine
 
-**Roll back by re-promoting the previous tag.** Dispatch the workflow in `promote` mode with the earlier release tag and the production target. No reconstruction, and no hotfix branch required to recover.
+**Roll back by re-promoting the previous tag.** No reconstruction, and no hotfix branch required to recover.
 
 This is only possible because the artifact was published rather than rebuilt. If your recovery plan involves rebuilding anything, you are shipping bytes that were never signed off, during an incident, which is the worst possible moment to introduce a variable.
+
+Rehearse it now, against `qa`, while nothing is on fire:
+
+1. Note the release tag currently installed in `qa`.
+2. Run the workflow with **What to do** set to `promote`, **release to use** set to the *previous* tag, and **target environment** set to `qa`.
+3. Confirm the older version is installed and the site still works.
+4. Re-promote the current tag to put `qa` back.
+
+A rollback you have never run is a plan, not a capability. The rehearsal also proves that the older release asset is still downloadable, which is the part that silently rots.
 
 | Failure | Recovery |
 |---|---|
@@ -176,7 +189,7 @@ You have completed this lab when:
 - [ ] Test receives the artifact automatically and the smoke suite passes.
 - [ ] You have decided how production is reached, and `PROD_AUTO_PROMOTE` is set to `true` only if required reviewers really exist on `prod`.
 - [ ] The site is activated in each target environment and cache clearing is part of the runbook.
-- [ ] A rollback has been rehearsed by re-promoting an earlier tag.
+- [ ] A rollback has been rehearsed against `qa` by re-promoting an earlier tag.
 - [ ] The operating cadence is documented and owned.
 
 ## Troubleshooting

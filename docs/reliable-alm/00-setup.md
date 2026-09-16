@@ -46,7 +46,11 @@ git --version
 The workflows install a fixed Power Platform CLI version. When you change it, change it in both places on the same commit, so a build never uses a CLI version that no developer has run locally.
 :::
 
-## Step 2: clone the repository and install dependencies
+## Step 2: create or clone the repository
+
+One repository holds the site source, the unpacked solution, the automation, and the developer scripts.
+
+**If your team already has a repository for this workload,** clone it and install dependencies:
 
 ```bash
 git clone <your repository url>
@@ -56,17 +60,25 @@ npm ci
 
 Use `npm ci` rather than `npm install`. It installs exactly the versions in the lockfile, which is what the workflows do.
 
-## Step 3: enable the pre-push hook
+**If you are starting from an existing Power Pages site and an empty repository,** you do not have those files yet. You build them as you go, and every one of them is reproduced in full in the appendixes. Nothing in this guide asks you to invent a file from scratch.
 
-The repository ships a hook that blocks a push whose committed solution is out of date with what the source builds. Git does not enable hooks from a repository automatically, so each developer runs this once:
+This is what gets added, and where:
 
-```bash
-git config core.hooksPath .githooks
-```
+| Artifact | Added in | Source |
+|---|---|---|
+| Unpacked solution under `solutions/` | [Lab 02](02-environment-strategy.md) | Exported from your integration environment |
+| Site source under `.powerpages-site/` | [Lab 02](02-environment-strategy.md) | Downloaded from your integration environment |
+| `.gitattributes` | [Lab 03](03-solutions-and-repository.md) | Contents given in the lab |
+| Pull request template and `CODEOWNERS` | [Lab 04](04-branching-and-protection.md) | Contents given in the lab |
+| `package.json` scripts, `scripts/*.mjs`, `.githooks/pre-push` | [Lab 05](05-inner-loop.md) | [Appendix B](appendix-b-scripts.md) |
+| `pr-validation.yml`, `dependabot.yml` | [Lab 06](06-pull-request-gates.md) | [Appendix A](appendix-a-workflows.md) |
+| `ci-build.yml`, `cd-release.yml`, `promote-solution` action | [Lab 07](07-release-and-promote.md) | [Appendix A](appendix-a-workflows.md) |
 
-The hook source is in [Appendix B.2](appendix-b-scripts.md#b2-pre-push). You configure what it checks in [Lab 05](05-inner-loop.md).
+:::note The npm commands arrive in Lab 05
+Until you add `package.json` in [Lab 05](05-inner-loop.md), commands such as `npm run build` and `npm run sync:solution` do not exist yet. Labs 02 through 04 use `pac` and `git` directly, and every command they need is given in full.
+:::
 
-## Step 4: register the service principal
+## Step 3: register the service principal
 
 The workflows authenticate as an application, never as a person. A named user account would tie your release pipeline to one employee's credentials, licence, and multifactor prompts.
 
@@ -75,9 +87,9 @@ The workflows authenticate as an application, never as a person. A named user ac
 3. Record the application (client) ID and the directory (tenant) ID.
 4. In each Power Platform environment the pipeline touches, add the application as an application user and grant it the System Administrator security role.
 
-Step 4 is the one most often missed. A service principal that exists in Entra ID but is not an application user in the target environment authenticates successfully and then fails on import with a permission error.
+The last point is the one most often missed. A service principal that exists in Entra ID but is not an application user in the target environment authenticates successfully and then fails on import with a permission error.
 
-## Step 5: create the GitHub environments
+## Step 4: create the GitHub environments
 
 Create three GitHub environments named `dev`, `qa`, and `prod`. Create them before you store any credentials, because the secrets and variables below are scoped to an environment rather than to the repository.
 
@@ -87,7 +99,7 @@ That scoping is what lets one workflow target a different Power Platform environ
 The diagrams in this guide label the pre-production environment *test*; the automation names it *qa*. They are the same role. Agree one name across Power Platform environments, GitHub environments, and your documentation before you build the pipeline, or you will spend the rest of the project translating.
 :::
 
-## Step 6: store the secrets
+## Step 5: store the secrets
 
 Store the service principal credentials as **environment** secrets on each of `dev`, `qa`, and `prod`, so no credential ever lives in the repository.
 
@@ -101,7 +113,7 @@ Store the service principal credentials as **environment** secrets on each of `d
 
 *Actions secrets. Each credential is stored per environment rather than at repository level, and the repository itself holds no secrets at all. Add the `prod` credentials only when you are ready to let the pipeline reach production.*
 
-## Step 7: store the variables
+## Step 6: store the variables
 
 Non-secret configuration goes in Actions variables. Changing a value here retargets the pipeline without editing a workflow file.
 
@@ -119,7 +131,7 @@ Non-secret configuration goes in Actions variables. Changing a value here retarg
 A site arrives inactive the first time it is imported, so it has no public URL yet. When the variable is unset the promotion step logs a warning and skips deployment verification and smoke tests rather than failing. Set it per environment once the site has been activated and has a URL, and the checks start running on the next promotion.
 :::
 
-## Step 8: assign owners
+## Step 7: assign owners
 
 Capture owners before configuration begins. Every row is someone who gets called when that thing breaks.
 
@@ -132,7 +144,7 @@ Capture owners before configuration begins. Every row is someone who gets called
 | Solution publisher and solution strategy |  |
 | Service principal and secret rotation |  |
 | Workflow and automation changes |  |
-| Production approval |  |
+| Production release decision |  |
 | Emergency recovery |  |
 
 ## Checkpoint
@@ -140,8 +152,7 @@ Capture owners before configuration begins. Every row is someone who gets called
 You are ready for Lab 01 when:
 
 - [ ] Node.js 22, the Power Platform CLI, and Git work locally.
-- [ ] The repository is cloned and `npm ci` succeeds.
-- [ ] `core.hooksPath` points at `.githooks`.
+- [ ] The repository exists, and you know which lab adds which file to it.
 - [ ] The service principal exists and is an application user with System Administrator in every target environment.
 - [ ] The `dev`, `qa`, and `prod` GitHub environments exist.
 - [ ] `PP_CLIENT_ID`, `PP_CLIENT_SECRET`, and `PP_TENANT_ID` are stored as environment secrets, not repository secrets.

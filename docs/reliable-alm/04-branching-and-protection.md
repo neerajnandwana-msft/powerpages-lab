@@ -29,14 +29,19 @@ We recommend a GitFlow-style model, because it maps cleanly onto the environment
 
 | Branch | Maps to | Rules |
 |---|---|---|
-| `feature/*` | Developer environments | Short-lived and shared by everyone working on one feature. Developers branch from it and merge back through pull requests. |
+| `dev/<alias>/<topic>` | One developer's environment | Personal and short-lived. Branched from the shared feature branch, merged back through a pull request. |
+| `feature/*` | The feature the team is building | Shared by everyone working on one feature. This is the branch a developer's environment is rebuilt from. |
 | `develop` | Integration | Protected. Requires a pull request and passing checks. Squash merge, then delete the branch. |
 | `main` | Test and production | Protected. Requires a pull request, green checks, and linear history. Direct pushes blocked. Releases are tagged here. |
 | `hotfix/*` | Expedited path | Same checks and approvals as any other change. Merge back to `develop` after release so the fix is never lost. |
 
-Developers work on a personal branch off the shared feature branch, named for who is doing what:
+The two-level split at the top is what lets several people build one feature without colliding. Each developer owns a personal branch and an environment; the shared `feature/*` branch is the only place their work meets before it reaches `develop`.
+
+Create a personal branch off the shared feature branch:
 
 ```bash
+git switch feature/invoice-list
+git pull
 git switch -c dev/<alias>/<topic>
 ```
 
@@ -56,7 +61,11 @@ gitGraph
     commit id: "integration"
     branch feature/invoice-list
     checkout feature/invoice-list
-    commit id: "feature work"
+    branch dev/ana/invoice-table
+    checkout dev/ana/invoice-table
+    commit id: "personal work"
+    checkout feature/invoice-list
+    merge dev/ana/invoice-table tag: "PR merged"
     checkout develop
     merge feature/invoice-list tag: "PR merged"
     checkout main
@@ -74,26 +83,28 @@ The back-merge at the end is not optional. A hotfix that reaches production but 
 
 ## Step 4: protect `main` and `develop`
 
-Configure a ruleset on both shared branches. Require:
+In the repository, go to **Settings** > **Rules** > **Rulesets** > **New ruleset** > **New branch ruleset**. Create one ruleset targeting `main` and one targeting `develop`, and set enforcement to **Active**. A ruleset left in **Evaluate** mode reports but never blocks.
+
+Require on both:
 
 - A pull request before merge.
 - At least one approving review.
 - All required status checks passing. You add the specific checks in [Lab 06](06-pull-request-gates.md).
 - Conversation resolution before merge.
-- No force pushes.
-- No branch deletion.
+- Block force pushes.
+- Restrict deletions.
 
 On `main`, additionally require linear history. It keeps the commit that a version tag points at unambiguous, which matters because that tag is what the release is built from.
 
 :::note Protect the rule, not just the branch
-Limit who can bypass these rules to a named break-glass group, and make bypassing produce an audit entry somebody actually reads. A protection rule that any maintainer can waive quietly is a suggestion.
+Use the ruleset's **Bypass list** to limit who can waive these rules to a named break-glass group, and make bypassing produce an audit entry somebody actually reads. A protection rule that any maintainer can waive quietly is a suggestion.
 :::
 
 ## Step 5: define what a pull request must contain
 
-Add a pull request template so the evidence arrives with the change rather than being asked for afterwards:
+Add `.github/pull_request_template.md` so the evidence arrives with the change rather than being asked for afterwards:
 
-```markdown
+```markdown title=".github/pull_request_template.md"
 ## Summary
 
 ## Components changed
@@ -109,15 +120,34 @@ Add a pull request template so the evidence arrives with the change rather than 
 
 ## Step 6: assign review ownership
 
-Add a `CODEOWNERS` file so the right reviewer is requested automatically. Matching a reviewer to an area by hand works until the week someone is on leave.
+Add `.github/CODEOWNERS` so the right reviewer is requested automatically. Matching a reviewer to an area by hand works until the week someone is on leave.
 
-| Area | Reviewer |
-|---|---|
-| Power Pages content and navigation | Site owner |
-| Dataverse schema | Data model owner |
-| Web roles and table permissions | Security owner |
-| Workflows and deployment files | Platform team |
-| Environment variables and secrets | Platform admin |
+Map each area to a path and a team:
+
+| Area | Path | Reviewer |
+|---|---|---|
+| Power Pages content and navigation | `.powerpages-site/` | Site owner |
+| Dataverse schema | `solutions/**/Entities/` | Data model owner |
+| Web roles and table permissions | `solutions/**/powerpagecomponents/` | Security owner |
+| Workflows and deployment files | `.github/` | Platform team |
+| Developer scripts and hooks | `scripts/`, `.githooks/` | Platform team |
+
+```text title=".github/CODEOWNERS"
+# Last matching pattern wins, so order matters: general first, specific last.
+*                                       @contoso/platform-team
+
+.powerpages-site/                       @contoso/site-owners
+solutions/**/Entities/                  @contoso/data-model-owners
+solutions/**/powerpagecomponents/       @contoso/security-owners
+
+/.github/                               @contoso/platform-team
+/scripts/                               @contoso/platform-team
+/.githooks/                             @contoso/platform-team
+```
+
+:::note CODEOWNERS only bites if review is required
+Owners are requested automatically either way, but the review is only mandatory when the ruleset from Step 4 has **Require review from Code Owners** enabled. Turn it on there, or this file is a suggestion.
+:::
 
 ## Step 7: agree conflict ownership
 
@@ -155,7 +185,7 @@ You have completed this lab when:
 | A fix shipped to production and then vanished | The hotfix was never merged back to `develop`. Back-merge every hotfix, and check for missing ones now. |
 | Feature branches live for weeks and merge painfully | The work items are too large. Split them so a branch lives for days. |
 | Reviewers approve without reading the solution diff | Point them at the schema half of the commit, and use `CODEOWNERS` to request the data model owner explicitly. |
-| Checks are required but nobody can merge anything | A required check is misnamed. Required check names must match the job names exactly. |
+| Checks are required but nobody can merge anything | A required check is misnamed. The required check name is the job's `name:` display value, not the job key. See [Lab 06](06-pull-request-gates.md). |
 | The same page conflicts every week | Split ownership or make the work items smaller. This is a coordination problem, not a tooling one. |
 
 ## Next step
