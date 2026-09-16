@@ -69,7 +69,7 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'reliableAlmSidebar',
           position: 'left',
-          label: 'Setup reliable ALM Lab',
+          label: 'Power Pages ALM guide',
         },
         {
           href: 'pathname:///pdf/lab-guide.pdf',

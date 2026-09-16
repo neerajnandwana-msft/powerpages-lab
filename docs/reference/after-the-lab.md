@@ -13,7 +13,7 @@ You finished the guided track. Use this page to turn the lab result into a repea
 ## Apply the pattern in your org
 
 1. **Ask your Power Platform admin to confirm the pipeline setup.** Lab 14 shows the Power Platform Pipelines flow. Your org still needs the right host environment, target environments, security roles, and approval process.
-2. **Use the focused manual ALM guide for rollout.** If your team already has a Power Pages site and wants manual source-control setup, quality gates, CI/CD, and Power Platform Pipelines, follow [Setup reliable ALM Lab](/reliable-alm).
+2. **Use the focused ALM guide for rollout.** If your team already has a Power Pages site and wants source control, quality gates, and a GitHub Actions release pipeline, follow [Power Pages ALM: recommended approach](/reliable-alm). It includes the workflow and script source in full.
 3. **Add a second feature end to end.** Pick something your team actually needs. Branch, build, open a PR, merge to integration, promote to pre-prod, and approve promotion to prod.
 4. **Document your team workflow.** Capture your branch naming, review expectations, rollback path, and promotion cadence in your own `CONTRIBUTING.md` or runbook.
 5. **Add ownership metadata.** Use `.github/CODEOWNERS` or your repo's equivalent review rules so solution files, site code, and docs route to the right reviewers.

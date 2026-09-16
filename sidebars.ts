@@ -69,12 +69,21 @@ const sidebars: SidebarsConfig = {
     },
     'reliable-alm/00-setup',
     'reliable-alm/01-design-alm-blueprint',
-    'reliable-alm/02-create-solution-and-source-control',
-    'reliable-alm/03-branching-and-review-strategy',
-    'reliable-alm/04-quality-security-gates',
-    'reliable-alm/05-prepare-release-artifacts',
-    'reliable-alm/06-set-up-ci-cd-and-pipelines',
-    'reliable-alm/07-promote-and-operate',
+    'reliable-alm/02-environment-strategy',
+    'reliable-alm/03-solutions-and-repository',
+    'reliable-alm/04-branching-and-protection',
+    'reliable-alm/05-inner-loop',
+    'reliable-alm/06-pull-request-gates',
+    'reliable-alm/07-release-and-promote',
+    {
+      type: 'category',
+      label: 'Appendixes',
+      collapsed: true,
+      items: [
+        'reliable-alm/appendix-a-workflows',
+        'reliable-alm/appendix-b-scripts',
+      ],
+    },
   ],
 };
 

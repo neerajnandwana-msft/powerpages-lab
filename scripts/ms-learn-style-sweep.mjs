@@ -19,10 +19,11 @@ const PRESERVE_CASE = new Set([
   'Dataverse', 'Azure', 'Entra', 'Liquid', 'Maker', 'Office', 'Teams',
   'Outlook', 'SharePoint', 'OneDrive', 'Excel', 'Word', 'Copilot',
   'Bing', 'GitHub', 'GitLab', 'Visual', 'Studio', 'Code', 'Mermaid',
+  'Actions', 'Dependabot', 'CodeQL',
   // Technology / framework names
   'React', 'Vue', 'Angular', 'Astro', 'Vite', 'Node.js', 'TypeScript',
   'JavaScript', 'Python', 'PowerShell', 'Bash',
-  'Claude', 'OpenAI',
+  'Claude', 'OpenAI', 'Git', 'GitFlow', 'Playwright', 'ESLint',
   // Acronyms
   'API', 'APIs', 'AI', 'SPA', 'SPAs', 'ALM', 'CRUD', 'CSRF', 'OData',
   'CI', 'HTML', 'CSS', 'JSON', 'YAML', 'XML', 'HTTP', 'HTTPS',

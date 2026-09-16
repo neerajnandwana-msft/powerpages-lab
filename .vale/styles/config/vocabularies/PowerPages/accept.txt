@@ -15,6 +15,13 @@ Outlook
 Copilot
 GitHub
 GitLab
+Dependabot
+CodeQL
+GitFlow
+Playwright
+ESLint
+Tailwind
+Rolldown
 Docusaurus
 Mermaid
 TypeScript

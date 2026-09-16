@@ -26,10 +26,11 @@ PRESERVE_CASE = {
     "Dataverse", "Azure", "Entra", "Liquid", "Maker", "Office", "Teams",
     "Outlook", "SharePoint", "OneDrive", "Excel", "Word", "Copilot",
     "Bing", "GitHub", "GitLab", "Visual", "Studio", "Code",
+    "Actions", "Dependabot", "CodeQL",
     # Technology / framework names
     "React", "Vue", "Angular", "Astro", "Vite", "Node.js", "TypeScript",
     "JavaScript", "Python", "PowerShell", "Bash",
-    "Claude", "OpenAI",
+    "Claude", "OpenAI", "Git", "GitFlow", "Playwright", "ESLint",
     # Acronyms (kept capitalized as words, the script also has a generic
     # all-caps detector below)
     "API", "APIs", "AI", "SPA", "SPAs", "ALM", "CRUD", "CSRF", "OData",

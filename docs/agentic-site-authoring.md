@@ -157,7 +157,7 @@ Optional: for a one-screen map of what installs in each phase, skim the [Setup G
 These reference docs sit outside the lab sequence. Read them when you need them.
 
 - [Setup Guide](setup-guide), cross-phase overview: what gets installed in each phase and when (the per-phase setup pages have the actual steps)
-- [Setup reliable ALM Lab](/reliable-alm): manual ALM setup for an existing Power Pages site, covering inner and outer development loops
+- [Power Pages ALM: recommended approach](/reliable-alm): the environment strategy, branching model, and GitHub Actions release pipeline for an existing Power Pages site, covering inner and outer development loops
 - [Prompt Cheat Sheet](reference/prompt-cheat-sheet): ACE framework, prompt patterns, design tokens, AI coding CLI commands
 - [AI Coding CLI Orientation](reference/ai-coding-cli-orientation): Claude Code and GitHub Copilot CLI: slash commands, context management, plugins
 - [After the lab](reference/after-the-lab): production hardening, operating cadence, cost considerations, and continued-learning resources

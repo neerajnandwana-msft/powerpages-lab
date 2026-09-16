@@ -43,9 +43,9 @@ import { Hammer, Rocket } from 'lucide-react';
   <a className="guideCard" href="reliable-alm">
     <Rocket className="guideCard__icon" aria-hidden="true" />
     <span className="guideCard__label">Set up ALM for an existing site</span>
-    <h3>Setup reliable ALM Lab</h3>
+    <h3>Power Pages ALM: recommended approach</h3>
     <p>
-      Set up a manual inner and outer development loop for source control, native Git integration, branching, quality gates, CI/CD, and Power Platform Pipelines.
+      Set up the inner and outer development loops: environment strategy, solution boundaries, branching, pull request gates, and a GitHub Actions release pipeline that builds once and promotes unchanged.
     </p>
     <ul>
       <li>Best when your Power Pages site already exists.</li>

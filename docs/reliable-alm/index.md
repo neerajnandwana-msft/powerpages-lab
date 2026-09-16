@@ -1,27 +1,27 @@
 ---
 sidebar_position: 0
 sidebar_label: "Reliable ALM overview"
-title: "Setup reliable ALM Lab"
+title: "Power Pages ALM: recommended approach"
 slug: /reliable-alm
 className: powerPlatformGuide
 ---
 
 import { GitBranch, PackageCheck, Rocket, ShieldCheck, Workflow } from 'lucide-react';
 
-# Setup reliable ALM Lab
+# Power Pages ALM: recommended approach
 
 <div className="wipBanner">
   <strong>Work in progress</strong>
   <p>
-    This ALM lab guide is still being refined. Use it as a guided draft, and validate the steps against your tenant, environment strategy, and organization policies before using it for production rollout.
+    This ALM guide is still being refined. Use it as a guided draft, and validate the steps against your tenant, environment strategy, and organization policies before using it for production rollout.
   </p>
 </div>
 
 <section className="landingHero">
-  <p className="landingEyebrow">Manual Power Pages ALM lab</p>
-  <h2>Set up a reliable delivery path for an existing site</h2>
+  <p className="landingEyebrow">Power Pages ALM lab track</p>
+  <h2>Move a site from maker-portal edits to a governed release process</h2>
   <p>
-    Build a working ALM setup for a Power Pages site: source control, branching, review gates, release artifacts, CI/CD, Power Platform Pipelines, validation, and recovery.
+    The environment strategy, branching model, and release pipeline we recommend, with the application lifecycle management (ALM) automation included in full so your team can judge the approach from working code.
   </p>
   <div className="landingActions">
     <a className="button button--primary button--lg" href="00-setup">Start setup</a>
@@ -29,94 +29,110 @@ import { GitBranch, PackageCheck, Rocket, ShieldCheck, Workflow } from 'lucide-r
   </div>
 </section>
 
-## What you will have when you finish
+This guide is for the people who decide how your Power Pages workload is built and shipped: architects, engineering leads, and platform owners. It states what we recommend, why, and what each recommendation prevents. The recommendations come from a Power Pages site built this way, and the automation that carries the process is reproduced in full in the appendixes.
 
-By the end, your team has:
+:::note How to use this guide
+This is reference guidance, not a mandate. It reflects a proven approach for a common set of constraints: a team building a Power Pages site with Dataverse, on GitHub. Your platform, team size, regulatory obligations, and release cadence may point to different choices, and adapting the approach is expected. Use it as a baseline to compare against, take what fits, and make any departure a deliberate, recorded decision.
+:::
 
-- A clear environment strategy for development, test, and production.
-- A Power Platform solution that contains the Power Pages site and dependencies.
-- Native Dataverse Git integration for the development inner loop.
-- A branching and review model that supports feature work, release candidates, and hotfixes.
-- Quality and security gates that protect the shared branch.
-- Managed release artifacts with environment-specific values handled safely.
-- Power Platform Pipelines or equivalent CI/CD that promotes the site through target environments.
-- A repeatable operating cadence for verification, rollback, and recovery.
+The examples use a Power Pages [single-page application (SPA) site](https://learn.microsoft.com/en-us/power-pages/configure/create-code-sites), so they compile a bundle. If your site is authored entirely in the design studio, skip the build steps and the bundle drift checks. Everything else applies unchanged.
 
-## Choose this guide when
+| Lab | If your site is not an SPA |
+|---|---|
+| Setup, 01, 02, 03, 04 | Applies unchanged |
+| 05 Inner loop | Skip `build`, `preview`, `sync:solution`, `check:drift`, and `verify:solution`. Keep the environment, seeding, and deployment commands. |
+| 06 Pull request gates | Skip the `web` and `drift` jobs. Keep `quality`, `solution`, `solution-checker`, and `environment-drift`. |
+| 07 Release and promote | Applies unchanged |
 
-<div className="phaseGrid">
-  <a className="phaseCard" href="#the-learner-journey">
-    <GitBranch className="phaseCard__icon" aria-hidden="true" />
-    <span className="phaseCard__label">Inner dev loop</span>
-    <h3>Your team is actively changing the site</h3>
-    <p>Set up source control, native Git integration, branching, code review, conflict ownership, and quality gates.</p>
-  </a>
-  <a className="phaseCard" href="#the-learner-journey">
-    <Rocket className="phaseCard__icon" aria-hidden="true" />
-    <span className="phaseCard__label">Outer dev loop</span>
-    <h3>You need governed promotion</h3>
-    <p>Build managed artifacts, configure environment values, deploy through Pipelines, validate targets, and recover safely.</p>
-  </a>
-</div>
+## The approach in brief
 
-## What you will set up
+A Power Pages site is a single-page application that runs on the Power Pages runtime, backed by Dataverse. That makes it two things at once: web code that belongs in Git, and Power Platform components that travel in a solution. Treat only one of them as the source of truth and the other drifts, silently and usually in production.
+
+We recommend one process built on a single idea: **source control is the source of truth, and every environment is rebuilt from it.** That idea produces five decisions.
+
+| Decision | Recommendation |
+|---|---|
+| **One commit carries everything** | The unpacked Dataverse solution and the site source live in the same repository and move in the same commit. One change is one reviewable unit. |
+| **Isolated developer environments** | Every developer gets their own environment. Nobody builds in a shared environment, and nobody builds in the default environment. |
+| **Automated gates on every pull request** | Lint, tests, solution checker, and drift detection run before a merge. A rule that nothing checks is not a control. |
+| **Build once, promote unchanged** | One managed solution, or one versioned artifact set when solutions are segmented, is built on a version tag and installed byte-for-byte in test and production. Rollback is re-promoting an earlier tag. |
+| **Downstream is import-only** | Test and production accept managed solution imports and nothing else. No maker-portal edits, no exceptions. |
+
+The payoff is predictability. Releases become routine and reversible, changes are reviewable and attributable, and multiple developers can work on the same feature without colliding.
+
+:::tip The one rule to keep
+Build the artifact once on a tag, then promote that identical artifact through every environment. Every other recommendation exists to make that rule safe.
+:::
+
+## Recommendations at a glance
+
+Use this table to decide what to adopt and in what order. Each row is expanded in the lab that owns it.
+
+| Area | What we recommend | What it prevents |
+|---|---|---|
+| Environments | Integration (shared baseline), then dev per developer, then test, then production | Developers overwriting each other; untraceable changes made directly in production |
+| Branching | A GitFlow-style model: `feature/*` to `develop` to `main`, with tagged releases | Half-finished work reaching a release; hotfixes that get lost at the next deployment |
+| Repository | Site source and unpacked solution in one repository, with line endings pinned | The deployed bundle silently differing from the reviewed code |
+| Solution boundaries | Start with one solution per independently released workload. Split only at a clear boundary in release cadence, ownership, reuse, size, or target environments. | Unnecessary dependency and deployment complexity, while allowing genuinely independent components to ship without blocking each other |
+| Quality gates | Pull request checks: lint, unit and end-to-end tests, link scan, solution packaging, solution checker, and drift detection | Regressions and broken links reaching test; invalid solution source discovered at deployment time |
+| Release | Tag on `main`, build once, publish immutable artifacts, promote to test automatically and to production behind an approval | "It worked in test", because test and production received different builds |
+| Configuration | Environment variables and connection references supplied at import time from per-environment settings files | Environment-specific values baked into the artifact, which forces a rebuild per environment |
+| Drift detection | A scheduled job that compares the development environment against committed source | Maker-portal edits that exist in no branch and are erased by the next import |
+
+## How the two loops fit together
+
+The process has two rhythms. The **inner loop** belongs to one developer, runs in their own environment, and repeats many times a day. The **outer loop** is shared, automated, and governed, and runs once per change set. They meet at the pull request.
+
+Keeping them separate is what makes the process fast and safe at the same time: the inner loop optimizes for speed with no approvals, and the outer loop optimizes for control with no manual steps.
+
+![Overview diagram: the inner loop of author, preview, validate, and commit repeats inside a developer environment and meets the outer loop at the pull request, which then validates, merges, tags, and promotes one artifact through test and production.](/img/reliable-alm/power-pages-alm-1-overview-animated-light.svg)
+
+*The inner loop repeats many times inside one developer environment. The outer loop runs once per pull request and promotes a single artifact along the environment ladder.*
+
+## What you set up
 
 <div className="rootCardGrid">
   <div className="rootCard">
     <GitBranch className="rootCard__icon" aria-hidden="true" />
     <h3>Source-controlled development</h3>
-    <p>Development changes sync to Azure DevOps Git, while test and production receive managed solution imports only.</p>
+    <p>Site source and the unpacked solution move in one commit, so a single pull request carries a complete, reviewable change.</p>
   </div>
   <div className="rootCard">
     <ShieldCheck className="rootCard__icon" aria-hidden="true" />
     <h3>Quality and security gates</h3>
-    <p>Pull requests, reviewers, solution checks, code scanning, and release evidence protect the shared branch.</p>
+    <p>Lint, tests, link scan, solution checker, and drift detection run on every pull request before a merge is allowed.</p>
   </div>
   <div className="rootCard">
     <PackageCheck className="rootCard__icon" aria-hidden="true" />
-    <h3>Release artifacts</h3>
-    <p>Managed solutions, environment values, connection references, and version metadata are ready for each stage.</p>
+    <h3>Immutable release artifacts</h3>
+    <p>A version tag builds the managed solution once and publishes it as a GitHub release asset that never gets rebuilt.</p>
   </div>
   <div className="rootCard">
     <Workflow className="rootCard__icon" aria-hidden="true" />
-    <h3>Pipeline operations</h3>
-    <p>Power Platform Pipelines move the same artifact through test and production with validation and recovery steps.</p>
+    <h3>Governed promotion</h3>
+    <p>The same bytes reach test automatically, and production only through a deliberate, recorded step. Rollback is re-promoting an earlier tag.</p>
   </div>
 </div>
-
-## The learner journey
-
-This guide separates the work into two loops.
-
-| Loop | What happens there | Labs |
-|---|---|---|
-| **Inner dev loop** | Makers and developers actively change the site, sync source, review changes, and keep the shared branch healthy | Setup through Lab 04 |
-| **Outer dev loop** | The team builds artifacts, promotes them to test and production, verifies the site, and learns from production feedback | Labs 05 through 07 |
-
-```mermaid
-flowchart LR
-    Plan["Plan"] --> Develop["Develop"]
-    Develop --> Source["Commit to source control"]
-    Source --> Review["Review and gates"]
-    Review --> Build["Build release artifact"]
-    Build --> Test["Deploy to test"]
-    Test --> Prod["Promote to production"]
-    Prod --> Monitor["Operate and monitor"]
-    Monitor --> Plan
-```
 
 ## Labs in this guide
 
 | # | Lab | Outcome |
 |---|---|---|
-| Setup | [Reliable ALM setup](00-setup.md) | Environments, tools, roles, repository, and ownership are ready |
-| 01 | [Design the ALM blueprint](01-design-alm-blueprint.md) | Inner loop, outer loop, environments, solutions, and source-of-truth rules are defined |
-| 02 | [Create the solution and connect source control](02-create-solution-and-source-control.md) | Site and dependencies are in an unmanaged solution connected to Azure DevOps Git |
-| 03 | [Define branching and review strategy](03-branching-and-review-strategy.md) | Branches, pull requests, conflict ownership, and hotfix rules are documented |
-| 04 | [Configure quality and security gates](04-quality-security-gates.md) | Required checks, reviewers, and branch policies protect the shared branch |
-| 05 | [Prepare release artifacts](05-prepare-release-artifacts.md) | Managed solution artifacts and environment values are ready for target deployment |
-| 06 | [Set up CI/CD and Pipelines](06-set-up-ci-cd-and-pipelines.md) | Validation, artifact build, and Power Platform Pipelines stages are configured |
-| 07 | [Promote and operate](07-promote-and-operate.md) | Test and production promotion, activation, cache clearing, validation, and recovery are repeatable |
+| Setup | [Reliable ALM setup](00-setup.md) | Tools, repository, service principal, and GitHub secrets and variables are ready |
+| 01 | [Design the ALM blueprint](01-design-alm-blueprint.md) | The five decisions, the two loops, and the rules your team commits to are recorded |
+| 02 | [Set up the environment strategy](02-environment-strategy.md) | Integration, per-developer, test, and production environments exist with the right solution state |
+| 03 | [Set solution boundaries and repository layout](03-solutions-and-repository.md) | Solution count is decided and the repository holds site source and unpacked solutions together |
+| 04 | [Set up branching and branch protection](04-branching-and-protection.md) | `feature/*`, `develop`, `main`, and `hotfix/*` exist with protection rules that cannot be bypassed |
+| 05 | [Work the inner loop](05-inner-loop.md) | A developer can author, preview, validate, sync, and push without memorizing a single `pac` command |
+| 06 | [Gate every pull request](06-pull-request-gates.md) | `pr-validation.yml` blocks a merge that breaks the build, the tests, the solution, or the bundle |
+| 07 | [Build, release, and promote](07-release-and-promote.md) | A tag builds once, publishes immutable artifacts, promotes to test, and reaches production behind approval |
+
+Two appendixes reproduce the automation in full:
+
+| Appendix | Contents |
+|---|---|
+| [Appendix A: GitHub Actions workflow source](appendix-a-workflows.md) | `pr-validation.yml`, `ci-build.yml`, `cd-release.yml`, the shared `promote-solution` action, and `dependabot.yml` |
+| [Appendix B: Developer script source](appendix-b-scripts.md) | `package.json`, the `pre-push` hook, `check-solution-drift.mjs`, and `sync-site-components.mjs` |
 
 ## What makes the setup reliable
 
@@ -133,5 +149,5 @@ Reliable ALM answers the hard questions before an incident:
 
 <div className="nextStepCallout">
   <h3>Start with setup</h3>
-  <p>Begin with <a href="00-setup">Reliable ALM setup</a>. It confirms your environments, repository, tools, roles, and ownership before you design the ALM blueprint.</p>
+  <p>Begin with <a href="00-setup">Reliable ALM setup</a>. It confirms your tools, repository, service principal, and the secrets and variables the workflows read before you design the blueprint.</p>
 </div>
