@@ -82,6 +82,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'reliable-alm/appendix-a-workflows',
         'reliable-alm/appendix-b-scripts',
+        'reliable-alm/appendix-c-consolidated-diagrams',
       ],
     },
   ],
