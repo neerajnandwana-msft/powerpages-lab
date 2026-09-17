@@ -10,13 +10,6 @@ import { GitBranch, PackageCheck, Rocket, ShieldCheck, Workflow } from 'lucide-r
 
 # Power Pages ALM: recommended approach
 
-<div className="wipBanner">
-  <strong>Work in progress</strong>
-  <p>
-    This ALM guide is still being refined. Use it as a guided draft, and validate the steps against your tenant, environment strategy, and organization policies before using it for production rollout.
-  </p>
-</div>
-
 <section className="landingHero">
   <p className="landingEyebrow">Power Pages ALM lab track</p>
   <h2>Move a site from maker-portal edits to a governed release process</h2>
@@ -36,13 +29,6 @@ This is reference guidance, not a mandate. It reflects a proven approach for a c
 :::
 
 The examples use a Power Pages [single-page application (SPA) site](https://learn.microsoft.com/en-us/power-pages/configure/create-code-sites), so they compile a bundle. If your site is authored entirely in the design studio, skip the build steps and the bundle drift checks. Everything else applies unchanged.
-
-| Lab | If your site is not an SPA |
-|---|---|
-| Setup, 01, 02, 03, 04 | Applies unchanged |
-| 05 Inner loop | Skip `build`, `preview`, `sync:solution`, `check:drift`, and `verify:solution`, and skip `check-solution-drift.mjs`. Keep the environment, seeding, and deployment commands. |
-| 06 Pull request gates | Skip the `Build and test the SPA` and `Solution matches the SPA build` jobs, and do not add them as required checks. Keep the other three plus `environment-drift`. |
-| 07 Release and promote | Applies unchanged |
 
 ## The approach in brief
 
