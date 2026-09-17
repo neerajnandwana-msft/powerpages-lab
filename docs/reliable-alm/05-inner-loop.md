@@ -23,10 +23,6 @@ Make the daily developer cycle fast and repeatable: author, preview, validate, s
 
 The inner loop is deliberately unglamorous. Nothing here is shared, and nobody else sees the work until the pull request. Speed comes from that isolation, and reliability comes from wrapping the error-prone parts in scripts rather than in documentation nobody rereads.
 
-![Inner loop diagram: a shared integration environment seeds the baseline into source control, developers each create a work branch and an isolated development environment, cycle through author, preview, validate, and commit, then open a pull request back to the shared feature branch.](/img/reliable-alm/power-pages-alm-2-inner-loop-animated-light.svg)
-
-*Seed the baseline once in the integration environment, fan out to one branch and one environment per developer, then merge back through pull requests.*
-
 ## Step 1: set up once
 
 A developer does this on their first day and never again:
@@ -93,6 +89,10 @@ chmod +x .githooks/pre-push
 - Load test data if you need it: `npm run seed`.
 
 ## Step 4: repeat while you build
+
+![Daily inner-loop cycle of authoring, previewing, validating, and committing inside one developer environment before opening a pull request.](/img/reliable-alm/power-pages-alm-inner-development-cycle.svg)
+
+*Repeat the local cycle as often as needed. Push and open a pull request only after the site source and unpacked solution pass validation together.*
 
 - Publish your change to your own environment:
 

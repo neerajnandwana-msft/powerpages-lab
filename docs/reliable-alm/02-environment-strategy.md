@@ -46,6 +46,10 @@ The prefix becomes part of every component's logical name. Changing it later mea
 
 In the integration environment, using the maker portal:
 
+![Baseline flow from the shared integration environment to source control and a shared feature branch.](/img/reliable-alm/power-pages-alm-inner-baseline.svg)
+
+*Build the baseline once in the integration environment, extract the solution and site together, then create the shared feature branch from source control.*
+
 1. Create the publisher and the unmanaged solution.
 2. Add the Power Pages site to the solution. If **Site** does not appear as an option, the site is not on the enhanced data model.
 3. Add the dependencies the site needs: tables, columns, relationships, choices, forms, views, web roles, table permissions, site settings, flows, connection references, and environment variable definitions.
@@ -97,6 +101,10 @@ This is the only time you run export and unpack by hand. From [Lab 05](05-inner-
 
 Each developer creates a development environment and authenticates to it:
 
+![Developer fan-out from a shared feature branch to one work branch and isolated development environment per developer, with changes returned through pull requests.](/img/reliable-alm/power-pages-alm-inner-developer-fan-out.svg)
+
+*Each developer works independently in a personal branch and environment, then returns the complete change through a pull request.*
+
 ```bash
 pac auth create --environment <your dev environment url>
 ```
@@ -131,6 +139,8 @@ A change made directly in test or production exists in no branch, survives no re
 ## Step 6: apply the four guardrails
 
 Check each of these is true before you continue:
+
+![Four environment guardrails: one environment per developer, configuration supplied per target, unmanaged development and managed downstream environments, and one publisher prefix.](/img/reliable-alm/power-pages-alm-inner-environment-guardrails.svg)
 
 - **One developer, one environment.** Never share a development environment, and never build in the default environment.
 - **Unmanaged upstream, managed downstream.** Makers build unmanaged. Only managed artifacts from the pipeline enter test and production.

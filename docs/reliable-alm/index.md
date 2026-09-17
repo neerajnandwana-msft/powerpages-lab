@@ -129,12 +129,13 @@ Budget about **7 to 9 hours** end to end, spread across sessions. Labs 01 and 03
 | 06 | [Gate every pull request](06-pull-request-gates.md) | 60-90 min | `pr-validation.yml` blocks a merge that breaks the build, the tests, the solution, or the bundle |
 | 07 | [Build, release, and promote](07-release-and-promote.md) | 60-90 min | A tag builds once, publishes immutable artifacts, promotes to test, and reaches production deliberately |
 
-Two appendixes reproduce the automation in full:
+Three appendixes provide the complete automation source and diagrams:
 
 | Appendix | Contents |
 |---|---|
 | [Appendix A: GitHub Actions workflow source](appendix-a-workflows.md) | `pr-validation.yml`, `ci-build.yml`, `cd-release.yml`, the shared `promote-solution` action, and `dependabot.yml` |
 | [Appendix B: Developer script source](appendix-b-scripts.md) | `package.json`, the `pre-push` hook, `check-solution-drift.mjs`, and `sync-site-components.mjs` |
+| [Appendix C: Consolidated ALM diagrams](appendix-c-consolidated-diagrams.md) | Full inner- and outer-loop SVGs for reviewing each process in one view |
 
 ## What makes the setup reliable
 

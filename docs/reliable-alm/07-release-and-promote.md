@@ -23,6 +23,10 @@ Build the release once on a tag, publish it as an immutable artifact, promote th
 
 This is where the one rule is either kept or quietly broken. Build the artifact once on a tag, then promote that identical artifact through every environment. Everything in the previous six labs exists to make that rule safe.
 
+![Release flow from a version tag on main to one GitHub release and immutable artifacts promoted unchanged to test and production.](/img/reliable-alm/power-pages-alm-outer-release-promotion.svg)
+
+*Build once from the tagged commit, publish the release artifacts, and promote the same version through test and production.*
+
 ## Step 1: keep `develop` releasable
 
 Copy [Appendix A.2](appendix-a-workflows.md#a2-ci-build) into `.github/workflows/ci-build.yml`, changing the same three things you changed in [Lab 06](06-pull-request-gates.md): the solution name, the environment names, and the pinned CLI version. Everything merged to `develop` is built and packed once.

@@ -53,31 +53,9 @@ That single decision is what makes code review meaningful for a low-code workloa
 
 ## Step 3: map the flow
 
-```mermaid
-gitGraph
-    commit id: "baseline"
-    branch develop
-    checkout develop
-    commit id: "integration"
-    branch feature/invoice-list
-    checkout feature/invoice-list
-    branch dev/ana/invoice-table
-    checkout dev/ana/invoice-table
-    commit id: "personal work"
-    checkout feature/invoice-list
-    merge dev/ana/invoice-table tag: "PR merged"
-    checkout develop
-    merge feature/invoice-list tag: "PR merged"
-    checkout main
-    merge develop tag: "v1.0.0"
-    branch hotfix/login-redirect
-    checkout hotfix/login-redirect
-    commit id: "urgent fix"
-    checkout main
-    merge hotfix/login-redirect tag: "v1.0.1"
-    checkout develop
-    merge hotfix/login-redirect id: "back-merge"
-```
+![Branching flow across personal work branches, shared feature branches, develop, main, and the hotfix path, including pull requests, release tags, and back-merges.](/img/reliable-alm/power-pages-alm-outer-branching.svg)
+
+*Feature work reaches `develop` through pull requests. Releases move from `develop` to `main`, and every release or hotfix returns to `develop`.*
 
 The back-merge at the end is not optional. A hotfix that reaches production but never returns to `develop` is silently reverted by the next release, which is the failure that teaches teams to distrust their own pipeline.
 

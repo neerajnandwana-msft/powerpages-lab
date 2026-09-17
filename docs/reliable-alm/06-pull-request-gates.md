@@ -23,13 +23,13 @@ Add the automated checks that prove a change is safe to merge, so the shared bra
 
 Once a pull request opens, automation takes over. A rule that nothing checks is not a control, and the checks here are the ones that turn the blueprint from a document into something the repository enforces.
 
-![Outer loop diagram: branch protection rules on feature, develop, main, and hotfix branches; three GitHub Actions workflows for pull request validation, continuous integration build, and tagged release; and promotion of one immutable artifact to test automatically and to production behind an approval gate.](/img/reliable-alm/power-pages-alm-3-outer-loop-animated-light.svg)
-
-*Branch rules, continuous integration and delivery workflows, and a single release artifact promoted unchanged through every environment.*
-
 ## Step 1: understand the three workflows
 
 The whole outer loop is three workflows and one shared action. This lab builds the first one; [Lab 07](07-release-and-promote.md) builds the other two.
+
+![GitHub Actions flow that validates pull requests, runs quality gates, builds and packages the release, and deploys to test and production.](/img/reliable-alm/power-pages-alm-outer-ci-cd.svg)
+
+*Each repository event starts the appropriate workflow: validate on a pull request, build on `develop`, and release from a version tag.*
 
 | Workflow | Runs on | What it proves |
 |---|---|---|
