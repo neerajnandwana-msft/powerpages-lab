@@ -426,6 +426,98 @@
   border-color: rgba(182, 108, 182, 0.2);
 }
 
+.powerPlatformGuide .theme-doc-markdown img[data-image-zoomable='true'] {
+  cursor: zoom-in;
+}
+
+.powerPlatformGuide .theme-doc-markdown img[data-image-zoomable='true']:focus-visible,
+.powerPlatformGuide .theme-doc-markdown a[data-image-zoom-trigger='true']:focus-visible img {
+  border-radius: 0.35rem;
+  outline: 3px solid var(--power-platform-color-primary);
+  outline-offset: 3px;
+}
+
+.imageZoomDialog {
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 0.75rem;
+  color: var(--ifm-font-color-base);
+  height: min(92vh, 60rem);
+  max-height: none;
+  max-width: none;
+  padding: 0;
+  width: min(96vw, 90rem);
+}
+
+.imageZoomDialog::backdrop {
+  background: rgba(10, 18, 30, 0.82);
+}
+
+.imageZoomDialog__content {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+}
+
+.imageZoomDialog__toolbar {
+  align-items: center;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+}
+
+.imageZoomDialog__toolbar h2 {
+  font-size: 1rem;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.imageZoomDialog__controls {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.5rem;
+}
+
+.imageZoomDialog__controls button {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  padding: 0.4rem;
+}
+
+.imageZoomDialog__controls button svg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.imageZoomDialog__controls output {
+  font-variant-numeric: tabular-nums;
+  min-width: 3.5rem;
+  text-align: center;
+}
+
+.imageZoomDialog__viewport {
+  align-items: flex-start;
+  background: var(--ifm-color-emphasis-100);
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 1rem;
+}
+
+.imageZoomDialog__viewport img {
+  display: block;
+  flex: 0 0 auto;
+  height: auto;
+  max-width: none;
+}
+
 @media (max-width: 768px) {
   .guideGrid,
   .phaseGrid,
@@ -440,5 +532,14 @@
 
   .phaseRootHero {
     flex-direction: column;
+  }
+
+  .imageZoomDialog__toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .imageZoomDialog__controls {
+    width: 100%;
   }
 }
