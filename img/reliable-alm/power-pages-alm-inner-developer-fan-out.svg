@@ -1,0 +1,699 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="40 412 1520 598" width="1520" height="598" role="img"
+     aria-labelledby="svgTitle svgDesc">
+  <title id="svgTitle">Power Pages ALM inner loop: developer fan-out</title>
+  <desc id="svgDesc">Animated diagram showing developers creating individual work branches and isolated development environments from a shared feature branch, then returning changes through pull requests.</desc>
+
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="55%" stop-color="#F4F7FC"/>
+      <stop offset="100%" stop-color="#EAF0F9"/>
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0E9E77"/><stop offset="100%" stop-color="#0A93C4"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2B6BE4"/><stop offset="100%" stop-color="#0A93C4"/>
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#A05F00"/><stop offset="100%" stop-color="#E2683F"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6F42D1"/><stop offset="100%" stop-color="#D6336C"/>
+    </linearGradient>
+
+    <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="1.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <marker id="arwTeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0E9E77"/>
+    </marker>
+    <marker id="arwBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2B6BE4"/>
+    </marker>
+    <marker id="arwAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#A05F00"/>
+    </marker>
+    <marker id="arwPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6F42D1"/>
+    </marker>
+
+
+    <path id="hop1" d="M344,308 L400,308"/>
+    <path id="hop2" d="M684,308 L740,308"/>
+    <path id="hop3" d="M1024,308 L1080,308"/>
+
+    <path id="down1" d="M312,528 L312,554"/>
+    <path id="down2" d="M800,528 L800,554"/>
+    <path id="down3" d="M1288,528 L1288,554"/>
+    <path id="up1" d="M502,958 L548,958 L548,532"/>
+    <path id="up2" d="M990,958 L1036,958 L1036,532"/>
+    <path id="up3" d="M1478,958 L1524,958 L1524,532"/>
+
+    <path id="personalOrbit" d="M230,1002 A68,68 0 0 1 298,1070 A68,68 0 0 1 230,1138 A68,68 0 0 1 162,1070 A68,68 0 0 1 230,1002"/>
+    <path id="orb1" d="M164,828 A20,20 0 0 1 184,848 A20,20 0 0 1 164,868 A20,20 0 0 1 144,848 A20,20 0 0 1 164,828"/>
+    <path id="orb2" d="M652,828 A20,20 0 0 1 672,848 A20,20 0 0 1 652,868 A20,20 0 0 1 632,848 A20,20 0 0 1 652,828"/>
+    <path id="orb3" d="M1140,828 A20,20 0 0 1 1160,848 A20,20 0 0 1 1140,868 A20,20 0 0 1 1120,848 A20,20 0 0 1 1140,828"/>
+
+    <path id="prom1" d="M344,1048 L398,1048"/>
+    <path id="prom2" d="M680,1048 L734,1048"/>
+
+    <!-- Microsoft product icon, unmodified. Do not recolour. -->
+    <symbol id="icon-powerpages" viewBox="0 0 96 96" fill="none">
+<g clip-path="url(#pp-clip0_4303_1230)">
+<g clip-path="url(#pp-clip1_4303_1230)">
+<path d="M16.9956 59.6815L53.8327 31.9692C57.2907 29.3677 62.0518 29.3642 65.5137 31.9606L90.717 50.8624C95.8984 54.7484 95.9048 62.5182 90.7298 66.4127L54.1952 93.9067C50.5268 96.6673 45.4741 96.6667 41.8063 93.9051L16.9923 75.2216C11.8239 71.3301 11.8255 63.5709 16.9956 59.6815Z" fill="url(#pp-paint0_linear_4303_1230)"/>
+<path d="M16.9956 59.6815L53.8327 31.9692C57.2907 29.3677 62.0518 29.3642 65.5137 31.9606L90.717 50.8624C95.8984 54.7484 95.9048 62.5182 90.7298 66.4127L54.1952 93.9067C50.5268 96.6673 45.4741 96.6667 41.8063 93.9051L16.9923 75.2216C11.8239 71.3301 11.8255 63.5709 16.9956 59.6815Z" fill="url(#pp-paint1_radial_4303_1230)"/>
+<path d="M16.9211 59.6727L20.7708 56.7522L62.1484 87.9297L54.1946 93.9107C50.5262 96.6692 45.4753 96.6676 41.8087 93.9069L16.9492 75.1891C11.7938 71.3074 11.7798 63.573 16.9211 59.6727Z" fill="url(#pp-paint2_linear_4303_1230)" fill-opacity="0.6"/>
+<path d="M16.9211 59.6727L20.7708 56.7522L62.1484 87.9297L54.1946 93.9107C50.5262 96.6692 45.4753 96.6676 41.8087 93.9069L16.9492 75.1891C11.7938 71.3074 11.7798 63.573 16.9211 59.6727Z" fill="url(#pp-paint3_radial_4303_1230)"/>
+<path d="M5.29615 29.5932L41.8043 2.0974C45.4729 -0.665539 50.5274 -0.665864 54.1963 2.09661L79.0079 20.7782C84.1763 24.6697 84.1747 32.429 79.0046 36.3183L42.1698 64.029C38.7106 66.6313 33.9479 66.6339 30.4859 64.0355L5.30905 45.1391C0.131502 41.2531 0.12506 33.4878 5.29615 29.5932Z" fill="url(#pp-paint4_linear_4303_1230)"/>
+<path d="M5.29615 29.5932L41.8043 2.0974C45.4729 -0.665539 50.5274 -0.665864 54.1963 2.09661L79.0079 20.7782C84.1763 24.6697 84.1747 32.429 79.0046 36.3183L42.1698 64.029C38.7106 66.6313 33.9479 66.6339 30.4859 64.0355L5.30905 45.1391C0.131502 41.2531 0.12506 33.4878 5.29615 29.5932Z" fill="url(#pp-paint5_radial_4303_1230)"/>
+<path d="M5.29615 29.5932L41.8043 2.0974C45.4729 -0.665539 50.5274 -0.665864 54.1963 2.09661L79.0079 20.7782C84.1763 24.6697 84.1747 32.429 79.0046 36.3183L42.1698 64.029C38.7106 66.6313 33.9479 66.6339 30.4859 64.0355L5.30905 45.1391C0.131502 41.2531 0.12506 33.4878 5.29615 29.5932Z" fill="url(#pp-paint6_linear_4303_1230)"/>
+<path d="M33.8989 8.1284L41.798 2.136C45.4675 -0.647759 50.5391 -0.656925 54.2187 2.11355L79.0508 20.8107C84.2062 24.6924 84.2202 32.4269 79.0789 36.3272L75.2292 39.2477L33.8989 8.1284Z" fill="url(#pp-paint7_linear_4303_1230)" fill-opacity="0.6"/>
+<path d="M33.8989 8.1284L41.798 2.136C45.4675 -0.647759 50.5391 -0.656925 54.2187 2.11355L79.0508 20.8107C84.2062 24.6924 84.2202 32.4269 79.0789 36.3272L75.2292 39.2477L33.8989 8.1284Z" fill="url(#pp-paint8_radial_4303_1230)"/>
+<path d="M43.1557 65.6655L82.0238 49.9688C85.0498 48.7467 88.4946 49.1965 91.1054 51.1546L65.5586 31.9945C61.9035 29.2532 57.0808 28.6234 52.8444 30.3343L13.9763 46.031C10.9502 47.2531 7.50545 46.8033 4.89468 44.8452L30.4415 64.0053C34.0966 66.7466 38.9193 67.3764 43.1557 65.6655Z" fill="url(#pp-paint9_linear_4303_1230)"/>
+</g>
+</g>
+<defs>
+<linearGradient id="pp-paint0_linear_4303_1230" x1="45.569" y1="98.5687" x2="72.7984" y2="40.2201" gradientUnits="userSpaceOnUse">
+<stop stop-color="#6864F6"/>
+<stop offset="0.528781" stop-color="#4A43CB"/>
+<stop offset="1" stop-color="#5B2AB5"/>
+</linearGradient>
+<radialGradient id="pp-paint1_radial_4303_1230" cx="0" cy="0" r="1" gradientTransform="matrix(5.08644 19.5482 -61.0372 19.6565 67.7072 51.7559)" gradientUnits="userSpaceOnUse">
+<stop stop-color="#312A9A"/>
+<stop offset="1" stop-color="#4A43CB" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="pp-paint2_linear_4303_1230" x1="56.4986" y1="61.6072" x2="12.0717" y2="70.1145" gradientUnits="userSpaceOnUse">
+<stop stop-color="#A3A3FF" stop-opacity="0"/>
+<stop offset="1" stop-color="#A3A3FF"/>
+</linearGradient>
+<radialGradient id="pp-paint3_radial_4303_1230" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(23.2299 56.7522) rotate(34.6614) scale(26.4656 13.4356)">
+<stop stop-color="#4A43CB"/>
+<stop offset="1" stop-color="#6864F6" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="pp-paint4_linear_4303_1230" x1="71.6719" y1="5.51946" x2="8.44126" y2="47.3941" gradientUnits="userSpaceOnUse">
+<stop stop-color="#AC80FF"/>
+<stop offset="0.660101" stop-color="#7B7BFF"/>
+<stop offset="1" stop-color="#5750E2"/>
+</linearGradient>
+<radialGradient id="pp-paint5_radial_4303_1230" cx="0" cy="0" r="1" gradientTransform="matrix(-3.23682 -14.4039 45.1794 -12.5656 31.0675 42.1862)" gradientUnits="userSpaceOnUse">
+<stop stop-color="#1B44B1"/>
+<stop offset="1" stop-color="#7B7BFF" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="pp-paint6_linear_4303_1230" x1="22.2818" y1="19.0371" x2="7.40873" y2="49.2411" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7B7BFF" stop-opacity="0"/>
+<stop offset="1" stop-color="#2052CB"/>
+</linearGradient>
+<linearGradient id="pp-paint7_linear_4303_1230" x1="39.1689" y1="31.9892" x2="81.7199" y2="18.3849" gradientUnits="userSpaceOnUse">
+<stop stop-color="#BABAFF" stop-opacity="0"/>
+<stop offset="1" stop-color="#BABAFF"/>
+</linearGradient>
+<radialGradient id="pp-paint8_radial_4303_1230" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(65.6886 42.812) rotate(-125.652) scale(24.9712 18.783)">
+<stop stop-color="#5750E2"/>
+<stop offset="1" stop-color="#8F8FFF" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="pp-paint9_linear_4303_1230" x1="21" y1="69.4999" x2="70.7221" y2="29.6433" gradientUnits="userSpaceOnUse">
+<stop stop-color="#58AAFE"/>
+<stop offset="0.28329" stop-color="#8F8FFF"/>
+<stop offset="0.671554" stop-color="#A3A3FF"/>
+<stop offset="1" stop-color="#CEB0FF"/>
+</linearGradient>
+<clipPath id="pp-clip0_4303_1230">
+<rect width="96" height="96" fill="white"/>
+</clipPath>
+<clipPath id="pp-clip1_4303_1230">
+<rect width="96" height="96" fill="white"/>
+</clipPath>
+</defs>
+    </symbol>
+    <!-- Microsoft product icon, unmodified. Do not recolour. -->
+    <symbol id="icon-dataverse" viewBox="0 0 96 96" fill="none">
+<g clip-path="url(#dv-clip0_4303_1230)">
+<g clip-path="url(#dv-clip1_4303_1230)">
+<g clip-path="url(#dv-clip2_4303_1230)">
+<path d="M13.8776 21.8242C29.1033 8.13791 49.7501 8.1861 62.955 18.9134C74.9816 28.6836 77.4697 44.3159 70.851 55.7801C64.2321 67.2443 52.5277 70.1455 39.5011 62.6247L31.7286 76.087L31.7234 76.0862C27.4181 83.5324 17.8937 86.0828 10.4437 81.7817C7.45394 80.0556 5.25322 77.4879 3.96665 74.551L3.96096 74.5511C-4.07832 55.7804 0.200745 34.1184 13.8776 21.8242Z" fill="url(#dv-paint0_radial_4303_1230)"/>
+<path d="M13.8776 21.8242C29.1033 8.13791 49.7501 8.1861 62.955 18.9134C74.9816 28.6836 77.4697 44.3159 70.851 55.7801C64.2321 67.2443 52.5277 70.1455 39.5011 62.6247L31.7286 76.087L31.7234 76.0862C27.4181 83.5324 17.8937 86.0828 10.4437 81.7817C7.45394 80.0556 5.25322 77.4879 3.96665 74.551L3.96096 74.5511C-4.07832 55.7804 0.200745 34.1184 13.8776 21.8242Z" fill="url(#dv-paint1_radial_4303_1230)" fill-opacity="0.8"/>
+<path d="M85.4327 14.2231C88.4528 15.9668 90.6686 18.569 91.9494 21.5433L91.9533 21.5444C99.9406 40.2943 95.6533 61.9068 81.9983 74.1814C66.7726 87.8677 46.1257 87.8196 32.9209 77.0923C20.8945 67.3221 18.4062 51.6897 25.0249 40.2256C31.6438 28.7614 43.3482 25.8601 56.3748 33.381L64.1434 19.9255L64.1482 19.9249C68.4516 12.4736 77.9805 9.92084 85.4327 14.2231Z" fill="url(#dv-paint2_radial_4303_1230)"/>
+<path d="M85.4327 14.2231C88.4528 15.9668 90.6686 18.569 91.9494 21.5433L91.9533 21.5444C99.9406 40.2943 95.6533 61.9068 81.9983 74.1814C66.7726 87.8677 46.1257 87.8196 32.9209 77.0923C20.8945 67.3221 18.4062 51.6897 25.0249 40.2256C31.6438 28.7614 43.3482 25.8601 56.3748 33.381L64.1434 19.9255L64.1482 19.9249C68.4516 12.4736 77.9805 9.92084 85.4327 14.2231Z" fill="url(#dv-paint3_radial_4303_1230)" fill-opacity="0.9"/>
+<path d="M39.5041 62.6261C52.5307 70.1469 64.2352 67.2456 70.8541 55.7814C77.2488 44.7055 75.1426 29.7389 64.147 19.9271L56.3791 33.3814L39.5041 62.6261Z" fill="url(#dv-paint4_radial_4303_1230)"/>
+<path d="M56.3794 33.3815C43.3528 25.8607 31.6482 28.762 25.0294 40.2262C18.6347 51.3021 20.7409 66.2687 31.7364 76.0806L39.5043 62.6262L56.3794 33.3815Z" fill="url(#dv-paint5_radial_4303_1230)"/>
+<path d="M33.3215 56.4453C37.9837 64.5204 48.3094 67.2872 56.3846 62.625C64.4598 57.9628 67.2266 47.6371 62.5643 39.5619C57.9021 31.4867 47.5764 28.72 39.5013 33.3822C31.4261 38.0444 28.6593 48.3701 33.3215 56.4453Z" fill="url(#dv-paint6_radial_4303_1230)"/>
+</g>
+</g>
+</g>
+<defs>
+<radialGradient id="dv-paint0_radial_4303_1230" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(46.0001 49.4996) rotate(-148.717) scale(46.2195 47.5359)">
+<stop offset="0.465088" stop-color="#09442A"/>
+<stop offset="0.70088" stop-color="#136C6C"/>
+<stop offset="1" stop-color="#22918B"/>
+</radialGradient>
+<radialGradient id="dv-paint1_radial_4303_1230" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(50.0001 32.4996) rotate(123.57) scale(66.0095 46.5498)">
+<stop offset="0.718705" stop-color="#1A7F7C" stop-opacity="0"/>
+<stop offset="1" stop-color="#16BBDA"/>
+</radialGradient>
+<radialGradient id="dv-paint2_radial_4303_1230" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(50.4999 44.5001) rotate(30.75) scale(45.9618 44.5095)">
+<stop offset="0.358097" stop-color="#136C6C"/>
+<stop offset="0.789474" stop-color="#42B870"/>
+<stop offset="1" stop-color="#76D45E"/>
+</radialGradient>
+<radialGradient id="dv-paint3_radial_4303_1230" cx="0" cy="0" r="1" gradientTransform="matrix(42.5 -36.0002 31.1824 36.8127 49.4998 55.5001)" gradientUnits="userSpaceOnUse">
+<stop offset="0.583166" stop-color="#76D45E" stop-opacity="0"/>
+<stop offset="1" stop-color="#C8F5B7"/>
+</radialGradient>
+<radialGradient id="dv-paint4_radial_4303_1230" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(47.5 48) rotate(-58.9042) scale(32.6898)">
+<stop offset="0.486266" stop-color="#22918B"/>
+<stop offset="0.729599" stop-color="#42B870"/>
+<stop offset="1" stop-color="#43E5CA"/>
+</radialGradient>
+<radialGradient id="dv-paint5_radial_4303_1230" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(47.3833 49.0077) rotate(119.859) scale(31.1328 29.4032)">
+<stop offset="0.459553" stop-color="#08494E"/>
+<stop offset="0.742242" stop-color="#1A7F7C"/>
+<stop offset="1" stop-color="#309C61"/>
+</radialGradient>
+<radialGradient id="dv-paint6_radial_4303_1230" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(52.5 40) rotate(120.784) scale(27.3542)">
+<stop stop-color="#C8F5B7"/>
+<stop offset="0.24583" stop-color="#98F0B0"/>
+<stop offset="0.643961" stop-color="#52D17C"/>
+<stop offset="1" stop-color="#119FC5"/>
+</radialGradient>
+<clipPath id="dv-clip0_4303_1230">
+<rect width="96" height="96" fill="white"/>
+</clipPath>
+<clipPath id="dv-clip1_4303_1230">
+<rect width="96" height="96" fill="white"/>
+</clipPath>
+<clipPath id="dv-clip2_4303_1230">
+<rect width="95.9998" height="96" fill="white"/>
+</clipPath>
+</defs>
+    </symbol>
+    <!-- Microsoft product icon, unmodified. Do not recolour. -->
+    <symbol id="icon-entra" viewBox="0 0 18 18" fill="none">
+<path d="m3.802,14.032c.388.242,1.033.511,1.715.511.621,0,1.198-.18,1.676-.487,0,0,.001,0,.002-.001l1.805-1.128v4.073c-.286,0-.574-.078-.824-.234l-4.374-2.734Z" fill="#225086"/>
+  <path d="m7.853,1.507L.353,9.967c-.579.654-.428,1.642.323,2.111,0,0,2.776,1.735,3.126,1.954.388.242,1.033.511,1.715.511.621,0,1.198-.18,1.676-.487,0,0,.001,0,.002-.001l1.805-1.128-4.364-2.728,4.365-4.924V1s0,0,0,0c-.424,0-.847.169-1.147.507Z" fill="#6df"/>
+  <polygon points="4.636 10.199 4.688 10.231 9 12.927 9.001 12.927 9.001 12.927 9.001 5.276 9 5.275 4.636 10.199" fill="#cbf8ff"/>
+  <path d="m17.324,12.078c.751-.469.902-1.457.323-2.111l-4.921-5.551c-.397-.185-.842-.291-1.313-.291-.925,0-1.752.399-2.302,1.026l-.109.123h0s4.364,4.924,4.364,4.924h0s0,0,0,0l-4.365,2.728v4.073c.287,0,.573-.078.823-.234l7.5-4.688Z" fill="#074793"/>
+  <path d="m9.001,1v4.275s.109-.123.109-.123c.55-.627,1.377-1.026,2.302-1.026.472,0,.916.107,1.313.291l-2.579-2.909c-.299-.338-.723-.507-1.146-.507Z" fill="#0294e4"/>
+  <polygon points="13.365 10.199 13.365 10.199 13.365 10.199 9.001 5.276 9.001 12.926 13.365 10.199" fill="#96bcc2"/>
+    </symbol>
+
+    <symbol id="fi-lock-closed" viewBox="0 0 20 20"><path d="M10 1C12.2091 1 14 2.79086 14 5V7.0498C15.1411 7.28142 16 8.29051 16 9.5V15.5C16 16.8807 14.8807 18 13.5 18H6.5C5.11929 18 4 16.8807 4 15.5V9.5C4 8.29051 4.85886 7.28142 6 7.0498V5C6 2.79086 7.79086 1 10 1ZM10 11.5C9.44772 11.5 9 11.9477 9 12.5C9 13.0523 9.44772 13.5 10 13.5C10.5523 13.5 11 13.0523 11 12.5C11 11.9477 10.5523 11.5 10 11.5ZM10 2C8.34315 2 7 3.34315 7 5V7H13V5C13 3.34315 11.6569 2 10 2Z"/></symbol>
+    <symbol id="fi-lock-open" viewBox="0 0 20 20"><path d="M15 1C17.2091 1 19 2.79086 19 5V5.5C19 5.77614 18.7761 6 18.5 6C18.2239 6 18 5.77614 18 5.5V5C18 3.34315 16.6569 2 15 2C13.3431 2 12 3.34315 12 5V7H13.5C14.8807 7 16 8.11929 16 9.5V15.5C16 16.8807 14.8807 18 13.5 18H6.5C5.11929 18 4 16.8807 4 15.5V9.5C4 8.11929 5.11929 7 6.5 7H11V5C11 2.79086 12.7909 1 15 1ZM10 11.5C9.44772 11.5 9 11.9477 9 12.5C9 13.0523 9.44772 13.5 10 13.5C10.5523 13.5 11 13.0523 11 12.5C11 11.9477 10.5523 11.5 10 11.5Z"/></symbol>
+    <symbol id="fi-prohibited" viewBox="0 0 20 20"><path d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM16.5 10C16.5 8.47531 15.975 7.07323 15.096 5.96465L5.96465 15.096C7.07323 15.975 8.47531 16.5 10 16.5C13.5899 16.5 16.5 13.5899 16.5 10ZM4.90399 14.0353L14.0353 4.90399C12.9268 4.02496 11.5247 3.5 10 3.5C6.41015 3.5 3.5 6.41015 3.5 10C3.5 11.5247 4.02496 12.9268 4.90399 14.0353Z"/></symbol>
+    <symbol id="fi-arrow-sync" viewBox="0 0 20 20"><path d="M9.88501 3.75004C8.32299 3.77855 6.77186 4.38831 5.58059 5.57957C3.13981 8.02035 3.13981 11.9776 5.58059 14.4184C5.79547 14.6333 6.02176 14.829 6.25739 15.0056C6.5888 15.2541 6.65604 15.7242 6.40758 16.0556C6.15911 16.387 5.68902 16.4543 5.3576 16.2058C5.06528 15.9866 4.78521 15.7443 4.51993 15.4791C1.49336 12.4525 1.49336 7.54548 4.51993 4.51891C5.86716 3.17169 7.58814 2.42408 9.34839 2.2763L8.76258 1.69049C8.46969 1.39759 8.46969 0.922719 8.76258 0.629826C9.05547 0.336933 9.53035 0.336933 9.82324 0.629826L11.9446 2.75115C12.2375 3.04404 12.2375 3.51891 11.9446 3.81181L9.82324 5.93313C9.53035 6.22602 9.05547 6.22602 8.76258 5.93313C8.46969 5.64023 8.46969 5.16536 8.76258 4.87247L9.88501 3.75004ZM10.115 16.2479C11.677 16.2194 13.2281 15.6096 14.4194 14.4184C16.8602 11.9776 16.8602 8.02031 14.4194 5.57953C14.2045 5.36466 13.9782 5.16896 13.7426 4.9923C13.4112 4.74383 13.344 4.27374 13.5924 3.94233C13.8409 3.61091 14.311 3.54367 14.6424 3.79214C14.9347 4.0113 15.2148 4.25359 15.4801 4.51887C18.5066 7.54543 18.5066 12.4525 15.4801 15.479C14.1328 16.8263 12.4119 17.5739 10.6516 17.7216L11.2374 18.3075C11.5303 18.6003 11.5303 19.0752 11.2374 19.3681C10.9445 19.661 10.4696 19.661 10.1768 19.3681L8.05543 17.2468C7.76253 16.9539 7.76253 16.479 8.05543 16.1861L10.1768 14.0648C10.4696 13.7719 10.9445 13.7719 11.2374 14.0648C11.5303 14.3577 11.5303 14.8326 11.2374 15.1255L10.115 16.2479Z"/></symbol>
+
+    <symbol id="fi-person" viewBox="0 0 20 20"><path d="M10 2C7.79086 2 6 3.79086 6 6C6 8.20914 7.79086 10 10 10C12.2091 10 14 8.20914 14 6C14 3.79086 12.2091 2 10 2ZM5.00873 11C3.90315 11 3 11.8869 3 13C3 14.6912 3.83281 15.9663 5.13499 16.7966C6.41697 17.614 8.14526 18 10 18C11.8547 18 13.583 17.614 14.865 16.7966C16.1672 15.9663 17 14.6912 17 13C17 11.8956 16.1045 11 15 11L5.00873 11Z"/></symbol>
+
+    <style>
+      /* ---- shared type scale: identical in all three decks ---- */
+      .t     { font-family:'Segoe UI',Inter,system-ui,-apple-system,sans-serif; }
+      .h1    { font-size:32px; font-weight:700; fill:#16202F; letter-spacing:.2px; }
+      .h1sub { font-size:14px; fill:#59687F; }
+      .ptitle{ font-size:16px; font-weight:700; letter-spacing:.6px; }
+      .psub  { font-size:12px; fill:#59687F; }
+      .ctitle{ font-size:15px; font-weight:700; fill:#16202F; }
+      .node  { font-size:14px; font-weight:700; fill:#16202F; }
+      .nsub  { font-size:10.5px; fill:#59687F; }
+      .lead  { font-size:12.5px; font-weight:700; fill:#16202F; }
+      .kpi   { font-size:13px; font-weight:700; }
+      .lane  { font-size:12.5px; font-weight:700; }
+      .chip  { font-size:11px; fill:#3B4859; }
+      .small { font-size:10.5px; fill:#59687F; }
+      .tiny  { font-size:9.5px; fill:#5E6E86; }
+      .mono  { font-family:'Cascadia Code',Consolas,'SF Mono',monospace; }
+      .cent  { text-anchor:middle; }
+      .end   { text-anchor:end; }
+      .cistage { font-size:12px; font-weight:700; fill:#16202F; }
+      .cisub   { font-size:9.5px; fill:#59687F; }
+      .ringlbl { font-size:15px; font-weight:700; letter-spacing:2.6px; }
+.flow { animation: dashFlow var(--fd,1.5s) linear infinite; }
+      @keyframes dashFlow { from { stroke-dashoffset: var(--fo,20px); } to { stroke-dashoffset: 0; } }
+
+      /* Respect a reader's motion preference: stop the flowing lines and drop the
+         travelling tokens, pulses and the rotating ring. The diagram stays fully
+         readable because none of that motion carries information on its own. */
+      @media (prefers-reduced-motion: reduce) {
+        .flow { animation: none; stroke-dashoffset: 0; }
+        .mtoken, .pulse, .spin { display: none; }
+      }
+    </style>
+  </defs>
+
+  <!-- ============ HEADER ============ -->
+  <g class="t">
+    <rect x="40" y="26" width="6" height="52" rx="3" fill="url(#purpleGrad)"/>
+    <use href="#icon-powerpages" xlink:href="#icon-powerpages" aria-hidden="true" x="60" y="28" width="40" height="40"/>
+    <text x="114" y="52" class="h1">Power Pages ALM — the inner loop up close</text>
+    <text x="114" y="76" class="h1sub">Environment strategy and branching: how multiple developers build the same feature in parallel without environment conflicts</text>
+    <g>
+      <rect x="1186" y="34" width="114" height="26" rx="13" fill="#FFFFFF" stroke="#DCE3EF"/>
+      <text x="1243" y="51" class="cent tiny">1 · Overview</text>
+      <rect x="1308" y="34" width="122" height="26" rx="13" fill="#F2ECFF" stroke="#6F42D1" stroke-width="1.5"/>
+      <text x="1369" y="51" class="cent tiny" fill="#6B3FC7">2 · Inner loop</text>
+      <rect x="1438" y="34" width="122" height="26" rx="13" fill="#FFFFFF" stroke="#DCE3EF"/>
+      <text x="1499" y="51" class="cent tiny">3 · Outer loop</text>
+    </g>
+  </g>
+
+  <!-- ============ TENANT STRIP ============ -->
+  <g class="t">
+    <rect x="40" y="108" width="1520" height="44" rx="12" fill="#F5F9FF" stroke="#C6DCEF" stroke-dasharray="8 6"/>
+    <use href="#icon-entra" xlink:href="#icon-entra" aria-hidden="true" x="62" y="120" width="20" height="20"/>
+    <text x="90" y="127" class="kpi" fill="#0A93C4">Microsoft Entra tenant · Contoso</text>
+    <text x="90" y="143" class="tiny">An environment is a container for Dataverse, apps, flows and Pages — plus the permissions to use them.</text>
+    <rect x="752" y="119" width="404" height="22" rx="11" fill="#F0F8F4" stroke="#C3E2D2"/>
+    <text x="764" y="134" class="tiny mono" fill="#5E6E86">e.g.</text>
+    <text x="798" y="134" class="tiny" fill="#3B4859">commands are examples — Studio, VS Code or a pipeline does the same job</text>
+    <use href="#fi-lock-open" xlink:href="#fi-lock-open" aria-hidden="true" x="1172.5" y="119.5" width="15" height="15" fill="#0E9E77"/>
+    <text x="1196" y="134" class="tiny" fill="#0B6B4F">unlocked · makers build here</text>
+    <use href="#fi-lock-closed" xlink:href="#fi-lock-closed" aria-hidden="true" x="1364.5" y="119.5" width="15" height="15" fill="#A05F00"/>
+    <text x="1388" y="134" class="tiny" fill="#A05F00">locked · solution import only</text>
+  </g>
+
+  <!-- ============================================================= -->
+  <!-- 1 · SEED THE BASELINE                                         -->
+  <!-- ============================================================= -->
+  <g class="t">
+    <rect x="40" y="168" width="1520" height="224" rx="18" fill="#FFFFFF" stroke="#DCE3EF"/>
+    <rect x="40" y="168" width="1520" height="4" rx="2" fill="url(#purpleGrad)"/>
+    <text x="64" y="206" class="ptitle" fill="#0E9E77">1 — Seed the baseline: build it once, in one place</text>
+    <text x="64" y="224" class="psub">The team builds the solution and the Power Pages site together in a shared integration environment, then commits that state to source control</text>
+
+    <!-- card A: integration environment -->
+    <g>
+      <rect x="64" y="240" width="280" height="136" rx="14" fill="#F5F8FD" stroke="#0E9E77" stroke-width="1.6"/>
+      <rect x="64" y="240" width="4" height="136" rx="2" fill="url(#tealGrad)"/>
+      <use href="#fi-lock-open" xlink:href="#fi-lock-open" aria-hidden="true" x="82" y="254" width="16" height="16" fill="#0E9E77"/>
+      <text x="106" y="269" class="ctitle">Integration environment</text>
+      <text x="84" y="287" class="tiny">Shared · team-owned · never the default environment</text>
+      <rect x="84" y="292" width="240" height="24" rx="7" fill="#EAF2FF" stroke="#C3D3EA"/>
+      <use href="#icon-dataverse" xlink:href="#icon-dataverse" aria-hidden="true" x="90" y="296" width="16" height="16"/>
+      <text x="112" y="308" class="tiny" fill="#1F5FC0">Dataverse · solution · Pages site · connections</text>
+      <rect x="84" y="320" width="240" height="20" rx="7" fill="#F0F8F4" stroke="#C3E2D2"/>
+      <text x="94" y="334" class="tiny mono" fill="#0B6B4F"><tspan fill="#5E6E86">e.g. </tspan>admin: sg-pp-alm-admins</text>
+      <text x="84" y="356" class="tiny">Baseline is built here once, then this environment</text>
+      <text x="84" y="369" class="tiny">stays as the shared place to validate merged features.</text>
+    </g>
+
+    <!-- card B: extract to source -->
+    <g>
+      <rect x="404" y="240" width="280" height="136" rx="14" fill="#F5F8FD" stroke="#C3D3EA"/>
+      <text x="424" y="269" class="ctitle">Extract it to source</text>
+      <text x="424" y="290" class="tiny" fill="#3B4859">1 · Export the solution as unmanaged</text>
+      <text x="424" y="306" class="tiny" fill="#3B4859">2 · Unpack it into reviewable source files</text>
+      <text x="424" y="322" class="tiny" fill="#3B4859">3 · Download the code site as source</text>
+      <rect x="422" y="330" width="244" height="20" rx="7" fill="#F0F8F4" stroke="#C3E2D2"/>
+      <text x="432" y="344" class="tiny mono" fill="#0B6B4F"><tspan fill="#5E6E86">e.g. </tspan>pac pages download-code-site</text>
+      <text x="424" y="366" class="tiny">Solution and site land in the same commit.</text>
+    </g>
+
+    <!-- card C: source control -->
+    <g>
+      <rect x="744" y="240" width="280" height="136" rx="14" fill="#F5F8FD" stroke="#2B6BE4" stroke-width="1.6"/>
+      <rect x="744" y="240" width="4" height="136" rx="2" fill="url(#blueGrad)"/>
+      <text x="764" y="269" class="ctitle">Source control</text>
+      <rect x="908" y="254" width="100" height="18" rx="9" fill="#EAF2FF" stroke="#C3D3EA"/>
+      <text x="958" y="267" class="cent tiny" fill="#1F5FC0">outside the tenant</text>
+      <text x="764" y="287" class="tiny" fill="#3B4859">The single source of truth across time,</text>
+      <text x="764" y="300" class="tiny" fill="#3B4859">versions and environments.</text>
+      <rect x="762" y="308" width="244" height="20" rx="7" fill="#F0F8F4" stroke="#C3E2D2"/>
+      <text x="772" y="322" class="tiny mono" fill="#1F5FC0">develop · integration branch</text>
+      <rect x="762" y="334" width="244" height="20" rx="7" fill="#F0F8F4" stroke="#C3E2D2"/>
+      <text x="772" y="348" class="tiny mono" fill="#0B6B4F">main · protected releases</text>
+      <text x="764" y="369" class="tiny">Every branch carries solution/src/** and site/**.</text>
+      <circle cx="998" cy="366" r="6" fill="#2B6BE4"/>
+      <circle cx="998" cy="366" r="7" fill="none" stroke="#2B6BE4" stroke-width="2" class="pulse">
+        <animate attributeName="r" values="7;17" dur="2.2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".9;0" dur="2.2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <!-- card D: cut the feature branch -->
+    <g>
+      <rect x="1084" y="240" width="280" height="136" rx="14" fill="#F5F8FD" stroke="#6F42D1" stroke-width="1.6"/>
+      <rect x="1084" y="240" width="4" height="136" rx="2" fill="url(#purpleGrad)"/>
+      <text x="1104" y="269" class="ctitle">Create the shared feature branch</text>
+      <text x="1104" y="290" class="tiny" fill="#3B4859">Create one shared branch for the feature from</text>
+      <text x="1104" y="304" class="tiny" fill="#3B4859">the latest integration baseline in develop.</text>
+      <rect x="1102" y="312" width="244" height="20" rx="7" fill="#F2ECFF" stroke="#CBB8F0"/>
+      <text x="1112" y="326" class="tiny mono" fill="#6B3FC7"><tspan fill="#5E6E86">e.g. </tspan>git switch -c feature/checkout develop</text>
+      <text x="1104" y="350" class="tiny">Each developer creates a work branch from this</text>
+      <text x="1104" y="364" class="tiny">shared feature integration branch.</text>
+    </g>
+
+    <!-- hops -->
+    <g fill="none" stroke-width="2" stroke-dasharray="4 5">
+      <line x1="344" y1="308" x2="398" y2="308" stroke="#0E9E77" marker-end="url(#arwTeal)" class="flow" style="--fo:18px;--fd:.8s"/>
+      <line x1="684" y1="308" x2="738" y2="308" stroke="#2B6BE4" marker-end="url(#arwBlue)" class="flow" style="--fo:18px;--fd:.8s"/>
+      <line x1="1024" y1="308" x2="1078" y2="308" stroke="#6F42D1" marker-end="url(#arwPurple)" class="flow" style="--fo:18px;--fd:.8s"/>
+    </g>
+    <g filter="url(#softGlow)">
+      <circle r="4.5" fill="#FFFFFF" class="mtoken">
+        <animateMotion dur="3s" begin="0s" repeatCount="indefinite"><mpath href="#hop1" xlink:href="#hop1"/></animateMotion>
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.1;.6;.7" dur="3s" begin="0s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="4.5" fill="#FFFFFF" class="mtoken" opacity="0">
+        <animateMotion dur="3s" begin=".5s" repeatCount="indefinite"><mpath href="#hop2" xlink:href="#hop2"/></animateMotion>
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.1;.6;.7" dur="3s" begin=".5s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="4.5" fill="#FFFFFF" class="mtoken" opacity="0">
+        <animateMotion dur="3s" begin="1s" repeatCount="indefinite"><mpath href="#hop3" xlink:href="#hop3"/></animateMotion>
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.1;.6;.7" dur="3s" begin="1s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <g>
+      <rect x="1400" y="291" width="136" height="34" rx="17" fill="#EAF2FF" stroke="#C3D3EA"/>
+      <text x="1468" y="312" class="cent small" fill="#1F5FC0">fan out ↓</text>
+    </g>
+  </g>
+
+  <!-- ============================================================= -->
+  <!-- 2 · FAN OUT                                                   -->
+  <!-- ============================================================= -->
+  <g class="t">
+    <rect x="40" y="412" width="1520" height="598" rx="18" fill="#FFFFFF" stroke="#DCE3EF"/>
+    <rect x="40" y="412" width="1520" height="4" rx="2" fill="url(#purpleGrad)"/>
+    <text x="64" y="450" class="ptitle" fill="#6F42D1">2 — Fan out: every developer gets their own branch and environment</text>
+    <text x="64" y="470" class="psub">Each developer follows the same four steps independently, then opens a pull request (PR) back to the shared feature integration branch</text>
+
+    <!-- the one shared branch, drawn once -->
+    <g>
+      <rect x="700" y="484" width="200" height="28" rx="14" fill="#F2ECFF" stroke="#CBB8F0"/>
+      <text x="800" y="503" class="cent tiny mono" fill="#6B3FC7">feature/checkout</text>
+      <text x="916" y="497" class="tiny" fill="#6B3FC7">Shared feature integration branch.</text>
+      <text x="916" y="511" class="tiny">Developer work branches start here and merge back through PRs.</text>
+      <line x1="110" y1="524" x2="1530" y2="524" stroke="#E4DBF8" stroke-width="7" stroke-linecap="round"/>
+      <line x1="110" y1="524" x2="1530" y2="524" stroke="#6F42D1" stroke-width="2.4" stroke-dasharray="12 14" stroke-linecap="round" opacity=".9" class="flow" style="--fo:52px;--fd:1.8s"/>
+    </g>
+
+    <!-- branch down into each column -->
+    <g fill="none" stroke="#6F42D1" stroke-width="2" stroke-dasharray="4 5">
+      <line x1="312" y1="528" x2="312" y2="554" marker-end="url(#arwPurple)" class="flow" style="--fo:18px;--fd:.9s"/>
+      <line x1="800" y1="528" x2="800" y2="554" marker-end="url(#arwPurple)" class="flow" style="--fo:18px;--fd:.9s"/>
+      <line x1="1288" y1="528" x2="1288" y2="554" marker-end="url(#arwPurple)" class="flow" style="--fo:18px;--fd:.9s"/>
+    </g>
+    <g class="end">
+      <text x="302" y="548" class="tiny end" fill="#6B3FC7">branch</text>
+      <text x="790" y="548" class="tiny end" fill="#6B3FC7">branch</text>
+      <text x="1278" y="548" class="tiny end" fill="#6B3FC7">branch</text>
+    </g>
+    <g filter="url(#softGlow)">
+      <circle r="4.5" fill="#FFFFFF" class="mtoken">
+        <animateMotion dur="8s" begin="0s" repeatCount="indefinite"><mpath href="#down1" xlink:href="#down1"/></animateMotion>
+        <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.02;.08;.11;1" dur="8s" begin="0s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="4.5" fill="#FFFFFF" class="mtoken" opacity="0">
+        <animateMotion dur="8s" begin=".6s" repeatCount="indefinite"><mpath href="#down2" xlink:href="#down2"/></animateMotion>
+        <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.02;.08;.11;1" dur="8s" begin=".6s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="4.5" fill="#FFFFFF" class="mtoken" opacity="0">
+        <animateMotion dur="8s" begin="1.2s" repeatCount="indefinite"><mpath href="#down3" xlink:href="#down3"/></animateMotion>
+        <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.02;.08;.11;1" dur="8s" begin="1.2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <!-- ===================== developer column 1 ===================== -->
+    <g>
+      <rect x="92" y="560" width="440" height="392" rx="16" fill="#F5F8FD" stroke="#2B6BE4" stroke-width="1.6"/>
+      <rect x="92" y="560" width="4" height="392" rx="2" fill="#2B6BE4"/>
+
+      <circle cx="126" cy="584" r="15" fill="#EAF2FF" stroke="#2B6BE4" stroke-width="2"/>
+      <use href="#fi-person" xlink:href="#fi-person" aria-hidden="true" x="117.5" y="575.5" width="17" height="17" fill="#1F5FC0"/>
+      <text x="152" y="581" class="ctitle">Developer 1 · Alice</text>
+      <text x="152" y="598" class="tiny">Works independently in an isolated environment.</text>
+
+      <circle cx="118" cy="626" r="10" fill="#F0F8F4" stroke="#2B6BE4" stroke-width="1.5"/>
+      <text x="118" y="630" class="cent tiny mono" fill="#1F5FC0">1</text>
+      <text x="138" y="631" class="lead">Create a developer work branch</text>
+      <rect x="138" y="640" width="210" height="20" rx="7" fill="#F2ECFF" stroke="#CBB8F0"/>
+      <text x="148" y="654" class="tiny mono" fill="#6B3FC7">dev/alice/cart</text>
+
+      <circle cx="118" cy="694" r="10" fill="#F0F8F4" stroke="#2B6BE4" stroke-width="1.5"/>
+      <text x="118" y="698" class="cent tiny mono" fill="#1F5FC0">2</text>
+      <text x="138" y="699" class="lead">Provision your own Dev environment</text>
+      <rect x="132" y="708" width="384" height="82" rx="10" fill="#EAF2FF" stroke="#C3D3EA"/>
+      <use href="#fi-lock-open" xlink:href="#fi-lock-open" aria-hidden="true" x="146.5" y="718.5" width="15" height="15" fill="#0E9E77"/>
+      <text x="170" y="731" class="lead">dev-alice</text>
+      <text x="240" y="731" class="tiny" fill="#0B6B4F">isolated · unmanaged</text>
+      <rect x="148" y="736" width="352" height="22" rx="7" fill="#F0F8F4" stroke="#C3E2D2"/>
+      <use href="#icon-dataverse" xlink:href="#icon-dataverse" aria-hidden="true" x="154" y="739" width="16" height="16"/>
+      <text x="180" y="751" class="tiny" fill="#1F5FC0">Dataverse · unmanaged solution · Pages site</text>
+      <text x="148" y="768" class="tiny" fill="#3B4859">Import the unmanaged solution built from this branch.</text>
+      <text x="148" y="781" class="tiny mono" fill="#0B6B4F"><tspan fill="#5E6E86">e.g. </tspan>pac solution import</text>
+
+      <circle cx="118" cy="812" r="10" fill="#F0F8F4" stroke="#2B6BE4" stroke-width="1.5"/>
+      <text x="118" y="816" class="cent tiny mono" fill="#1F5FC0">3</text>
+      <text x="138" y="817" class="lead">Work the inner loop</text>
+      <circle cx="164" cy="848" r="20" fill="none" stroke="#E6ECF7" stroke-width="5"/>
+      <circle cx="164" cy="848" r="20" fill="none" stroke="#2B6BE4" stroke-width="2" stroke-dasharray="18 108" stroke-linecap="round" class="flow" style="--fo:126px;--fd:3.4s"/>
+      <circle r="4" fill="#FFFFFF" filter="url(#softGlow)" class="mtoken">
+        <animateMotion dur="3.4s" repeatCount="indefinite"><mpath href="#orb1" xlink:href="#orb1"/></animateMotion>
+      </circle>
+      <use href="#fi-arrow-sync" xlink:href="#fi-arrow-sync" aria-hidden="true" x="138.5" y="868.5" width="11" height="11" fill="#1F5FC0"/>
+      <text x="170" y="878" class="cent tiny" fill="#1F5FC0">repeat</text>
+      <text x="204" y="845" class="small" fill="#3B4859">Author, preview, validate — then repeat</text>
+      <text x="204" y="863" class="tiny" fill="#1F5FC0">see the daily cycle in Lab 05</text>
+
+      <circle cx="118" cy="900" r="10" fill="#F0F8F4" stroke="#2B6BE4" stroke-width="1.5"/>
+      <text x="118" y="904" class="cent tiny mono" fill="#1F5FC0">4</text>
+      <text x="138" y="905" class="lead">Push it back to source</text>
+      <text x="138" y="924" class="tiny" fill="#3B4859">Commit, then open a pull request.</text>
+    </g>
+
+    <!-- ===================== developer column 2 ===================== -->
+    <g>
+      <rect x="580" y="560" width="440" height="392" rx="16" fill="#F5F8FD" stroke="#6F42D1" stroke-width="1.6"/>
+      <rect x="580" y="560" width="4" height="392" rx="2" fill="#6F42D1"/>
+
+      <circle cx="614" cy="584" r="15" fill="#F2ECFF" stroke="#6F42D1" stroke-width="2"/>
+      <use href="#fi-person" xlink:href="#fi-person" aria-hidden="true" x="605.5" y="575.5" width="17" height="17" fill="#6B3FC7"/>
+      <text x="640" y="581" class="ctitle">Developer 2 · Ben</text>
+      <text x="640" y="598" class="tiny">Works independently in an isolated environment.</text>
+
+      <circle cx="606" cy="626" r="10" fill="#F0F8F4" stroke="#6F42D1" stroke-width="1.5"/>
+      <text x="606" y="630" class="cent tiny mono" fill="#6B3FC7">1</text>
+      <text x="626" y="631" class="lead">Create a developer work branch</text>
+      <rect x="626" y="640" width="210" height="20" rx="7" fill="#F2ECFF" stroke="#CBB8F0"/>
+      <text x="636" y="654" class="tiny mono" fill="#6B3FC7">dev/ben/checkout</text>
+
+      <circle cx="606" cy="694" r="10" fill="#F0F8F4" stroke="#6F42D1" stroke-width="1.5"/>
+      <text x="606" y="698" class="cent tiny mono" fill="#6B3FC7">2</text>
+      <text x="626" y="699" class="lead">Provision your own Dev environment</text>
+      <rect x="620" y="708" width="384" height="82" rx="10" fill="#EAF2FF" stroke="#C3D3EA"/>
+      <use href="#fi-lock-open" xlink:href="#fi-lock-open" aria-hidden="true" x="634.5" y="718.5" width="15" height="15" fill="#0E9E77"/>
+      <text x="658" y="731" class="lead">dev-ben</text>
+      <text x="728" y="731" class="tiny" fill="#0B6B4F">isolated · unmanaged</text>
+      <rect x="636" y="736" width="352" height="22" rx="7" fill="#F0F8F4" stroke="#C3E2D2"/>
+      <use href="#icon-dataverse" xlink:href="#icon-dataverse" aria-hidden="true" x="642" y="739" width="16" height="16"/>
+      <text x="668" y="751" class="tiny" fill="#1F5FC0">Dataverse · unmanaged solution · Pages site</text>
+      <text x="636" y="768" class="tiny" fill="#3B4859">Import the unmanaged solution built from this branch.</text>
+      <text x="636" y="781" class="tiny mono" fill="#0B6B4F"><tspan fill="#5E6E86">e.g. </tspan>pac solution import</text>
+
+      <circle cx="606" cy="812" r="10" fill="#F0F8F4" stroke="#6F42D1" stroke-width="1.5"/>
+      <text x="606" y="816" class="cent tiny mono" fill="#6B3FC7">3</text>
+      <text x="626" y="817" class="lead">Work the inner loop</text>
+      <circle cx="652" cy="848" r="20" fill="none" stroke="#E6ECF7" stroke-width="5"/>
+      <circle cx="652" cy="848" r="20" fill="none" stroke="#6F42D1" stroke-width="2" stroke-dasharray="18 108" stroke-linecap="round" class="flow" style="--fo:126px;--fd:4.2s"/>
+      <circle r="4" fill="#FFFFFF" filter="url(#softGlow)" class="mtoken">
+        <animateMotion dur="4.2s" repeatCount="indefinite"><mpath href="#orb2" xlink:href="#orb2"/></animateMotion>
+      </circle>
+      <use href="#fi-arrow-sync" xlink:href="#fi-arrow-sync" aria-hidden="true" x="626.5" y="868.5" width="11" height="11" fill="#6B3FC7"/>
+      <text x="658" y="878" class="cent tiny" fill="#6B3FC7">repeat</text>
+      <text x="692" y="845" class="small" fill="#3B4859">Author, preview, validate — then repeat</text>
+      <text x="692" y="863" class="tiny" fill="#1F5FC0">see the daily cycle in Lab 05</text>
+
+      <circle cx="606" cy="900" r="10" fill="#F0F8F4" stroke="#6F42D1" stroke-width="1.5"/>
+      <text x="606" y="904" class="cent tiny mono" fill="#6B3FC7">4</text>
+      <text x="626" y="905" class="lead">Push it back to source</text>
+      <text x="626" y="924" class="tiny" fill="#3B4859">Commit, then open a pull request.</text>
+    </g>
+
+    <!-- ===================== developer column n ===================== -->
+    <g>
+      <rect x="1068" y="560" width="440" height="392" rx="16" fill="#F5F8FD" stroke="#0A93C4" stroke-width="1.6" stroke-dasharray="8 6"/>
+      <rect x="1068" y="560" width="4" height="392" rx="2" fill="#0A93C4"/>
+
+      <circle cx="1102" cy="584" r="15" fill="#EAF2FF" stroke="#0A93C4" stroke-width="2"/>
+      <use href="#fi-person" xlink:href="#fi-person" aria-hidden="true" x="1093.5" y="575.5" width="17" height="17" fill="#1F5FC0"/>
+      <text x="1128" y="581" class="ctitle">Developer n</text>
+      <text x="1128" y="598" class="tiny">The same pattern, for every developer on the feature.</text>
+      <rect x="1424" y="572" width="66" height="22" rx="11" fill="#EAF2FF" stroke="#0A93C4"/>
+      <text x="1457" y="587" class="cent tiny mono" fill="#1F5FC0">× N</text>
+
+      <circle cx="1094" cy="626" r="10" fill="#F0F8F4" stroke="#0A93C4" stroke-width="1.5"/>
+      <text x="1094" y="630" class="cent tiny mono" fill="#1F5FC0">1</text>
+      <text x="1114" y="631" class="lead">Create a developer work branch</text>
+      <rect x="1114" y="640" width="210" height="20" rx="7" fill="#F2ECFF" stroke="#CBB8F0"/>
+      <text x="1124" y="654" class="tiny mono" fill="#6B3FC7">dev/&lt;alias&gt;/&lt;topic&gt;</text>
+
+      <circle cx="1094" cy="694" r="10" fill="#F0F8F4" stroke="#0A93C4" stroke-width="1.5"/>
+      <text x="1094" y="698" class="cent tiny mono" fill="#1F5FC0">2</text>
+      <text x="1114" y="699" class="lead">Provision your own Dev environment</text>
+      <rect x="1108" y="708" width="384" height="82" rx="10" fill="#EAF2FF" stroke="#C3D3EA"/>
+      <use href="#fi-lock-open" xlink:href="#fi-lock-open" aria-hidden="true" x="1122.5" y="718.5" width="15" height="15" fill="#0E9E77"/>
+      <text x="1146" y="731" class="lead">dev-n</text>
+      <text x="1216" y="731" class="tiny" fill="#0B6B4F">isolated · unmanaged</text>
+      <rect x="1124" y="736" width="352" height="22" rx="7" fill="#F0F8F4" stroke="#C3E2D2"/>
+      <use href="#icon-dataverse" xlink:href="#icon-dataverse" aria-hidden="true" x="1130" y="739" width="16" height="16"/>
+      <text x="1156" y="751" class="tiny" fill="#1F5FC0">Dataverse · unmanaged solution · Pages site</text>
+      <text x="1124" y="768" class="tiny" fill="#3B4859">Import the unmanaged solution built from this branch.</text>
+      <text x="1124" y="781" class="tiny mono" fill="#0B6B4F"><tspan fill="#5E6E86">e.g. </tspan>pac solution import</text>
+
+      <circle cx="1094" cy="812" r="10" fill="#F0F8F4" stroke="#0A93C4" stroke-width="1.5"/>
+      <text x="1094" y="816" class="cent tiny mono" fill="#1F5FC0">3</text>
+      <text x="1114" y="817" class="lead">Work the inner loop</text>
+      <circle cx="1140" cy="848" r="20" fill="none" stroke="#E6ECF7" stroke-width="5"/>
+      <circle cx="1140" cy="848" r="20" fill="none" stroke="#0A93C4" stroke-width="2" stroke-dasharray="18 108" stroke-linecap="round" class="flow" style="--fo:126px;--fd:3s"/>
+      <circle r="4" fill="#FFFFFF" filter="url(#softGlow)" class="mtoken">
+        <animateMotion dur="3s" repeatCount="indefinite"><mpath href="#orb3" xlink:href="#orb3"/></animateMotion>
+      </circle>
+      <use href="#fi-arrow-sync" xlink:href="#fi-arrow-sync" aria-hidden="true" x="1114.5" y="868.5" width="11" height="11" fill="#1F5FC0"/>
+      <text x="1146" y="878" class="cent tiny" fill="#1F5FC0">repeat</text>
+      <text x="1180" y="845" class="small" fill="#3B4859">Author, preview, validate — then repeat</text>
+      <text x="1180" y="863" class="tiny" fill="#1F5FC0">see the daily cycle in Lab 05</text>
+
+      <circle cx="1094" cy="900" r="10" fill="#F0F8F4" stroke="#0A93C4" stroke-width="1.5"/>
+      <text x="1094" y="904" class="cent tiny mono" fill="#1F5FC0">4</text>
+      <text x="1114" y="905" class="lead">Push it back to source</text>
+      <text x="1114" y="924" class="tiny" fill="#3B4859">Commit, then open a pull request.</text>
+    </g>
+
+    <!-- PR back up into the same branch -->
+    <g fill="none" stroke="#0E9E77" stroke-width="2" stroke-dasharray="5 5">
+      <path d="M502,958 L548,958 L548,532" marker-end="url(#arwTeal)" class="flow" style="--fo:20px;--fd:1s"/>
+      <path d="M990,958 L1036,958 L1036,532" marker-end="url(#arwTeal)" class="flow" style="--fo:20px;--fd:1s"/>
+      <path d="M1478,958 L1524,958 L1524,532" marker-end="url(#arwTeal)" class="flow" style="--fo:20px;--fd:1s"/>
+    </g>
+    <g>
+      <text x="558" y="952" class="tiny" fill="#0B6B4F">PR</text>
+      <text x="1046" y="952" class="tiny" fill="#0B6B4F">PR</text>
+      <text x="1534" y="952" class="tiny" fill="#0B6B4F">PR</text>
+    </g>
+    <g filter="url(#softGlow)">
+      <circle r="4.5" fill="#FFFFFF" class="mtoken" opacity="0">
+        <animateMotion dur="8s" begin="3.5s" repeatCount="indefinite"><mpath href="#up1" xlink:href="#up1"/></animateMotion>
+        <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.02;.22;.26;1" dur="8s" begin="3.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="4.5" fill="#FFFFFF" class="mtoken" opacity="0">
+        <animateMotion dur="8s" begin="4.1s" repeatCount="indefinite"><mpath href="#up2" xlink:href="#up2"/></animateMotion>
+        <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.02;.22;.26;1" dur="8s" begin="4.1s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="4.5" fill="#FFFFFF" class="mtoken" opacity="0">
+        <animateMotion dur="8s" begin="4.7s" repeatCount="indefinite"><mpath href="#up3" xlink:href="#up3"/></animateMotion>
+        <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.02;.22;.26;1" dur="8s" begin="4.7s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <!-- shared notes, said once instead of three times -->
+    <rect x="92" y="972" width="1416" height="24" rx="12" fill="#F5F9FF" stroke="#C6DCEF"/>
+    <text x="800" y="988" class="cent tiny" fill="#1F5FC0">Before each new change: pull the shared feature integration branch, then re-import it into your Dev environment</text>
+  </g>
+
+  <!-- ============================================================= -->
+  <!-- 3 · THE PERSONAL LOOP                                         -->
+  <!-- ============================================================= -->
+  <g class="t" transform="translate(0,118)">
+    <rect x="40" y="912" width="1520" height="260" rx="18" fill="#FFFFFF" stroke="#DCE3EF"/>
+    <rect x="40" y="912" width="1520" height="4" rx="2" fill="url(#tealGrad)"/>
+    <text x="64" y="950" class="ptitle" fill="#0E9E77">3 — See the daily development loop up close</text>
+    <text x="64" y="968" class="psub">Inside their own environment a developer cycles here many times before opening a single pull request</text>
+
+    <circle cx="230" cy="1070" r="68" fill="none" stroke="#E6ECF7" stroke-width="10"/>
+    <circle cx="230" cy="1070" r="68" fill="none" stroke="url(#tealGrad)" stroke-width="2.2"
+            stroke-dasharray="40 388" stroke-linecap="round" opacity=".9" class="flow" style="--fo:428px;--fd:4s"/>
+    <circle r="5" fill="#FFFFFF" stroke="#0E9E77" stroke-width="2" filter="url(#softGlow)" class="mtoken">
+      <animateMotion dur="4s" repeatCount="indefinite"><mpath href="#personalOrbit" xlink:href="#personalOrbit"/></animateMotion>
+    </circle>
+
+    <rect x="175" y="986" width="110" height="32" rx="9" fill="#F5F8FD" stroke="#0E9E77" stroke-width="1.4"/>
+    <text x="230" y="1006" class="cent lead">Author</text>
+    <rect x="243" y="1054" width="110" height="32" rx="9" fill="#F5F8FD" stroke="#0A93C4" stroke-width="1.4"/>
+    <text x="298" y="1074" class="cent lead">Preview</text>
+    <rect x="175" y="1122" width="110" height="32" rx="9" fill="#F5F8FD" stroke="#6F42D1" stroke-width="1.4"/>
+    <text x="230" y="1142" class="cent lead">Validate</text>
+    <rect x="107" y="1054" width="110" height="32" rx="9" fill="#F5F8FD" stroke="#A05F00" stroke-width="1.4"/>
+    <text x="162" y="1074" class="cent lead">Commit</text>
+
+    <line x1="392" y1="984" x2="392" y2="1160" stroke="#DCE3EF"/>
+
+    <text x="420" y="996" class="small" fill="#59687F">Moving work between your Dev environment and Git</text>
+    <rect x="418" y="1004" width="500" height="34" rx="8" fill="#F0F8F4" stroke="#C3E2D2"/>
+    <text x="432" y="1019" class="chip" fill="#20303F">Pull the site down as code</text>
+    <text x="432" y="1033" class="tiny mono" fill="#0B6B4F"><tspan fill="#5E6E86">e.g. </tspan>pac pages download-code-site</text>
+    <rect x="418" y="1044" width="500" height="34" rx="8" fill="#F0F8F4" stroke="#C3E2D2"/>
+    <text x="432" y="1059" class="chip" fill="#20303F">Export and unpack the solution</text>
+    <text x="432" y="1073" class="tiny mono" fill="#0B6B4F"><tspan fill="#5E6E86">e.g. </tspan>pac solution export + pac solution unpack</text>
+    <rect x="418" y="1084" width="500" height="34" rx="8" fill="#F0F8F4" stroke="#C3E2D2"/>
+    <text x="432" y="1099" class="chip" fill="#20303F">Publish, then preview locally</text>
+    <text x="432" y="1113" class="tiny mono" fill="#0B6B4F"><tspan fill="#5E6E86">e.g. </tspan>pac pages upload-code-site</text>
+    <rect x="418" y="1128" width="240" height="24" rx="12" fill="#EAF2FF" stroke="#C3D3EA"/>
+    <text x="538" y="1144" class="cent tiny" fill="#0B6B4F">many loops per pull request</text>
+
+    <line x1="952" y1="984" x2="952" y2="1160" stroke="#DCE3EF"/>
+
+    <text x="980" y="998" class="kpi" fill="#0E9E77">What stays inside the loop</text>
+    <text x="980" y="1020" class="small">Site source, web templates, Liquid, JS and CSS bundles, and the</text>
+    <text x="980" y="1037" class="small">unpacked solution all live in the same branch.</text>
+    <text x="980" y="1060" class="small">Nothing here is shared. Nobody else sees it until the pull request.</text>
+    <text x="980" y="1090" class="kpi" fill="#A05F00">Exit criteria</text>
+    <text x="980" y="1112" class="small">Local validation green · conventional commit written</text>
+    <text x="980" y="1129" class="small">One commit carries the site source and the unpacked solution</text>
+    <rect x="978" y="1138" width="360" height="22" rx="11" fill="#E8F8F0" stroke="#8ED2AF"/>
+    <text x="1158" y="1153" class="cent tiny" fill="#0B6B4F">then push and open a pull request → deck 3</text>
+  </g>
+
+  <!-- ============================================================= -->
+  <!-- 4 · GUARDRAILS                                                -->
+  <!-- ============================================================= -->
+  <g class="t" transform="translate(0,188)">
+    <rect x="40" y="1122" width="1520" height="130" rx="18" fill="#FFFFFF" stroke="#DCE3EF"/>
+    <rect x="40" y="1122" width="1520" height="4" rx="2" fill="url(#amberGrad)"/>
+    <text x="64" y="1158" class="ptitle" fill="#A05F00">4 — Guardrails keep the environment strategy reliable</text>
+
+    <g>
+      <rect x="64" y="1176" width="353" height="64" rx="12" fill="#F5F8FD" stroke="#C3D3EA"/>
+      <text x="84" y="1198" class="node">One developer, one environment</text>
+      <text x="84" y="1216" class="tiny">Never share a Dev environment, and never build in the</text>
+      <text x="84" y="1231" class="tiny">default environment. Use per-user developer environments.</text>
+    </g>
+    <g>
+      <rect x="437" y="1176" width="353" height="64" rx="12" fill="#F5F8FD" stroke="#C3D3EA"/>
+      <text x="457" y="1198" class="node">Connections + environment variables</text>
+      <text x="457" y="1216" class="tiny">Definitions travel with the solution. Supply target-specific</text>
+      <text x="457" y="1231" class="tiny">values during import or through deployment settings.</text>
+    </g>
+    <g>
+      <rect x="810" y="1176" width="353" height="64" rx="12" fill="#F5F8FD" stroke="#C3D3EA"/>
+      <text x="830" y="1198" class="node">Unmanaged upstream, managed downstream</text>
+      <text x="830" y="1216" class="tiny">Makers build unmanaged in Dev. Only managed artifacts</text>
+      <text x="830" y="1231" class="tiny">from the pipeline enter Test and Prod.</text>
+    </g>
+    <g>
+      <rect x="1183" y="1176" width="353" height="64" rx="12" fill="#F5F8FD" stroke="#C3D3EA"/>
+      <text x="1203" y="1198" class="node">Same publisher prefix everywhere</text>
+      <text x="1203" y="1216" class="tiny">Agree the prefix and solution name in the integration</text>
+      <text x="1203" y="1231" class="tiny">environment before anyone forks, or merges will fight.</text>
+    </g>
+  </g>
+
+  <!-- ============ FOOTER ============ -->
+  <g class="t" transform="translate(0,188)">
+    <line x1="40" y1="1272" x2="1560" y2="1272" stroke="#DCE3EF"/>
+    <g transform="translate(40,1300)">
+      <text x="0" y="0" class="small" fill="#3B4859">2 of 3 · inner loop</text>
+      <circle cx="166" cy="-4" r="5" fill="#0E9E77"/>
+      <text x="180" y="0" class="small" fill="#3B4859">Integration — shared baseline</text>
+      <circle cx="386" cy="-4" r="5" fill="#6F42D1"/>
+      <text x="400" y="0" class="small" fill="#3B4859">Dev × N — one per developer</text>
+      <circle cx="606" cy="-4" r="5" fill="#A05F00"/>
+      <text x="620" y="0" class="small" fill="#3B4859">Test and Prod — covered in deck 3</text>
+    </g>
+    <text x="1560" y="1292" class="small end" fill="#68788F">Source control is the single source of truth across time, versions and environments.</text>
+    <text x="1560" y="1310" class="tiny end">Next: the outer loop — branching strategy, CI/CD and how a release is cut →</text>
+  </g>
+</svg>
